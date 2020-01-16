@@ -1,12 +1,12 @@
 import httpService from './http.service';
 
-const register = (id) => httpService
-  .post(`/users/register/${id}`)
+const register = (body) => httpService
+  .post(`/users/register`, body)
   .then(({ data }) => data)
   .catch((err) => Promise.reject(err.response));
 
-const login = (id) => httpService
-  .post(`/users/authenticate/${id}`)
+const login = (body) => httpService
+  .post(`/users/authenticate`, body)
   .then(({ data }) => data)
   .catch((err) => Promise.reject(err.response));
 export default {

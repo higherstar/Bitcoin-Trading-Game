@@ -2,8 +2,8 @@ import types from '../actionTypes';
 
 const INITIAL_STATE = {
   isFetching: false,
-  userToken: '',
-  errors: '',
+  userInfo: {},
+  errors: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        userToken: action.payload.data.token,
+        userToken: action.payload,
       };
     case types.USER_LOGIN_FAILED:
       return {
@@ -35,7 +35,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        userToken: action.payload.data.token,
+        userToken: action.payload,
       };
     case types.USER_SIGNUP_FAILED:
       return {

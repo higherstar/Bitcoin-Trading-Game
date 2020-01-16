@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton } from 'components/elements';
+import { CustomButton, CustomInputBox, Loading } from 'components/elements';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+import { registerUser } from 'redux/actions/user';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -24,30 +28,69 @@ const useStyles = makeStyles((theme) => ({
     width: '50%',
     height: '50%'
   },
-  signUpStyle:{
+  signUpButtonStyle:{
     marginTop: 20
-  }
+  },
 }));
 
-function SignUp() {
+function SignUp(props) {
+  const { registerUser, history } = props;
+
   const classes = useStyles();
 
-const onClickLogin = () => {
-    console.log('LoginButtonClicked');
+  const [userName, setUserName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const handleChangeName = (event) => {
+    setUserName(event.target.value);
+  };
+  const handleChangeEmail = (event) => {
+    setUserEmail(event.target.value);
+  };
+  const handleChangePassword = (event) => {
+    setUserPassword(event.target.value);
+  };
+  const handleOnClickSignUp = () => {
+    setLoading(true);
+    registerUser({
+      name: userName,
+      email: userEmail,
+      password: userPassword
+    }).then(() => {
+      setLoading(false);
+      history.push('/login');
+    }).catch(() => {
+      console.log('error');
+      setLoading(false);
+    });
   };
 
-const onClickSignUp = () => {
-    console.log('signupButtonClicked');
-  };
-
-  return (
-    <div className={classes.container}>
-      <div className={classes.buttonContainer}>
-        <CustomButton label='Login' onClick={onClickLogin}/>
-        <CustomButton label='Sign Up' className={classes.signUpStyle} onClick={onClickSignUp}/>
+  if(loading) 
+    return <Loading />
+  else 
+    return (
+      <div className={classes.container}>
+        <div className={classes.buttonContainer}>
+          <CustomInputBox onChange={handleChangeName} label="UserName" leftText="UserName: " width={300} />
+          <CustomInputBox onChange={handleChangeEmail} label="Email" leftText="Email: " width={300} type='email'/>
+          <CustomInputBox onChange={handleChangePassword} label="Password" leftText="Password: " width={300} type='password'/>
+          <CustomButton onClick={handleOnClickSignUp} label='Sign Up' className={classes.signUpButtonStyle} />
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
-export default SignUp;
+SignUp.TypeProps = {
+  registerUser: PropTypes.func.isRequired,
+  history: PropTypes.func.isRequired
+}
+const mapStateToProps = (store) => ({
+
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  registerUser
+}, dispatch);
+
+export default connect (mapStateToProps, mapDispatchToProps)(SignUp);
