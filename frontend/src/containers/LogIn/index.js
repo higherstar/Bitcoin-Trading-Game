@@ -1,7 +1,6 @@
 import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton } from 'components/elements';
-import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -27,13 +26,10 @@ const useStyles = makeStyles((theme) => ({
   },
   signUpStyle:{
     marginTop: 20
-  },
-  link: {
-    textDecoration: 'none',
-  },
+  }
 }));
 
-function HomePage() {
+function LogIn() {
   const classes = useStyles();
 
 const onClickLogin = () => {
@@ -47,15 +43,11 @@ const onClickSignUp = () => {
   return (
     <div className={classes.container}>
       <div className={classes.buttonContainer}>
-        <Link to="/login" className={classes.link}>
-          <CustomButton label='Login' onClick={onClickLogin}/>
-        </Link>
-        <Link to="/signup" className={classes.link}>
-          <CustomButton label='Sign Up' className={classes.signUpStyle} onClick={onClickSignUp}/>
-        </Link>
+        <CustomButton label='Login' onClick={onClickLogin}/>
+        <CustomButton label='Sign Up' className={classes.signUpStyle} onClick={onClickSignUp}/>
       </div>
     </div>
   );
 }
 
-export default HomePage;
+export default LogIn;

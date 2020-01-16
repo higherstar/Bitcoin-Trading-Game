@@ -30,7 +30,7 @@ const theme = createMuiTheme({
       darkYellow: '#E99708',
     },
     background: {
-      default: '#EEEEEE',
+      default: '#FFFFFF',
       drawer: '#2B2F3A',
       paper: '#FFFFFF',
       symbol: '#16BBCF',

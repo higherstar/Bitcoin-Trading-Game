@@ -6,7 +6,9 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import PublicRoute from 'routes/PublicRoute';
-import HomePage from 'containers/Homepage';
+import HomePage from 'containers/HomePage';
+import SignUp from 'containers/SignUp';
+import LogIn from 'containers/LogIn';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,6 +60,8 @@ const App = (props) => {
               <Switch>
                 <Redirect exact from="/" to="/home" />
                 <PublicRoute exact path="/home" component={HomePage} props={props} />
+                <PublicRoute exact path="/login" component={LogIn} props={props} />
+                <PublicRoute exact path="/signup" component={SignUp} props={props} />
               </Switch>
             </PerfectScrollbar>
           </div>
