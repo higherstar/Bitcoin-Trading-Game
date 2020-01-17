@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonContainer: {
     display: 'flex',
@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: 'solid',
     borderRadius: 20,
     width: '50%',
-    height: '50%'
+    height: '50%',
   },
-  signUpButtonStyle:{
-    marginTop: 20
+  signUpButtonStyle: {
+    marginTop: 20,
   },
 }));
 
@@ -56,41 +56,39 @@ function SignUp(props) {
     registerUser({
       name: userName,
       email: userEmail,
-      password: userPassword
+      password: userPassword,
     }).then(() => {
       setLoading(false);
-      history.push('/login');
+      history.push('/billing');
     }).catch(() => {
       console.log('error');
       setLoading(false);
     });
   };
 
-  if(loading) 
-    return <Loading />
-  else 
-    return (
-      <div className={classes.container}>
-        <div className={classes.buttonContainer}>
-          <CustomInputBox onChange={handleChangeName} label="UserName" leftText="UserName: " width={300} />
-          <CustomInputBox onChange={handleChangeEmail} label="Email" leftText="Email: " width={300} type='email'/>
-          <CustomInputBox onChange={handleChangePassword} label="Password" leftText="Password: " width={300} type='password'/>
-          <CustomButton onClick={handleOnClickSignUp} label='Sign Up' className={classes.signUpButtonStyle} />
-        </div>
+  if (loading) { return <Loading />; }
+  return (
+    <div className={classes.container}>
+      <div className={classes.buttonContainer}>
+        <CustomInputBox onChange={handleChangeName} label="UserName" leftText="UserName: " width={300} />
+        <CustomInputBox onChange={handleChangeEmail} label="Email" leftText="Email: " width={300} type="email" />
+        <CustomInputBox onChange={handleChangePassword} label="Password" leftText="Password: " width={300} type="password" />
+        <CustomButton onClick={handleOnClickSignUp} label="Sign Up" className={classes.signUpButtonStyle} />
       </div>
-    );
+    </div>
+  );
 }
 
 SignUp.TypeProps = {
   registerUser: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired
-}
+  history: PropTypes.func.isRequired,
+};
 const mapStateToProps = (store) => ({
 
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  registerUser
+  registerUser,
 }, dispatch);
 
-export default connect (mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

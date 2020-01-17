@@ -7,6 +7,7 @@ const http = axios.create({ baseURL: `${baseURL}/` });
 
 function get(url, headers = {}, params = {}) {
   const accessToken = localStorage.getItem(USER_TOKEN_KEY);
+  console.log('venus------>accessToken', accessToken);
   const authHeader = { Authorization: `Bearer ${accessToken}` };
   return http.get(url, {
     ...params,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton, CustomInputBox, Loading } from 'components/elements';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonContainer: {
     display: 'flex',
@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: 'solid',
     borderRadius: 20,
     width: '50%',
-    height: '50%'
+    height: '50%',
   },
-  signUpStyle:{
-    marginTop: 20
-  }
+  signUpStyle: {
+    marginTop: 20,
+  },
 }));
 
 function LogIn(props) {
@@ -50,40 +50,47 @@ function LogIn(props) {
     setLoading(true);
     logInUser({
       email: userEmail,
-      password: userPassword
-    }).then(()=> {
+      password: userPassword,
+    }).then(() => {
       setLoading(false);
-      history.push('/home');
+      history.push('/game');
     }).catch(() => {
       console.log('error');
       setLoading(false);
     });
   };
 
-  if (loading) 
-    return <Loading />
-  else
-    return (
-      <div className={classes.container}>
-        <div className={classes.buttonContainer}>
-          <CustomInputBox onChange={handleChangeEmail} label="Email" leftText="Email: " width={300} type='email'/>
-          <CustomInputBox onChange={handleChangePassword} label="Password" leftText="Password: " width={300} type='password'/>
-          <CustomButton label='Login' onClick={onClickLogin}/>
-        </div>
+  if (loading) { return <Loading />; }
+  return (
+    <div className={classes.container}>
+      <div className={classes.buttonContainer}>
+        <CustomInputBox
+          onChange={handleChangeEmail}
+          label="Email"
+          leftText="Email: "
+          width={300}
+          type="email"
+        />
+        <CustomInputBox
+          onChange={handleChangePassword}
+          label="Password"
+          leftText="Password: "
+          width={300}
+          type="password"
+        />
+        <CustomButton label="Login" onClick={onClickLogin} />
       </div>
-    );
+    </div>
+  );
 }
 
 LogIn.TypeProps = {
   logInUser: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired
-}
-const mapStateToProps = (store) => ({
-
-});
+  history: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  logInUser
+  logInUser,
 }, dispatch);
 
-export default connect (mapStateToProps, mapDispatchToProps)(LogIn);
+export default connect(null, mapDispatchToProps)(LogIn);

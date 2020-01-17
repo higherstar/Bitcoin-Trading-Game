@@ -12,15 +12,15 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   formGroup: {
-    marginBottom: theme.spacing(4),
+    marginBottom: (props) => theme.spacing(props.marginBottom),
     display: 'flex',
     alignItems: 'center',
   },
   label: {
-    width: theme.spacing(11),
-    marginRight: theme.spacing(8),
+    width: (props) => theme.spacing((props.labelPadding) + 3),
+    marginRight: (props) => theme.spacing(props.labelPadding),
     color: '#000000',
-    fontSize: 20
+    fontSize: 20,
   },
 }));
 
@@ -30,9 +30,12 @@ function CustomInputBox({
   label,
   width,
   onChange,
-  type
+  shrink,
+  marginBottom,
+  labelPadding,
+  type,
 }) {
-  const classes = useStyles({width});
+  const classes = useStyles({ width, marginBottom, labelPadding });
 
   return (
     <Box className={classnames(classes.formGroup, className)}>
@@ -56,8 +59,11 @@ CustomInputBox.propTypes = {
   leftText: PropTypes.string,
   onChange: PropTypes.func,
   width: PropTypes.number,
-  type: PropTypes.string
-}
+  type: PropTypes.string,
+  shrink: PropTypes.bool,
+  labelPadding: PropTypes.number,
+  marginBottom: PropTypes.number,
+};
 
 CustomInputBox.defaultProps = {
   className: '',
@@ -65,7 +71,10 @@ CustomInputBox.defaultProps = {
   leftText: '',
   onChange: undefined,
   width: 200,
-  type: 'text'
+  type: 'text',
+  shrink: false,
+  marginBottom: 4,
+  labelPadding: 8,
 };
 
 export default CustomInputBox;

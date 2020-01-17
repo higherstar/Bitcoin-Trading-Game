@@ -1,20 +1,20 @@
-import userService from 'services/user.service';
+import paymentService from 'services/payment.service';
 import types from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export
-export const registerUser = (body) => (dispatch, getState) => {
+export const setPaymentToken = (body) => (dispatch, getState) => {
   if (getState().userData.isFetching) {
     return Promise.reject();
   }
 
   dispatch({
-    type: types.USER_SIGNUP_REQUEST,
+    type: types.PAYMENT_TOKEN_REQUEST,
   });
 
-  return userService.register(body)
+  return paymentService.updateInfo(body)
     .then((response) => {
       dispatch({
-        type: types.USER_SIGNUP_SUCCESS,
+        type: types.PAYMENT_TOKEN_SUCCESS,
         payload: { response },
       });
 
@@ -22,7 +22,7 @@ export const registerUser = (body) => (dispatch, getState) => {
     })
     .catch((error) => {
       dispatch({
-        type: types.USER_SIGNUP_FAILED,
+        type: types.PAYMENT_TOKEN_FAILED,
         payload: { error },
       });
 
@@ -30,27 +30,27 @@ export const registerUser = (body) => (dispatch, getState) => {
     });
 };
 
-export const logInUser = (body) => (dispatch, getState) => {
+export const chargeStripe = (body) => (dispatch, getState) => {
   if (getState().userData.isFetching) {
     return Promise.reject();
   }
 
   dispatch({
-    type: types.USER_LOGIN_REQUEST,
+    type: types.PAYMENT_CHARGE_REQUEST,
   });
 
-  return userService.login(body)
-    .then((response) => {
+  return paymentService.chargeStripe(body)
+    .then((result) => {
       dispatch({
-        type: types.USER_LOGIN_SUCCESS,
-        payload: { response },
+        type: types.PAYMENT_CHARGE_SUCCESS,
+        payload: { result },
       });
 
       return true;
     })
     .catch((error) => {
       dispatch({
-        type: types.USER_SIGNUP_FAILED,
+        type: types.PAYMENT_CHARGE_FAILED,
         payload: { error },
       });
 

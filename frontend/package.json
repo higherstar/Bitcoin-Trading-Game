@@ -23,6 +23,7 @@
     "react-router-dom": "^5.1.2",
     "react-router-redux": "^4.0.8",
     "react-scripts": "3.1.2",
+    "react-stripe-elements": "^6.0.1",
     "recharts": "^1.7.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
@@ -40,34 +41,11 @@
     "husky": "^3.0.5",
     "lint-staged": "^9.3.0"
   },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "scripts": {
     "lint": "eslint .",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start": "react-scripts start"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "start": "react-scripts start",
   }
 }

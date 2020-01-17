@@ -64,14 +64,14 @@ async function create(userParam) {
     };
 }
 
-async function update(id, userParam) {
-    const user = await User.findById(id);
+async function update(userParam) {
+    const user = await User.findById(userParam.id);
 
     // validate
     if (!user) throw 'User not found';
-    if (user.username !== userParam.email && await User.findOne({ email: userParam.email })) {
-        throw 'Email "' + userParam.email + '" is already taken';
-    }
+    // if (user.username !== userParam.email && await User.findOne({ email: userParam.email })) {
+    //     throw 'Email "' + userParam.email + '" is already taken';
+    // }
 
     // hash password if it was entered
     if (userParam.password) {
@@ -81,7 +81,8 @@ async function update(id, userParam) {
     // copy userParam properties to user
     Object.assign(user, userParam);
 
-    await user.save();
+    return await user.save();
+    // return await getById(userParam.id);
 }
 
 async function _delete(id) {

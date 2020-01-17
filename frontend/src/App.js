@@ -9,6 +9,8 @@ import PublicRoute from 'routes/PublicRoute';
 import HomePage from 'containers/HomePage';
 import SignUp from 'containers/SignUp';
 import LogIn from 'containers/LogIn';
+import BillingUser from 'containers/BillingUser';
+import Game from 'containers/Game';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +64,8 @@ const App = (props) => {
                 <PublicRoute exact path="/home" component={HomePage} props={props} />
                 <PublicRoute exact path="/login" component={LogIn} props={props} />
                 <PublicRoute exact path="/signup" component={SignUp} props={props} />
+                <PublicRoute exact path="/billing" component={BillingUser} props={props} />
+                <PublicRoute exact path="/game" component={Game} props={props} />
               </Switch>
             </PerfectScrollbar>
           </div>

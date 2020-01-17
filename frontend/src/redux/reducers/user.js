@@ -3,7 +3,7 @@ import types from '../actionTypes';
 const INITIAL_STATE = {
   isFetching: false,
   userInfo: {},
-  errors: ''
+  errors: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -14,10 +14,11 @@ export default (state = INITIAL_STATE, action) => {
         isFetching: true,
       };
     case types.USER_LOGIN_SUCCESS:
+      localStorage.setItem('kc_token', action.payload.response.token);
       return {
         ...state,
         isFetching: false,
-        userToken: action.payload,
+        userInfo: action.payload.response,
       };
     case types.USER_LOGIN_FAILED:
       return {
@@ -32,12 +33,30 @@ export default (state = INITIAL_STATE, action) => {
         isFetching: true,
       };
     case types.USER_SIGNUP_SUCCESS:
+      localStorage.setItem('kc_token', action.payload.response.token);
       return {
         ...state,
         isFetching: false,
-        userToken: action.payload,
+        userInfo: action.payload.response,
       };
     case types.USER_SIGNUP_FAILED:
+      return {
+        ...state,
+        isFetching: false,
+        errors: action.payload.error,
+      };
+    case types.PAYMENT_TOKEN_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case types.PAYMENT_TOKEN_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        userInfo: action.payload.response,
+      };
+    case types.PAYMENT_TOKEN_FAILED:
       return {
         ...state,
         isFetching: false,
