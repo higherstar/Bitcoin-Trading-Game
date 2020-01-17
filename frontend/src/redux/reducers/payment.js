@@ -2,7 +2,7 @@ import types from '../actionTypes';
 
 const INITIAL_STATE = {
   isFetching: false,
-  chargeResult: {},
+  paymentStatus: {},
   errors: '',
 };
 
@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        chargeResult: action.payload,
+        paymentStatus: action.payload.response,
       };
     case types.PAYMENT_CHARGE_FAILED:
       return {

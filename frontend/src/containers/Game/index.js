@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton, CustomInputBox } from 'components/elements';
 import { Link } from 'react-router-dom';
@@ -71,9 +71,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const classes = useStyles();
-  const { chargeStripe, userInfo } = props;
+  const { chargeStripe, userInfo, paymentStatus } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [amount, setAmount] = useState(0);
+  const [amountInput, setAmountInput] = useState(0);
+  useEffect(()=>{
+    if(paymentStatus.amount)
+      setAmountInput(paymentStatus.amount);
+  }, [paymentStatus])
 
   const onClickStart = () => {
     console.log('LoginButtonClicked');
@@ -89,7 +94,6 @@ function Game(props) {
   };
   const handleChangeAmount = (event) => {
     setAmount(event.target.value);
-    console.log(event.target.value)
   };
   const handleAmountChargeClick = () => {
     chargeStripe({
@@ -115,7 +119,7 @@ function Game(props) {
     <div className={classes.container}>
       <div className={classes.amountParent}>
         <h1>$</h1>
-        <p>0</p>
+        <p>{amountInput}</p>
         <i className="material-icons" onClick={onClickAmount}>
 					add_circle
         </i>
@@ -143,11 +147,13 @@ function Game(props) {
 
 Game.TypeProps = {
   chargeStripe: PropTypes.func.isRequired,
-  userInfo: PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired,
+  paymentStatus: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (store) => ({
   userInfo: store.userData.userInfo,
+  paymentStatus: store.paymentData.paymentStatus
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

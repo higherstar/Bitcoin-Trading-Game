@@ -25,20 +25,29 @@ async function chargeAmount(chargeParam) {
     const userPayment = new Payment({
         name: user.name,
         email: user.email,
-        amount: chargeParam.amount
+        amount: chargeParam.amount,
+        paymentToken: user.paymentTokenID
     });
 
     const paymentUser = await Payment.findOne({ email: user.email });
     if (paymentUser) {
+        if (paymentUser.amount < chargeParam.amount) {
+            chargeAmountStripe(chargeParam.amount - paymentUser.amount, user.paymentTokenID, user.name);
+        }
+        
         Object.assign(paymentUser, {amount: chargeParam.amount});
         return await paymentUser.save();
     } else {
-        await userPayment.save();
-        const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user._id }, config.secret);
-        return {
-            ...userWithoutHash,
-            token
-        };
+        return await userPayment.save();
     }    
+}
+
+async function chargeAmountStripe(amount, userToken, description) {
+    let {status} = await stripe.charges.create({
+        amount: amount,
+        currency: "usd",
+        description: `${description}: charged`,
+        source: userToken
+    });
+    console.log('venus--->status-charge',status);
 }
