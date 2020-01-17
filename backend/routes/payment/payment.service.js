@@ -8,46 +8,54 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 app.use(require("body-parser").text());
 
 module.exports = {
-    chargeAmount
+    chargeAmount,
+    createCustomer
 };
 
-async function chargeAmount(chargeParam) {
-    if (!chargeParam.id) {
-        throw 'Require User Id';
-    }
-    const user = await User.findById(chargeParam.id);
-    console.log('venus-----charge User', user);
-    // validate
-    // if (await Payment.findOne({ email: chargeParam.email })) {
-    //     throw 'Email "' + chargeParam.email + '" is already taken';
-    // }
+async function chargeAmount(body) {
+	if (!body.id) {
+			throw 'Require User Id';
+	}
+	const user = await User.findById(body.id);
+	if (user) {
+		const paymentInfo = await Payment.findOne({ email: user.email });
+		if (!paymentInfo) throw "Can not find the paymentUser";
+		if (paymentInfo.amount < body.amount) {
+			const chargeParam = {
+				amount: body.amount - paymentInfo.amount,
+				userToken: paymentInfo.paymentTokenID,
+				customerID: paymentInfo.customerID,
+				description: paymentInfo.name
+			};
+			const chargeResult = await chargeAmountStripe(chargeParam);
+			if (chargeResult.success) {
+				Object.assign(paymentInfo, {amount: chargeResult.amount/100});
+				return await paymentInfo.save();
+			} else throw 'Can not charge Amount';
+		}
+	} else throw 'Can not find user';
+};
 
-    const userPayment = new Payment({
-        name: user.name,
-        email: user.email,
-        amount: chargeParam.amount,
-        paymentToken: user.paymentTokenID
-    });
-
-    const paymentUser = await Payment.findOne({ email: user.email });
-    if (paymentUser) {
-        if (paymentUser.amount < chargeParam.amount) {
-            chargeAmountStripe(chargeParam.amount - paymentUser.amount, user.paymentTokenID, user.name);
-        }
-        
-        Object.assign(paymentUser, {amount: chargeParam.amount});
-        return await paymentUser.save();
-    } else {
-        return await userPayment.save();
-    }    
-}
-
-async function chargeAmountStripe(amount, userToken, description) {
-    let {status} = await stripe.charges.create({
-        amount: amount,
+async function chargeAmountStripe({amount, userToken, customerID, description}) {
+    let result = await stripe.charges.create({
+        amount: (amount*100),
         currency: "usd",
+        customer: customerID,
         description: `${description}: charged`,
         source: userToken
+		});
+		const response = {
+			success: result.status === 'succeeded',
+			amount: result.amount
+		}
+    return response
+};
+
+//test function
+async function createCustomer(chargeParam) {
+    let {status} = await stripe.customers.create({
+        email: "goldbyol@outlook.com",
+        name: "Gold"
     });
     console.log('venus--->status-charge',status);
 }

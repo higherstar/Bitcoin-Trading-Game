@@ -2,6 +2,10 @@ const config = require('../../config/vars');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('./user.model');
+const Payment = require('../payment/payment.model');
+const app = require("express")();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+app.use(require("body-parser").text());
 
 module.exports = {
     authenticate,
@@ -65,24 +69,43 @@ async function create(userParam) {
 }
 
 async function update(userParam) {
-    const user = await User.findById(userParam.id);
+	const user = await User.findById(userParam.id);
 
-    // validate
-    if (!user) throw 'User not found';
-    // if (user.username !== userParam.email && await User.findOne({ email: userParam.email })) {
-    //     throw 'Email "' + userParam.email + '" is already taken';.
-    // }
+	// validate
+	if (!user) throw 'User not found';
+	// if (user.username !== userParam.email && await User.findOne({ email: userParam.email })) {
+	//     throw 'Email "' + userParam.email + '" is already taken';.
+	// }
 
-    // hash password if it was entered
-    if (userParam.password) {
-        userParam.hash = bcrypt.hashSync(userParam.password, 10);
-    }
+	// hash password if it was entered
+	if (userParam.password) {
+			userParam.hash = bcrypt.hashSync(userParam.password, 10);
+	}
 
-    // copy userParam properties to user
-    Object.assign(user, userParam);
-
-    return await user.save();
-    // return await getById(userParam.id);
+	// copy userParam properties to user
+	Object.assign(user, userParam);
+	const customer = await stripe.customers
+		.create({
+				email: user.email,
+				name: user.name
+		});
+	console.log('venus--->create customer',customer);
+	if(customer.id){
+		const status = await stripe.customers.createSource(customer.id, {
+      source: user.paymentTokenID,
+		});
+		if(!status) throw 'Customer CreateSource Failed'
+	} else throw 'Can not Create Customer';
+	const userPayment = new Payment({
+		name: user.name,
+		email: user.email,
+		amount: 0,
+		paymentToken: user.paymentTokenID,
+		customerID: customer.id
+	});
+	await user.save();
+	return await userPayment.save();
+	// return await getById(userParam.id);
 }
 
 async function _delete(id) {

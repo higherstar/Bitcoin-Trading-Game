@@ -3,6 +3,7 @@ import types from '../actionTypes';
 const INITIAL_STATE = {
   isFetching: false,
   paymentStatus: {},
+  paymentToken: '',
   errors: '',
 };
 

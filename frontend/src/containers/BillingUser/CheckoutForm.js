@@ -76,7 +76,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (store) => ({
-  paymentToken: store.payment.paymentToken,
+  paymentToken: store.paymentData.paymentToken,
   userInfo: store.userData.userInfo,
 });
 
