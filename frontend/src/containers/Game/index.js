@@ -3,6 +3,10 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton, CustomInputBox } from 'components/elements';
 import { Link } from 'react-router-dom';
 import { CustomModal } from 'components/modals';
+import { bindActionCreators } from 'redux';
+import { chargeStripe } from 'redux/actions/payment';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -65,8 +69,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Game() {
+function Game(props) {
   const classes = useStyles();
+  const { chargeStripe, userInfo } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [amount, setAmount] = useState(0);
 
@@ -77,16 +82,21 @@ function Game() {
     console.log('signupButtonClicked');
   };
   const onClickAmount = () => {
-    console.log('amount click');
     setAmountModalView(true);
   };
   const onAmountModalClose = () => {
     setAmountModalView(false);
-    console.log('venus---event');
   };
   const handleChangeAmount = (event) => {
     setAmount(event.target.value);
+    console.log(event.target.value)
   };
+  const handleAmountChargeClick = () => {
+    chargeStripe({
+        id: userInfo._id,
+        amount: amount
+      })
+  }
   const amountModalContent = (
     <div>
       <CustomInputBox
@@ -105,7 +115,7 @@ function Game() {
     <div className={classes.container}>
       <div className={classes.amountParent}>
         <h1>$</h1>
-        <p>{amount}</p>
+        <p>0</p>
         <i className="material-icons" onClick={onClickAmount}>
 					add_circle
         </i>
@@ -119,20 +129,28 @@ function Game() {
           <CustomButton label="How to Play" className={classes.howToPlay} onClick={onClickHowToPlay} />
         </Link>
       </div>
-      {
-        amountModalView
-					&& (
-					  <CustomModal
-					    opened={amountModalView}
-					    handleClose={onAmountModalClose}
-					    content={amountModalContent}
-					    title="Add Amount"
-					    buttonTitle="Buy"
-					  />
-					)
-      }
+      <CustomModal
+        opened={amountModalView}
+        handleClose={onAmountModalClose}
+        content={amountModalContent}
+        title="Add Amount"
+        buttonTitle="Buy"
+        handleOK={handleAmountChargeClick}
+      />
     </div>
   );
 }
 
-export default Game;
+Game.TypeProps = {
+  chargeStripe: PropTypes.func.isRequired,
+  userInfo: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (store) => ({
+  userInfo: store.userData.userInfo,
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  chargeStripe,
+}, dispatch);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

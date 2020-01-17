@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
@@ -46,21 +46,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DialogTitle = withStyles(useStyles)((props) => {
-  const {
-    children, classes, onClose, ...other
-  } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography className={classes.title}>{children}</Typography>
-      {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
+// const DialogTitle = withStyles(useStyles)((props) => {
+//   const {
+//     children, classes, onClose, ...other
+//   } = props;
+//   return (
+//     <MuiDialogTitle disableTypography className={classes.root} {...other}>
+//       <Typography className={classes.title}>{children}</Typography>
+//       {onClose ? (
+//         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+//           <CloseIcon />
+//         </IconButton>
+//       ) : null}
+//     </MuiDialogTitle>
+//   );
+// });
 
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -84,7 +84,9 @@ function CustomModal(props) {
     content,
     handleClose,
     buttonTitle,
+    handleOK
   } = props;
+  const [open, setOpen] = useState(opened);
 
   return (
     <Dialog
@@ -92,17 +94,21 @@ function CustomModal(props) {
       open={opened}
       aria-labelledby="customized-dialog-title"
     >
-      <DialogTitle classes={classes} id="customized-dialog-title" onClose={handleClose} children={title} />
+      {/* <DialogTitle classes={classes} id="customized-dialog-title" onClose={handleClose} children={title} /> */}
 
       <DialogContent className={classes.content}>
+        <Typography className={classes.title}>{title}</Typography>
         {content}
+        <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
       </DialogContent>
 
       <DialogActions className={classes.actions}>
         <CustomButton
           label={buttonTitle}
           color="red"
-          onClick={handleClose}
+          onClick={handleOK}
         />
       </DialogActions>
     </Dialog>
@@ -115,12 +121,14 @@ CustomModal.propTypes = {
   content: PropTypes.node,
   buttonTitle: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
+  handleOK: PropTypes.func
 };
 
 CustomModal.defaultProps = {
   title: '',
   content: '',
   buttonTitle: 'Cancel',
+  handleOK: ()=>{}
 };
 
 export default CustomModal;

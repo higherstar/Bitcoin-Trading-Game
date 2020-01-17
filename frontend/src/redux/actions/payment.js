@@ -31,7 +31,7 @@ export const setPaymentToken = (body) => (dispatch, getState) => {
 };
 
 export const chargeStripe = (body) => (dispatch, getState) => {
-  if (getState().userData.isFetching) {
+  if (getState().paymentData.isFetching) {
     return Promise.reject();
   }
 
@@ -40,10 +40,10 @@ export const chargeStripe = (body) => (dispatch, getState) => {
   });
 
   return paymentService.chargeStripe(body)
-    .then((result) => {
+    .then((response) => {
       dispatch({
         type: types.PAYMENT_CHARGE_SUCCESS,
-        payload: { result },
+        payload: { response },
       });
 
       return true;

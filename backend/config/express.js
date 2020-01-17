@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(jwt());
 
 app.use('/users', require('../routes/users/user.controller'));
+app.use('/payment', require('../routes/payment/payment.controller'));
 
 // global error handler
 app.use(errorHandler);

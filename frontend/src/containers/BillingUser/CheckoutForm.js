@@ -31,9 +31,6 @@ function CheckoutForm(props) {
   } = props;
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    console.log('venus----->userInfo', userInfo);
-  }, [userInfo]);
 
   const submit = () => {
     setLoading(true);
@@ -48,7 +45,6 @@ function CheckoutForm(props) {
       });
       setLoading(false);
     }).catch((error) => {
-      console.log('venus----Error', error);
       setLoading(false);
     });
   };

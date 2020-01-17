@@ -54,9 +54,8 @@ function getByEmail(req, res, next) {
 }
 
 function update(req, res, next) {
-	console.log('venus------>update', res);
     userService.update(req.body)
-				.then(user => user ? res.json(user) : res.sendStatus(404))
+		.then(user => user ? res.json(user) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
