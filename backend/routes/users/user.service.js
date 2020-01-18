@@ -39,7 +39,7 @@ async function getById(id) {
 }
 
 async function getByEmail(email) {
-    return await await User.findOne({ email: email }).select('-hash');
+    return await User.findOne({ email: email }).select('-hash');
 }
 
 async function create(userParam) {

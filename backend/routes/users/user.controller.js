@@ -10,7 +10,7 @@ router.get('/', getAll);
 router.get('/current', getCurrent);
 router.get('/getByEmail', getByEmail);
 router.get('/:id', getById);
-router.put('/update', update);
+router.put('/updatePayInfo', update);
 router.delete('/:id', _delete);
 
 module.exports = router;
@@ -28,7 +28,6 @@ function register(req, res, next) {
 }
 
 function getAll(req, res, next) {
-	console.log('venus-->getAll', res);
     userService.getAll()
         .then(users => res.json(users))
         .catch(err => next(err));
@@ -41,7 +40,6 @@ function getCurrent(req, res, next) {
 }
 
 function getById(req, res, next) {
-	console.log('venus-->getById', res);
     userService.getById(req.params.id)
         .then(user => user ? res.json(user) : res.sendStatus(404))
         .catch(err => next(err));
@@ -60,7 +58,6 @@ function update(req, res, next) {
 }
 
 function _delete(req, res, next) {
-	console.log('venus-->Delet', res);
     userService.delete(req.params.id)
         .then(() => res.json({}))
         .catch(err => next(err));

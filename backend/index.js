@@ -13,6 +13,10 @@ if (process.env.NODE_ENV === 'development') {
     http.createServer(app).listen(PORT, function(){
         console.log("Express server listening on port " + PORT);
     });
+} else if (process.env.NODE_ENV === 'local'){
+    http.createServer(app).listen(PORT, function(){
+        console.log("Express server listening on port " + PORT);
+    });
 } else {
     const fs = require('fs');
     const httpsPort = 4443;

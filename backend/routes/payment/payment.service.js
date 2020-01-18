@@ -9,7 +9,8 @@ app.use(require("body-parser").text());
 
 module.exports = {
     chargeAmount,
-    createCustomer
+		createCustomer,
+		getPaymentInfo
 };
 
 async function chargeAmount(body) {
@@ -29,12 +30,19 @@ async function chargeAmount(body) {
 			};
 			const chargeResult = await chargeAmountStripe(chargeParam);
 			if (chargeResult.success) {
-				Object.assign(paymentInfo, {amount: chargeResult.amount/100});
+				Object.assign(paymentInfo, {amount: paymentInfo.amount + (chargeResult.amount/100)});
 				return await paymentInfo.save();
 			} else throw 'Can not charge Amount';
 		}
 	} else throw 'Can not find user';
 };
+
+async function getPaymentInfo(id) {
+	const userInfo = await User.findById(id).select('-hash');
+	if (userInfo) {
+		return await Payment.findOne({ email: userInfo.email });
+	} else throw "Can not find the User"
+}
 
 async function chargeAmountStripe({amount, userToken, customerID, description}) {
     let result = await stripe.charges.create({
