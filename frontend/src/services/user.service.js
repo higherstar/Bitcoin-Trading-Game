@@ -1,14 +1,15 @@
 import httpService from './http.service';
+import { errorMessage } from '../utils'
 
 const register = (body) => httpService
   .post(`/users/register`, body)
   .then(({ data }) => data)
-  .catch((err) => Promise.reject(err.response));
+  .catch((err) => Promise.reject(errorMessage(err.response)));
 
 const login = (body) => httpService
   .post(`/users/authenticate`, body)
   .then(({ data }) => data)
-  .catch((err) => Promise.reject(err.response));
+  .catch((err) => Promise.reject(errorMessage(err.response)));
 export default {
   register,
   login

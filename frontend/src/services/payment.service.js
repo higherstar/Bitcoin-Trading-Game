@@ -1,16 +1,22 @@
 import httpService from './http.service';
-
+import { errorMessage } from '../utils'
 const updateInfo = (body) => httpService
-  .put('/users/update', body)
+  .put('/users/updatePayInfo', body)
   .then(({ data }) => data)
   .catch((err) => Promise.reject(err.response));
 
 const chargeStripe = (body) => httpService
   .post('/payment/charge', body)
   .then(({ data }) => data)
-  .catch((err) => Promise.reject(err.response));
+  .catch((err) => Promise.reject(errorMessage(err.response)));
+
+const getPaymentInfo = (id) => httpService
+  .get(`/payment/getInfo/${id}`)
+  .then(({ data }) => data)
+  .catch((err) => Promise.reject(errorMessage(err.response)));
 
 export default {
   chargeStripe,
   updateInfo,
+  getPaymentInfo
 };

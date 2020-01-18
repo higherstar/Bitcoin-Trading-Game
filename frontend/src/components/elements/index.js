@@ -9,4 +9,5 @@ export { default as CustomMultiSelect } from './CustomMultiSelect';
 export { default as CustomSearchInput } from './CustomSearchInput';
 export { default as CustomAccordion } from './CustomAccordion';
 export { default as CustomInputBox } from './CustomInputBox'
+export { default as CustomAlert } from './CustomAlert'
 export { default as Loading } from './Loading';

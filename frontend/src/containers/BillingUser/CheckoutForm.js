@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, Loading } from 'components/elements';
+import { CustomButton, Loading, CustomAlert } from 'components/elements';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -31,20 +31,22 @@ function CheckoutForm(props) {
   } = props;
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error!', type: 'error'});
 
   const submit = () => {
     setLoading(true);
     stripe.createToken({
-      name: 'Name',
+      name: userInfo.name,
     }).then((result) => {
       setPaymentToken({
         id: userInfo._id,
         paymentTokenID: result.token.id,
       }).then(() => {
+        setLoading(false);
         history.push('/login');
       });
-      setLoading(false);
     }).catch((error) => {
+      setErrorShow({show: true, message: error, type: error});
       setLoading(false);
     });
   };
@@ -59,6 +61,11 @@ function CheckoutForm(props) {
           loading && <Loading />
         }
       </div>
+      <CustomAlert 
+          title={errorShow.message}
+          open={errorShow.show}
+          handleClose={()=>setErrorShow(false)}
+          type={errorShow.type}/>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, Loading } from 'components/elements';
+import { CustomButton, CustomInputBox, Loading, CustomAlert } from 'components/elements';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
@@ -39,6 +39,7 @@ function LogIn(props) {
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error!', type: 'error'});
   const handleChangeEmail = (event) => {
     setUserEmail(event.target.value);
   };
@@ -54,8 +55,8 @@ function LogIn(props) {
     }).then(() => {
       setLoading(false);
       history.push('/game');
-    }).catch(() => {
-      console.log('error');
+    }).catch((error) => {
+      setErrorShow({show: true, message: error, type: 'error'});
       setLoading(false);
     });
   };
@@ -79,6 +80,11 @@ function LogIn(props) {
           type="password"
         />
         <CustomButton label="Login" onClick={onClickLogin} />
+        <CustomAlert 
+          title={errorShow.message}
+          open={errorShow.show}
+          handleClose={()=>setErrorShow(false)}
+          type={errorShow.type}/>
       </div>
     </div>
   );

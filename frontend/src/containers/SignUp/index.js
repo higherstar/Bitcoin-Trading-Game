@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, Loading } from 'components/elements';
+import { CustomButton, CustomInputBox, Loading, CustomAlert } from 'components/elements';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { registerUser } from 'redux/actions/user';
@@ -42,6 +42,8 @@ function SignUp(props) {
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
+
   const handleChangeName = (event) => {
     setUserName(event.target.value);
   };
@@ -60,8 +62,8 @@ function SignUp(props) {
     }).then(() => {
       setLoading(false);
       history.push('/billing');
-    }).catch(() => {
-      console.log('error');
+    }).catch((error) => {
+      setErrorShow({show:true, message: error, type: 'error'});
       setLoading(false);
     });
   };
@@ -75,6 +77,11 @@ function SignUp(props) {
         <CustomInputBox onChange={handleChangePassword} label="Password" leftText="Password: " width={300} type="password" />
         <CustomButton onClick={handleOnClickSignUp} label="Sign Up" className={classes.signUpButtonStyle} />
       </div>
+      <CustomAlert 
+          title={errorShow.message}
+          open={errorShow.show}
+          handleClose={()=>setErrorShow(false)}
+          type={errorShow.type}/>
     </div>
   );
 }

@@ -57,3 +57,36 @@ export const chargeStripe = (body) => (dispatch, getState) => {
       throw error;
     });
 };
+
+export const getPaymentInfo = () => (dispatch, getState) => {
+  if (getState().paymentData.isFetching) {
+    return Promise.reject();
+  }
+
+  if (!getState().userData.userInfo._id) {
+    console.log('venus---->, no ID')
+    return Promise.reject('No user Info');
+  }
+
+  dispatch({
+    type: types.PAYMENT_GET_INFO_REQUEST,
+  });
+
+  return paymentService.getPaymentInfo(getState().userData.userInfo._id)
+    .then((response) => {
+      dispatch({
+        type: types.PAYMENT_GET_INFO_SUCCESS,
+        payload: { response },
+      });
+
+      return true;
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.PAYMENT_GET_INFO_FAILED,
+        payload: { error },
+      });
+
+      throw error;
+    });
+};

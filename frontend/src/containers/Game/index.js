@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox } from 'components/elements';
+import { CustomButton, CustomInputBox, CustomAlert, Loading } from 'components/elements';
 import { Link } from 'react-router-dom';
 import { CustomModal } from 'components/modals';
 import { bindActionCreators } from 'redux';
-import { chargeStripe } from 'redux/actions/payment';
+import { chargeStripe, getPaymentInfo } from 'redux/actions/payment';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -71,14 +71,31 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const classes = useStyles();
-  const { chargeStripe, userInfo, paymentStatus } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [amount, setAmount] = useState(0);
   const [amountInput, setAmountInput] = useState(0);
+  const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
+  const [loading, setLoading] = useState(false);
+
   useEffect(()=>{
-    if(paymentStatus.amount)
-      setAmountInput(paymentStatus.amount);
-  }, [paymentStatus])
+    if(paymentInfo.amount) {
+      setAmount(paymentInfo.amount);
+      setAmountInput(paymentInfo.amount);
+    }
+  }, [paymentInfo])
+
+  useEffect(()=>{
+    setLoading(true);
+    getPaymentInfo()
+      .then(()=>{
+        setLoading(false);
+      })
+      .catch((error)=> {
+        setLoading(false);
+        setErrorShow({show:true, message: error, type: 'error'});
+      });
+  }, [])
 
   const onClickStart = () => {
     console.log('LoginButtonClicked');
@@ -99,7 +116,12 @@ function Game(props) {
     chargeStripe({
         id: userInfo._id,
         amount: amount
-      })
+    }).then(()=>{
+      setErrorShow({show:true, message: 'Buy Success', type: 'success'});
+      setAmountModalView(false);
+    }).catch((error)=>{
+      setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
+    });
   }
   const amountModalContent = (
     <div>
@@ -107,6 +129,7 @@ function Game(props) {
         onChange={handleChangeAmount}
         width={300}
         type="number"
+        defaultValue={amount}
         marginBottom={0}
         labelPadding={0}
         leftText="$"
@@ -115,6 +138,7 @@ function Game(props) {
       />
     </div>
   );
+  if (loading) { return <Loading />; }
   return (
     <div className={classes.container}>
       <div className={classes.amountParent}>
@@ -141,6 +165,11 @@ function Game(props) {
         buttonTitle="Buy"
         handleOK={handleAmountChargeClick}
       />
+      <CustomAlert 
+        title={errorShow.message}
+        open={errorShow.show}
+        handleClose={()=>setErrorShow(false)}
+        type={errorShow.type}/>
     </div>
   );
 }
@@ -148,15 +177,17 @@ function Game(props) {
 Game.TypeProps = {
   chargeStripe: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
-  paymentStatus: PropTypes.object.isRequired
+  paymentInfo: PropTypes.object.isRequired,
+  getPaymentInfo: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (store) => ({
   userInfo: store.userData.userInfo,
-  paymentStatus: store.paymentData.paymentStatus
+  paymentInfo: store.paymentData.paymentInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   chargeStripe,
+  getPaymentInfo
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

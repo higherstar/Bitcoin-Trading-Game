@@ -30,9 +30,9 @@ function CustomInputBox({
   label,
   width,
   onChange,
-  shrink,
   marginBottom,
   labelPadding,
+  defaultValue,
   type,
 }) {
   const classes = useStyles({ width, marginBottom, labelPadding });
@@ -45,6 +45,7 @@ function CustomInputBox({
         className={classnames(classes.textField, className)}
         hiddenLabel
         label={label}
+        defaultValue={defaultValue}
         type={type}
         variant="outlined"
         onChange={onChange}
@@ -60,7 +61,7 @@ CustomInputBox.propTypes = {
   onChange: PropTypes.func,
   width: PropTypes.number,
   type: PropTypes.string,
-  shrink: PropTypes.bool,
+  defaultValue: PropTypes.string,
   labelPadding: PropTypes.number,
   marginBottom: PropTypes.number,
 };
@@ -72,7 +73,7 @@ CustomInputBox.defaultProps = {
   onChange: undefined,
   width: 200,
   type: 'text',
-  shrink: false,
+  defaultValue: '',
   marginBottom: 4,
   labelPadding: 8,
 };
