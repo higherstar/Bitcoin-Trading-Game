@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
+import { CookiesProvider } from 'react-cookie';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import store, { history } from './redux/store';
@@ -19,7 +20,9 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <App />
+        <CookiesProvider>
+          <App />
+        </CookiesProvider>
       </ThemeProvider>
     </ConnectedRouter>
   </Provider>,

@@ -45,25 +45,24 @@ async function getPaymentInfo(id) {
 }
 
 async function chargeAmountStripe({amount, userToken, customerID, description}) {
-    let result = await stripe.charges.create({
-        amount: (amount*100),
-        currency: "usd",
-        customer: customerID,
-        description: `${description}: charged`,
-        source: userToken
-		});
-		const response = {
-			success: result.status === 'succeeded',
-			amount: result.amount
-		}
-    return response
+	let result = await stripe.charges.create({
+		amount: (amount*100),
+		currency: "usd",
+		customer: customerID,
+		description: `${description}: charged`,
+		source: userToken
+	});
+	const response = {
+		success: result.status === 'succeeded',
+		amount: result.amount
+	}
+	return response
 };
 
 //test function
 async function createCustomer(chargeParam) {
-    let {status} = await stripe.customers.create({
-        email: "goldbyol@outlook.com",
-        name: "Gold"
-    });
-    console.log('venus--->status-charge',status);
+	let {status} = await stripe.customers.create({
+		email: "goldbyol@outlook.com",
+		name: "Gold"
+	});
 }

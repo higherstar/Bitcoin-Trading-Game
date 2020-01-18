@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
 import { connect } from 'react-redux';
+import { useCookies } from 'react-cookie';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -34,8 +35,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function LogIn(props) {
-  const { logInUser, history } = props;
+  const { logInUser, history, userInfo } = props;
   const classes = useStyles();
+  const [cookies, setCookie] = useCookies(['id', 'token']);
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -52,7 +54,10 @@ function LogIn(props) {
     logInUser({
       email: userEmail,
       password: userPassword,
-    }).then(() => {
+    }).then((result) => {
+      setCookie('id', result._id, { path: '/', maxAge: 3600 });
+      setCookie('token', result.token, { path: '/', maxAge: 3600 });
+      // setCookie('token', result._id, { path: '/' });
       setLoading(false);
       history.push('/game');
     }).catch((error) => {
@@ -64,28 +69,28 @@ function LogIn(props) {
   if (loading) { return <Loading />; }
   return (
     <div className={classes.container}>
-      <div className={classes.buttonContainer}>
-        <CustomInputBox
-          onChange={handleChangeEmail}
-          label="Email"
-          leftText="Email: "
-          width={300}
-          type="email"
-        />
-        <CustomInputBox
-          onChange={handleChangePassword}
-          label="Password"
-          leftText="Password: "
-          width={300}
-          type="password"
-        />
-        <CustomButton label="Login" onClick={onClickLogin} />
-        <CustomAlert 
-          title={errorShow.message}
-          open={errorShow.show}
-          handleClose={()=>setErrorShow(false)}
-          type={errorShow.type}/>
-      </div>
+      <form className={classes.buttonContainer} noValidate autoComplete="off">
+          <CustomInputBox
+            onChange={handleChangeEmail}
+            label="Email"
+            leftText="Email: "
+            width={300}
+            type="email"
+          />
+          <CustomInputBox
+            onChange={handleChangePassword}
+            label="Password"
+            leftText="Password: "
+            width={300}
+            type="password"
+          />
+          <CustomButton label="Login" onClick={onClickLogin} type="submit"/>
+          <CustomAlert 
+            title={errorShow.message}
+            open={errorShow.show}
+            handleClose={()=>setErrorShow(false)}
+            type={errorShow.type}/>
+      </form>
     </div>
   );
 }
@@ -93,10 +98,15 @@ function LogIn(props) {
 LogIn.TypeProps = {
   logInUser: PropTypes.func.isRequired,
   history: PropTypes.func.isRequired,
+  userInfo: PropTypes.func.isRequired
 };
+
+const mapStateToProps = (store) => ({
+  userInfo: store.userData.userInfo,
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   logInUser,
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(LogIn);
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

@@ -10,6 +10,7 @@ router.get('/', getAll);
 router.get('/current', getCurrent);
 router.get('/getByEmail', getByEmail);
 router.get('/:id', getById);
+router.get('/getInfo/:id', getUserInfo);
 router.put('/updatePayInfo', update);
 router.delete('/:id', _delete);
 
@@ -71,3 +72,9 @@ function googleLogin(req, res, next) {
             next(err);
         });
 }
+
+function getUserInfo(req, res, next) {
+    userService.getUserInfo(req.params.id)
+        .then(userInfo => userInfo ? res.json(userInfo) : res.sendStatus(404))
+        .catch(err => next(err));
+  }

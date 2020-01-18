@@ -97,6 +97,7 @@ function CustomButton({
   disabled,
   icon,
   onClick,
+  type
 }) {
   const classes = useStyles({ width, height, color });
 
@@ -105,6 +106,7 @@ function CustomButton({
       className={classnames(classes.button, className)}
       disabled={disabled}
       onClick={onClick}
+      type={type}
     >
       <div className={classes.buttonIcon}>{icon}</div>
       {label}
@@ -121,6 +123,7 @@ CustomButton.propTypes = {
   disabled: PropTypes.bool,
   icon: PropTypes.array,
   onClick: PropTypes.func,
+  type: PropTypes.string
 };
 
 CustomButton.defaultProps = {
@@ -131,6 +134,7 @@ CustomButton.defaultProps = {
   disabled: false,
   icon: [],
   onClick: undefined,
+  type: ''
 };
 
 export default CustomButton;

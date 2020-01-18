@@ -46,7 +46,7 @@ function CustomInputBox({
         hiddenLabel
         label={label}
         defaultValue={defaultValue}
-        type={type}
+        autoComplete={type}
         variant="outlined"
         onChange={onChange}
       />

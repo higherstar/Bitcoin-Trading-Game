@@ -15,7 +15,8 @@ module.exports = {
     getByEmail,
     create,
     update,
-    delete: _delete
+    delete: _delete,
+    getUserInfo
 };
 
 async function authenticate({ email, password }) {
@@ -135,4 +136,8 @@ async function googleLogin(userParam) {
         ...userWithoutHash,
         token
     };
+}
+
+async function getUserInfo(id) {
+	return await User.findById(id).select('-hash');
 }

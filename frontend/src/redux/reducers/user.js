@@ -62,6 +62,24 @@ export default (state = INITIAL_STATE, action) => {
         isFetching: false,
         errors: action.payload.error,
       };
+
+    case types.USER_GET_INFO_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case types.USER_GET_INFO_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        userInfo: action.payload.response,
+      };
+    case types.USER_GET_INFO_FAILED:
+      return {
+        ...state,
+        isFetching: false,
+        errors: action.payload.error,
+      };
     default:
       return state;
   }

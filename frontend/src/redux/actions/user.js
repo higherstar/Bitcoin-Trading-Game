@@ -18,7 +18,7 @@ export const registerUser = (body) => (dispatch, getState) => {
         payload: { response },
       });
 
-      return true;
+      return response;
     })
     .catch((error) => {
       dispatch({
@@ -46,11 +46,39 @@ export const logInUser = (body) => (dispatch, getState) => {
         payload: { response },
       });
 
-      return true;
+      return response;
     })
     .catch((error) => {
       dispatch({
         type: types.USER_SIGNUP_FAILED,
+        payload: { error },
+      });
+
+      throw error;
+    });
+};
+
+export const getUserInfo = (id) => (dispatch, getState) => {
+  if (getState().userData.isFetching) {
+    return Promise.reject();
+  }
+
+  dispatch({
+    type: types.USER_GET_INFO_REQUEST,
+  });
+
+  return userService.getUserInfo(id)
+    .then((response) => {
+      dispatch({
+        type: types.USER_GET_INFO_SUCCESS,
+        payload: { response },
+      });
+
+      return response;
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.USER_GET_INFO_FAILED,
         payload: { error },
       });
 

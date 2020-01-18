@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { CustomModal } from 'components/modals';
 import { bindActionCreators } from 'redux';
 import { chargeStripe, getPaymentInfo } from 'redux/actions/payment';
+import { getUserInfo } from 'redux/actions/user';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { useCookies } from 'react-cookie';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -71,8 +73,10 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const classes = useStyles();
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo } = props;
+  const [cookies, setCookie] = useCookies(['id', 'token']);
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo } = props;
   const [amountModalView, setAmountModalView] = useState(false);
+  const [buyInModalView, setBuyInModalView] = useState(false);
   const [amount, setAmount] = useState(0);
   const [amountInput, setAmountInput] = useState(0);
   const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
@@ -87,7 +91,23 @@ function Game(props) {
 
   useEffect(()=>{
     setLoading(true);
-    getPaymentInfo()
+    if(!userInfo.id) {
+      if(cookies.id){
+        localStorage.setItem('kc_token', cookies.token);
+        getUserInfo(cookies.id)
+          .then(()=>{
+            getPaymentInfo()
+              .then(()=>{
+                setLoading(false);
+              })
+          })
+          .catch(()=>{
+            gotoLogIn();
+          });
+
+      } else gotoLogIn();
+    } else {
+      getPaymentInfo()
       .then(()=>{
         setLoading(false);
       })
@@ -95,13 +115,20 @@ function Game(props) {
         setLoading(false);
         setErrorShow({show:true, message: error, type: 'error'});
       });
+    }
   }, [])
 
   const onClickStart = () => {
-    console.log('LoginButtonClicked');
+    setBuyInModalView(true);
+  };
+  const onBuyInModalClose = () => {
+    setBuyInModalView(false);
   };
   const onClickHowToPlay = () => {
     console.log('signupButtonClicked');
+  };
+  const gotoLogIn = () => {
+    history.push('/login');
   };
   const onClickAmount = () => {
     setAmountModalView(true);
@@ -158,11 +185,19 @@ function Game(props) {
         </Link>
       </div>
       <CustomModal
-        opened={amountModalView}
-        handleClose={onAmountModalClose}
+        opened={buyInModalView}
+        handleClose={onBuyInModalClose}
         content={amountModalContent}
         title="Add Amount"
         buttonTitle="Buy"
+        handleOK={handleAmountChargeClick}
+      />
+      <CustomModal
+        opened={buyInModalView}
+        handleClose={onBuyInModalClose}
+        content={amountModalContent}
+        title="Select Stackes"
+        buttonTitle="Buy-in"
         handleOK={handleAmountChargeClick}
       />
       <CustomAlert 
@@ -178,7 +213,9 @@ Game.TypeProps = {
   chargeStripe: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
   paymentInfo: PropTypes.object.isRequired,
-  getPaymentInfo: PropTypes.func.isRequired
+  getPaymentInfo: PropTypes.func.isRequired,
+  history: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (store) => ({
@@ -188,6 +225,7 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   chargeStripe,
-  getPaymentInfo
+  getPaymentInfo,
+  getUserInfo
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

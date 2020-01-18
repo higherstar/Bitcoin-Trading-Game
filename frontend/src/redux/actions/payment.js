@@ -18,7 +18,7 @@ export const setPaymentToken = (body) => (dispatch, getState) => {
         payload: { response },
       });
 
-      return true;
+      return response;
     })
     .catch((error) => {
       dispatch({
@@ -46,7 +46,7 @@ export const chargeStripe = (body) => (dispatch, getState) => {
         payload: { response },
       });
 
-      return true;
+      return response;
     })
     .catch((error) => {
       dispatch({
@@ -64,7 +64,6 @@ export const getPaymentInfo = () => (dispatch, getState) => {
   }
 
   if (!getState().userData.userInfo._id) {
-    console.log('venus---->, no ID')
     return Promise.reject('No user Info');
   }
 
@@ -79,7 +78,7 @@ export const getPaymentInfo = () => (dispatch, getState) => {
         payload: { response },
       });
 
-      return true;
+      return response;
     })
     .catch((error) => {
       dispatch({

@@ -10,7 +10,13 @@ const login = (body) => httpService
   .post(`/users/authenticate`, body)
   .then(({ data }) => data)
   .catch((err) => Promise.reject(errorMessage(err.response)));
+
+const getUserInfo = (id) => httpService
+  .get(`/users/getInfo/${id}`)
+  .then(({ data }) => data)
+  .catch((err) => Promise.reject(errorMessage(err.response)));
 export default {
   register,
-  login
+  login,
+  getUserInfo
 };
