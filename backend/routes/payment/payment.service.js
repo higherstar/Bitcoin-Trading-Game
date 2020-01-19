@@ -9,7 +9,6 @@ app.use(require("body-parser").text());
 
 module.exports = {
     chargeAmount,
-		createCustomer,
 		getPaymentInfo
 };
 
@@ -58,11 +57,3 @@ async function chargeAmountStripe({amount, userToken, customerID, description}) 
 	}
 	return response
 };
-
-//test function
-async function createCustomer(chargeParam) {
-	let {status} = await stripe.customers.create({
-		email: "goldbyol@outlook.com",
-		name: "Gold"
-	});
-}

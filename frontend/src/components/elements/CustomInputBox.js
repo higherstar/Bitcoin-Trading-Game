@@ -45,6 +45,7 @@ function CustomInputBox({
         className={classnames(classes.textField, className)}
         hiddenLabel
         label={label}
+        type={type}
         defaultValue={defaultValue}
         autoComplete={type}
         variant="outlined"
