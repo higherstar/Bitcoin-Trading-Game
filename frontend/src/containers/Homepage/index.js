@@ -1,6 +1,6 @@
 import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton } from 'components/elements';
+import { CustomButton } from '../../components/elements';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({

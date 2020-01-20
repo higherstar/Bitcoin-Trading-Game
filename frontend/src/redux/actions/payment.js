@@ -1,4 +1,4 @@
-import paymentService from 'services/payment.service';
+import paymentService from '../../services/payment.service';
 import types from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export

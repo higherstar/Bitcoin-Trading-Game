@@ -1,4 +1,4 @@
-import examplesService from 'services/examples.service';
+import examplesService from '../../services/examples.service';
 import types from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export

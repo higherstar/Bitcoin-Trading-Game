@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, CustomAlert, Loading } from 'components/elements';
+import { CustomButton, CustomInputBox, CustomAlert, Loading } from '../../components/elements';
 import UserIcon from './components/UserIcon'
 import TradeToken from './components/TradeToken'
 import { Link } from 'react-router-dom';

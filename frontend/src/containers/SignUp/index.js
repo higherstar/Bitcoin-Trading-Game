@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, Loading, CustomAlert } from 'components/elements';
+import { CustomButton, CustomInputBox, Loading, CustomAlert } from '../../components/elements';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { registerUser } from 'redux/actions/user';

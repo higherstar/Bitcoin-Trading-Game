@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, Loading, CustomAlert } from 'components/elements';
+import { CustomButton, Loading, CustomAlert } from '../../components/elements';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

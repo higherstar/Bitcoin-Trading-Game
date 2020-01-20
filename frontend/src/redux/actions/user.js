@@ -1,4 +1,4 @@
-import userService from 'services/user.service';
+import userService from '../../services/user.service';
 import types from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export
