@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, Loading, CustomAlert } from '../../components/elements';
+import { CustomButton, CustomInputBox, Loading, CustomAlert } from '../../Components/elements';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
@@ -85,7 +85,7 @@ function LogIn(props) {
             type="password"
           />
           <CustomButton label="Login" onClick={onClickLogin} type="submit"/>
-          <CustomAlert 
+          <CustomAlert
             title={errorShow.message}
             open={errorShow.show}
             handleClose={()=>setErrorShow(false)}

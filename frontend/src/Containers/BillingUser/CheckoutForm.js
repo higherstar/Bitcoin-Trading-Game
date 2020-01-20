@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, Loading, CustomAlert } from '../../components/elements';
+import { CustomButton, Loading, CustomAlert } from '../../Components/elements';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -61,7 +61,7 @@ function CheckoutForm(props) {
           loading && <Loading />
         }
       </div>
-      <CustomAlert 
+      <CustomAlert
           title={errorShow.message}
           open={errorShow.show}
           handleClose={()=>setErrorShow(false)}

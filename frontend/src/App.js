@@ -6,13 +6,12 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import PublicRoute from 'routes/PublicRoute';
-import HomePage from './containers/HomePage';
-import SignUp from './containers/SignUp';
-import LogIn from './containers/LogIn';
-import BillingUser from './containers/BillingUser';
-import Game from './containers/Game';
-import MainGameScreen from  './containers/Game/main'
-import PrivateRoute from 'routes/PrivateRoute';
+import HomePage from './Containers/HomePage';
+import SignUp from './Containers/SignUp';
+import LogIn from './Containers/LogIn';
+import BillingUser from './Containers/BillingUser';
+import Game from './Containers/Game';
+import MainGameScreen from './Containers/Game/main';
 
 const useStyles = makeStyles((theme) => ({
   root: {

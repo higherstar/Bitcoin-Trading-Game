@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, CustomAlert, Loading } from '../../components/elements';
-import UserIcon from './components/UserIcon'
-import TradeToken from './components/TradeToken'
+import { CustomButton, CustomInputBox, CustomAlert, Loading } from '../../Components/elements';
+import UserIcon from './components/UserIcon';
+import TradeToken from './components/TradeToken';
 import { Link } from 'react-router-dom';
-import { CustomModal } from 'components/modals';
+import { CustomModal } from '../../Components/modals';
 import { bindActionCreators } from 'redux';
 import { chargeStripe, getPaymentInfo } from 'redux/actions/payment';
 import { getUserInfo } from 'redux/actions/user';
@@ -191,7 +191,7 @@ function Game(props) {
   const buyInModalContent = (
     <div className={classes.buyInContainer}>
       {
-        buyInCoast.map((item, index)=> 
+        buyInCoast.map((item, index)=>
           <BuyIn value={item} key={index} active={index === buyInSelect} onSelect={handleBuyInSelect}/> )
       }
     </div>
@@ -237,7 +237,7 @@ function Game(props) {
         buttonTitle="Buy-in"
         handleOK={handleAmountChargeClick}
       />
-      <CustomAlert 
+      <CustomAlert
         title={errorShow.message}
         open={errorShow.show}
         handleClose={()=>setErrorShow(false)}
