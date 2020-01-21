@@ -9,7 +9,8 @@ app.use(require("body-parser").text());
 
 module.exports = {
     chargeAmount,
-		getPaymentInfo
+		getPaymentInfo,
+		buyInStacke
 };
 
 async function chargeAmount(body) {
@@ -32,15 +33,30 @@ async function chargeAmount(body) {
 			return await paymentInfo.save();
 		} else throw 'Can not charge Amount';
 	} else throw 'Can not find user';
-} 
+};
+
+async function buyInStacke(body) {
+	const paymentInfo = await Payment.findById(body.id);
+	if (paymentInfo) {
+		if (paymentInfo.amount >= body.buyInAmount) {
+			const updatePaymentInfoParam = {
+				amount: paymentInfo.amount - body.buyInAmount,
+				betCoin: body.buyInAmount
+			};
+			Object.assign(paymentInfo, updatePaymentInfoParam);
+			return await paymentInfo.save();
+		} else throw "Not enough your buyed amount.";
+	} else throw "PaymentInfo not found.";
+};
 
 async function getPaymentInfo(id) {
 	const userInfo = await User.findById(id).select('-hash');
 	if (userInfo) {
 		return await Payment.findOne({ email: userInfo.email });
 	} else throw "Can not find the User"
-}
+};
 
+/* Stripe API Call Functions */
 async function chargeAmountStripe({amount, userToken, customerID, description}) {
 	let result = await stripe.charges.create({
 		amount: (amount*100),

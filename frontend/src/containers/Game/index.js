@@ -225,7 +225,7 @@ function Game(props) {
       </div>
       <p className={classes.title}>BitCoin Trading</p>
       <div className={classes.buttonContainer}>
-        <Link to="/game" className={classes.link}>
+        <Link to={`/game${ paymentInfo.betCoin > 0 ? '/main' : ''}`} className={classes.link}>
           <CustomButton label="Enter Game" onClick={onClickStart} />
         </Link>
         <Link to="/game" className={classes.link}>
