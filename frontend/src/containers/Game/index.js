@@ -179,7 +179,7 @@ function Game(props) {
         onChange={handleChangeAmount}
         width={300}
         type="number"
-        defaultValue={amount}
+        defaultValue={null}
         marginBottom={0}
         labelPadding={0}
         leftText="$"

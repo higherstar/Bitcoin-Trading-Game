@@ -1,13 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/styles/makeStyles';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import HomeIcon from '@material-ui/icons/Home';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container : {
     display: 'flex',
     alignItems: 'center',
+    position: 'absolute',
+    cursor: 'pointer',
+    top: 0,
+    left: 0,
     '& svg': {
       fontSize: 50
     },
@@ -19,24 +24,33 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CustomUserIcon(props) {
-  const { name } = props;
+function CustomBack(props) {
+  const { name, type } = props;
   const classes = useStyles(props);
 
   return (
     <div className={classes.container}>
-      <Link to="/login"><AccountCircleIcon /></Link>
+      {
+        type === 'home' ?
+          <Link to="/home">
+            <HomeIcon />
+          </Link> :
+          <ExitToAppIcon />
+      }
+      
       <p>{name}</p>
     </div>
   );
 }
 
-CustomUserIcon.propTypes = {
-  name: PropTypes.string
+CustomBack.propTypes = {
+  name: PropTypes.string,
+  type: PropTypes.string
 };
 
-CustomUserIcon.defaultProps = {
-  name: 'Custom'
+CustomBack.defaultProps = {
+  name: '',
+  type: 'home'
 };
 
-export default CustomUserIcon;
+export default CustomBack;

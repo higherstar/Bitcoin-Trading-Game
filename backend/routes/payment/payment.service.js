@@ -20,21 +20,19 @@ async function chargeAmount(body) {
 	if (user) {
 		const paymentInfo = await Payment.findOne({ email: user.email });
 		if (!paymentInfo) throw "Can not find the paymentUser";
-		if (paymentInfo.amount < body.amount) {
-			const chargeParam = {
-				amount: body.amount - paymentInfo.amount,
-				userToken: paymentInfo.paymentTokenID,
-				customerID: paymentInfo.customerID,
-				description: paymentInfo.name
-			};
-			const chargeResult = await chargeAmountStripe(chargeParam);
-			if (chargeResult.success) {
-				Object.assign(paymentInfo, {amount: paymentInfo.amount + (chargeResult.amount/100)});
-				return await paymentInfo.save();
-			} else throw 'Can not charge Amount';
-		}
+		const chargeParam = {
+			amount: body.amount,
+			userToken: paymentInfo.paymentTokenID,
+			customerID: paymentInfo.customerID,
+			description: paymentInfo.name
+		};
+		const chargeResult = await chargeAmountStripe(chargeParam);
+		if (chargeResult.success) {
+			Object.assign(paymentInfo, {amount: paymentInfo.amount + (chargeResult.amount/100)});
+			return await paymentInfo.save();
+		} else throw 'Can not charge Amount';
 	} else throw 'Can not find user';
-};
+} 
 
 async function getPaymentInfo(id) {
 	const userInfo = await User.findById(id).select('-hash');
