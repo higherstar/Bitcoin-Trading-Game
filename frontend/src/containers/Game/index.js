@@ -6,7 +6,7 @@ import TradeToken from './components/TradeToken'
 import { Link } from 'react-router-dom';
 import { CustomModal } from 'components/modals';
 import { bindActionCreators } from 'redux';
-import { chargeStripe, getPaymentInfo } from 'redux/actions/payment';
+import { chargeStripe, getPaymentInfo, buyInStacke } from 'redux/actions/payment';
 import { getUserInfo } from 'redux/actions/user';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 function Game(props) {
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(['id', 'token']);
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [buyInModalView, setBuyInModalView] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -159,13 +159,24 @@ function Game(props) {
   const handleChangeAmount = (event) => {
     setAmount(event.target.value);
   };
+  const handleBuyInClick = () => {
+    buyInStacke(buyInCoast[buyInSelect]).then(()=>{
+      // setErrorShow({show:true, message: 'Buy Success', type: 'success'});
+      // setAmountModalView(false);
+      // setAmount(0);
+      history.push('/game/main');
+    }).catch((error)=>{
+      setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
+    });
+  }
   const handleAmountChargeClick = () => {
     chargeStripe({
-        id: userInfo._id,
-        amount: amount
+      id: userInfo._id,
+      amount: amount
     }).then(()=>{
       setErrorShow({show:true, message: 'Buy Success', type: 'success'});
       setAmountModalView(false);
+      setAmount(0);
     }).catch((error)=>{
       setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
     });
@@ -235,7 +246,7 @@ function Game(props) {
         content={buyInModalContent}
         title="Select Stackes"
         buttonTitle="Buy-in"
-        handleOK={handleAmountChargeClick}
+        handleOK={handleBuyInClick}
       />
       <CustomAlert 
         title={errorShow.message}
@@ -252,7 +263,8 @@ Game.TypeProps = {
   paymentInfo: PropTypes.object.isRequired,
   getPaymentInfo: PropTypes.func.isRequired,
   history: PropTypes.func.isRequired,
-  getUserInfo: PropTypes.func.isRequired
+  getUserInfo: PropTypes.func.isRequired,
+  buyInStacke: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (store) => ({
@@ -263,6 +275,7 @@ const mapStateToProps = (store) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   chargeStripe,
   getPaymentInfo,
-  getUserInfo
+  getUserInfo,
+  buyInStacke
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

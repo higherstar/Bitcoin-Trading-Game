@@ -89,3 +89,39 @@ export const getPaymentInfo = () => (dispatch, getState) => {
       throw error;
     });
 };
+
+export const buyInStacke = (buyInAmount) => (dispatch, getState) => {
+  if (getState().paymentData.isFetching) {
+    return Promise.reject();
+  }
+
+  if (!getState().paymentData.paymentInfo._id) {
+    return Promise.reject('No Payment Info');
+  }
+
+  dispatch({
+    type: types.PAYMENT_GET_INFO_REQUEST,
+  });
+
+  const buyInBody = {
+    id: getState().paymentData.paymentInfo._id,
+    buyInAmount: buyInAmount
+  };
+  return paymentService.buyInStacke(buyInBody)
+    .then((response) => {
+      dispatch({
+        type: types.PAYMENT_GET_INFO_SUCCESS,
+        payload: { response },
+      });
+
+      return response;
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.PAYMENT_GET_INFO_FAILED,
+        payload: { error },
+      });
+
+      throw error;
+    });
+}

@@ -15,8 +15,13 @@ const getPaymentInfo = (id) => httpService
   .then(({ data }) => data)
   .catch((err) => Promise.reject(errorMessage(err.response)));
 
+const buyInStacke = (buyInBody) => httpService
+  .post('/payment/buyin', buyInBody)
+  .then(({ data }) => data)
+  .catch((err) => Promise.reject(errorMessage(err.response)));
 export default {
   chargeStripe,
   updateInfo,
-  getPaymentInfo
+  getPaymentInfo,
+  buyInStacke
 };
