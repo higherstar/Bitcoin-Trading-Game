@@ -32,13 +32,11 @@ const useStyles = makeStyles((theme) => ({
   },
   appContent: {
     height: '100%',
-    padding: theme.spacing(1.875),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
 
     '& > .scrollbar-container': {
-      padding: theme.spacing(1.875),
       width: '100%',
       height: '100%',
     },
