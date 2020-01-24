@@ -85,3 +85,10 @@ export const getUserInfo = (id) => (dispatch, getState) => {
       throw error;
     });
 };
+
+export const setTradeToken = (token) => (dispatch) => {
+  return dispatch({
+    type: types.SET_TRADE_TOKEN,
+    payload: token
+  })
+}

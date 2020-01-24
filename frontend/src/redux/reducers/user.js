@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   isFetching: false,
   userInfo: {},
   errors: '',
+  userTradeToken: 5
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -80,6 +81,11 @@ export default (state = INITIAL_STATE, action) => {
         isFetching: false,
         errors: action.payload.error,
       };
+    case types.SET_TRADE_TOKEN:
+      return {
+        ...state,
+        userTradeToken: state.userTradeToken + action.payload
+      }
     default:
       return state;
   }

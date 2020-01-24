@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
   tradeTokenSection: {
     position: 'absolute',
-    top: 0,
-    right: 0
+    top: 20,
+    right: 20
   },
   howToPlay: {
     marginTop: 20,
@@ -51,8 +51,8 @@ const useStyles = makeStyles((theme) => ({
   },
   userSection :{
     position: 'absolute',
-    top: 0,
-    left: 0
+    top: 20,
+    left: 20
   },
   amountParent: {
     display: 'flex',
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 function Game(props) {
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(['id', 'token']);
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [buyInModalView, setBuyInModalView] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -214,7 +214,7 @@ function Game(props) {
         <UserIcon name={userInfo.name}/>
       </div>
       <div className={classes.tradeTokenSection}>
-        <TradeToken name={5}/>
+        <TradeToken name={userTradeToken}/>
       </div>
       <div className={classes.amountParent}>
         <h1>$</h1>
@@ -264,12 +264,14 @@ Game.TypeProps = {
   getPaymentInfo: PropTypes.func.isRequired,
   history: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
-  buyInStacke: PropTypes.func.isRequired
+  buyInStacke: PropTypes.func.isRequired,
+  userTradeToken: PropTypes.number.isRequired
 }
 
 const mapStateToProps = (store) => ({
   userInfo: store.userData.userInfo,
-  paymentInfo: store.paymentData.paymentInfo
+  paymentInfo: store.paymentData.paymentInfo,
+  userTradeToken: store.userData.userTradeToken
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
