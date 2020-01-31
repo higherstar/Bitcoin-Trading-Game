@@ -1,64 +1,12 @@
 import axios from 'axios';
 
 export const fetchData = async (cryptoParams) => {
-  const { url, apiKey, fsym, tsym, limit, aggregate } = cryptoParams;
-  const timeUnit = aggregate < 60 ? 'minute' : aggregate < 1440 ? 'hour' : 'day';
-  const aggregateNew = aggregate < 60 ? aggregate : aggregate < 1440 ? aggregate / 60 : aggregate > 1440 ? 7 : 1;
-  const request1 = `${url[0]}${timeUnit}?fsym=${fsym}&tsym=${tsym}&aggregate=${aggregateNew}&limit=${limit}&api_key=${apiKey}`;
-  const request2 = `${url[1]}?fsym=${fsym}&tsym=${tsym}&limit=${50}&api_key=${apiKey}`;
-  const candleData = await axios
-    .get(request1)
-    .then((res) => {
-      return res;
-    }) 
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
-  const depthData = await axios
-    .get(request2)
-    .then((res) => {
-      return res;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
-
-  if (!candleData || !depthData) {
-    return { candleData: false, depthData: false };
-  }
-
-  // calc ma7, 30, 60
-  const maAddedData = candleData.data.Data;
-  for (let j = 0; j < maAddedData.length; j++) {
-    let ma7 = 0;
-    let ma30 = 0;
-    let ma60 = 0;
-
-    // previous 7 days
-    for (let k = j - 1; k >= (j > 6 ? j - 7 : 0); k--) {
-      ma7 += maAddedData[k].close;
-    }
-    maAddedData[j].ma7 = ma7 / (j > 6 ? 7 : j);
-
-    // previous 30 days
-    for (let k = j - 1; k >= (j > 29 ? j - 30 : 0); k--) {
-      ma30 += maAddedData[k].close;
-    }
-    maAddedData[j].ma30 = ma30 / (j > 29 ? 30 : j);
-
-    // previous 60 days
-    for (let k = j - 1; k >= (j > 59 ? j - 60 : 0); k--) {
-      ma60 += maAddedData[k].close;
-    }
-    maAddedData[j].ma60 = ma60 / (j > 59 ? 60 : j);
-  }
-  maAddedData[0].ma7 = maAddedData[0].close;
-  maAddedData[0].ma30 = maAddedData[0].close;
-  maAddedData[0].ma60 = maAddedData[0].close;
-
-  return { candleData: maAddedData, depthData: depthData.data.Data };
+  // const { url, apiKey, fsym, tsym, limit, aggregate } = cryptoParams;
+  // const timeUnit = aggregate < 60 ? 'minute' : aggregate < 1440 ? 'hour' : 'day';
+  // const aggregateNew = aggregate < 60 ? aggregate : aggregate < 1440 ? aggregate / 60 : aggregate > 1440 ? 7 : 1;
+  // const request1 = `${url[0]}${timeUnit}?fsym=${fsym}&tsym=${tsym}&aggregate=${aggregateNew}&limit=${limit}&api_key=${apiKey}`;
+  // const request2 = `${url[1]}?fsym=${fsym}&tsym=${tsym}&limit=${50}&api_key=${apiKey}`;
+  return { time: Date.now(), value: 100 * Math.random() };
 };
 
 export const parseCandleData = (data) => {

@@ -17,6 +17,13 @@ const theme = createMuiTheme({
       800: '#1B1B28',
     },
     primary: {
+      top: '#5b0f65',
+      middle: '#021244',
+      bottom: '#000719',
+      backLineColor: '#610f67',
+      backLineBottomColor: '#2b104f',
+      buttonTopBorder: '#8540d2',
+      buttonBottomBorder: '#1d9edc',
       yellow: '#FDBA45',
       main: '#46CC93',
       red: '#F34734',

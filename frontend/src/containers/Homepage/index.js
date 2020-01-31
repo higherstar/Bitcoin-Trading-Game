@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
-    background: theme.palette.base.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -19,10 +18,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: theme.palette.secondary.main,
-    borderStyle: 'solid',
-    borderRadius: 20,
     width: '50%',
     height: '50%'
   },
@@ -31,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: 'none',
+    marginTop: 50,
+    marginBottom: 50
   },
 }));
 
@@ -49,10 +46,10 @@ const onClickSignUp = () => {
     <div className={classes.container}>
       <div className={classes.buttonContainer}>
         <Link to="/login" className={classes.link}>
-          <CustomButton label='Login' onClick={onClickLogin}/>
+          <CustomButton label='LOGIN' onClick={onClickLogin} width={550} height={150}/>
         </Link>
         <Link to="/signup" className={classes.link}>
-          <CustomButton label='Sign Up' className={classes.signUpStyle} onClick={onClickSignUp}/>
+          <CustomButton label='SIGN UP' className={classes.signUpStyle} onClick={onClickSignUp} width={550} height={150}/>
         </Link>
       </div>
     </div>

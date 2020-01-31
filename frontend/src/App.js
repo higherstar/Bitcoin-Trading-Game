@@ -12,7 +12,6 @@ import LogIn from 'containers/LogIn';
 import BillingUser from 'containers/BillingUser';
 import Game from 'containers/Game';
 import MainGameScreen from 'containers/Game/main';
-import PrivateRoute from 'routes/PrivateRoute';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,11 +29,33 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     overflow: 'auto',
   },
+  linetop: {
+    height: 5,
+    width: '100%',
+    position: 'absolute',
+    top: '14vh',
+    backgroundColor: theme.palette.primary.backLineColor
+  },
+  linemiddle: {
+    height: 5,
+    width: '100%',
+    position: 'absolute',
+    top: '16vh',
+    backgroundColor: theme.palette.primary.backLineColor
+  },
+  linebottom: {
+    height: 6,
+    width: '100%',
+    position: 'absolute',
+    top: '60vh',
+    backgroundColor: theme.palette.primary.backLineBottomColor
+  },
   appContent: {
     height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    background: `linear-gradient(${theme.palette.primary.top}, ${theme.palette.primary.middle}, ${theme.palette.primary.bottom})`,
 
     '& > .scrollbar-container': {
       width: '100%',
@@ -53,6 +74,9 @@ const App = (props) => {
 
         <main className={classes.content}>
           <div className={classes.appContent}>
+            <div className={classes.linetop}/>
+            <div className={classes.linemiddle}/>
+            <div className={classes.linebottom}/>
             <PerfectScrollbar
               options={{
                 suppressScrollX: true,

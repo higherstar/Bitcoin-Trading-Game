@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(1.875),
-    background: theme.palette.base.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -23,10 +22,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: theme.palette.secondary.main,
-    borderStyle: 'solid',
-    borderRadius: 20,
     width: '50%',
     height: '50%',
   },
@@ -85,7 +80,11 @@ function LogIn(props) {
             width={300}
             type="password"
           />
-          <CustomButton label="Login" onClick={onClickLogin} type="submit"/>
+          <CustomButton label="LOGIN"
+            onClick={onClickLogin} 
+            width={300}
+            height={100} 
+            type="submit"/>
           <CustomAlert 
             title={errorShow.message}
             open={errorShow.show}

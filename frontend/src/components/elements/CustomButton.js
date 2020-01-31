@@ -63,21 +63,24 @@ const useStyles = makeStyles((theme) => ({
   button: {
     minWidth: (props) => props.width,
     height: (props) => props.height,
-    backgroundColor: (props) => getColor(theme, props.color).base,
-    borderRadius: 2,
-    boxShadow: theme.palette.shadow.main,
-    color: (props) => (props.color === 'grey' || props.color === 'white' ? '#60636B' : 'white'),
+    borderRadius: 15,
+    borderColor: theme.palette.primary.buttonBottomBorder,
+    borderWidth: 3,
+    borderStyle: 'solid',
+    fontSize: (props) => props.width / 6,
+    color: theme.palette.base.white,
+    // background: `linear-gradient(${theme.palette.primary.buttonTopBorder}, ${theme.palette.primary.buttonBottomBorder})`,
 
     '&:hover': {
-      backgroundColor: (props) => getColor(theme, props.color).hover,
+      // backgroundColor: (props) => getColor(theme, props.color).hover,
     },
 
     '&:active': {
-      backgroundColor: (props) => getColor(theme, props.color).active,
+      // backgroundColor: (props) => getColor(theme, props.color).active,
     },
 
     '&:disabled': {
-      backgroundColor: (props) => getColor(theme, props.color).disabled,
+      // backgroundColor: (props) => getColor(theme, props.color).disabled,
       color: (props) => (props.color === 'grey' ? '#D4D5D9' : 'white'),
     },
   },

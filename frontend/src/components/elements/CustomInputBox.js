@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     minWidth: (props) => props.width,
     flex: 1,
+    backgroundColor: theme.palette.base.white,
   },
   formGroup: {
     marginBottom: (props) => theme.spacing(props.marginBottom),
