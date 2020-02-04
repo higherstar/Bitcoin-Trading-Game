@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: (props) => props.width,
     flex: 1,
     backgroundColor: theme.palette.base.white,
+    fontFamily: theme.font.CeliasMedium,
   },
   formGroup: {
     marginBottom: (props) => theme.spacing(props.marginBottom),
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: (props) => theme.spacing(props.labelPadding),
     color: '#fff',
     fontSize: 45,
+    fontFamily: theme.font.CeliasMedium,
   },
 }));
 
@@ -49,6 +51,9 @@ function CustomInputBox({
         defaultValue={defaultValue}
         autoComplete={type}
         variant="outlined"
+        inputProps={{style: {
+          fontSize: 25,
+        }}}
         onChange={onChange}
       />
     </Box>

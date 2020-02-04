@@ -14,8 +14,7 @@ import { CustomButton } from '../elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 500,
-      maxWidth: 'unset',
+      minWidth: 'fit-content',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
       borderWidth: 3,
@@ -29,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    fontSize: 26,
+    fontSize: 45,
     textAlign: 'center',
   },
   content: {
@@ -47,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.base.white,
+    '& svg': {
+      fontSize: 50
+    }
   },
 }));
 
@@ -64,8 +66,6 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 function CustomModal(props) {
-  const classes = useStyles();
-
   const {
     opened,
     title,
@@ -74,7 +74,8 @@ function CustomModal(props) {
     buttonTitle,
     handleOK
   } = props;
-  const [open, setOpen] = useState(opened);
+
+  const classes = useStyles();
 
   return (
     <Dialog

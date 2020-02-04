@@ -137,6 +137,9 @@ const theme = createMuiTheme({
       letterSpacing: 0.5,
     },
   },
+  font: {
+    CeliasMedium: "celias-medium",
+  }
 });
 
 export default theme;

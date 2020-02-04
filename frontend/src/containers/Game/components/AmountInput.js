@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontSize: 14,
     color: '#415574',
+    fontFamily: theme.font.CeliasMedium,
   },
 }));
 

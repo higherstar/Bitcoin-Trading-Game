@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 10
     },
     '& p': {
+      fontFamily: theme.font.CeliasMedium,
       fontSize: 29,
       paddingRight: 10,
       color: theme.palette.primary.mainMenuButtonColor,

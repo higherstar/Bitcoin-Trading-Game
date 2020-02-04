@@ -4,15 +4,15 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
 import { getUserInfo, setTradeToken } from 'redux/actions/user';
 import { bindActionCreators } from 'redux';
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
-import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-// import { createLegendChart, setLegendChartStyle, setLegendChartData } from '../components/TradingChart';
+import { CustomButton } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData } from '../components/chart/TradingAPI';
+import PauseImage from 'assets/image/pause_btn.png'
+import ClockImage from 'assets/image/clock.png'
 import { JoinedUserMockData } from 'MockData';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
@@ -26,35 +26,45 @@ const useStyles = makeStyles(() => ({
   },
   headerBar: {
     width: '100%',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     display: 'flex',
     alignItems: 'center',
     padding: 20
   },
   userStakeInfoStyle: {
-    padding: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 30,
+    paddingLeft: 30,
     display: 'flex',
-    borderWidth: 2,
-    borderRadius: 3,
-    borderColor: '#000',
+    borderWidth: 3,
+    borderRadius: 10,
+    borderColor: theme.palette.primary.buttonBottomBorder,
     borderStyle: 'solid',
     '& p': {
       fontWeight: 'bold',
-      fontSize: 20,
+      fontFamily: theme.font.CeliasMedium,
+      color: 'white',
+      fontSize: 25,
       margin: 0
     }
   },
   jackpotInfoStyle: {
-    padding: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingRight: 30,
+    paddingLeft: 30,    
     display: 'flex',
-    borderWidth: 2,
-    borderRadius: 3,
-    borderColor: '#000',
+    borderWidth: 3,
+    borderRadius: 10,
+    borderColor: theme.palette.primary.buttonBottomBorder,
     borderStyle: 'solid',
     marginRight: 60,
     '& p': {
+      fontFamily: theme.font.CeliasMedium,
+      color: 'white',
       fontWeight: 'bold',
-      fontSize: 23,
+      fontSize: 30,
       margin: 0
     }
   },
@@ -63,15 +73,10 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     top: 20,
-    left: 20,
+    right: '7vw',
     zIndex: 2,
-    '& svg': {
-      borderRadius: 1,
-      borderWidth:2,
-      borderStyle: 'solid',
-      borderColor: '#fff',
-      fontSize: 50,
-      color: '#fff'
+    '& img': {
+      width: 70
     },
     '& p': {
       fontSize: 12,
@@ -82,8 +87,11 @@ const useStyles = makeStyles(() => ({
     }
   },
   pauseGameStyle: {
-    '& svg': {
-      fontSize: 50
+    position: 'absolute',
+    left: '5vw',
+    top: 20,
+    '& img': {
+      width: 70
     }
   },
   joinedUserList: {
@@ -123,23 +131,12 @@ const useStyles = makeStyles(() => ({
     }
   },
   takeWinStyle:{
-    backgroundColor: 'white',
     position: 'absolute',
     display: 'flex',
     flexDirection: 'column',
-    top: 20,
-    right: 20,
-    zIndex: 2,
-    borderRadius: 2,
-    borderWidth: 3,
-    borderColor: '#000',
-    borderStyle: 'solid',
-    '& p': {
-      margin: 0,
-      fontSize: 20,
-      fontWeight: 'bold',
-      padding: 10
-    }
+    bottom: '8vh',
+    right: '10vw',
+    zIndex: 20,
   }
 }));
 
@@ -202,6 +199,7 @@ function MainGameScreen(props) {
     }, 1000);
   }
 
+  const onClickTakeWin = () => {}
 
   if(waitingTime == 0) {
     clearInterval(waitingTimerId.current);
@@ -221,22 +219,26 @@ function MainGameScreen(props) {
     <div className={classes.container} >
       <div className={classes.headerBar}>
         <div className={classes.userStakeInfoStyle}>
-          <p>{`Stake: $ ${paymentInfo.betCoin}`}</p>
+          <p>{`Stake : $ ${paymentInfo.betCoin}`}</p>
         </div>
         <div className={classes.jackpotInfoStyle}>
-          <p>{`Jackpot: $ 40,000`}</p>
+          <p>{`Jackpot : $ 40,000`}</p>
         </div>
         <div className={classes.pauseGameStyle}>
-          <PauseCircleFilledIcon />
+          <img src={PauseImage}/>
         </div>
       </div>
       <div className={classes.tradingView} id='line-chart'>
         <div className={classes.gameTime}>
-          <QueryBuilderIcon />
+          <img src={ClockImage}/>
           <p>{`${gamePlayMin}:${gamePlaySec}`}</p>
         </div>
         <div className={classes.takeWinStyle}>
-          <p>Take Win</p>
+          <CustomButton
+            onClick={onClickTakeWin} 
+            width={200}
+            height={80} 
+            label="TAKE WIN"/>
         </div>
       </div>
       <div className={classes.joinedUserList}>

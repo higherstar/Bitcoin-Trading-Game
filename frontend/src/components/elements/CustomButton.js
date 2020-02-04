@@ -4,61 +4,6 @@ import classnames from 'classnames';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/styles/makeStyles';
 
-const getColor = (theme, color) => {
-  switch (color) {
-    case 'dark':
-      return {
-        base: theme.palette.base[800],
-        hover: '#35353E',
-        active: '#000000',
-        disabled: '#828282',
-      };
-    case 'green':
-      return {
-        base: theme.palette.primary.main,
-        hover: '#5DD8A4',
-        active: '#40BC88',
-        disabled: '#92DEBE',
-      };
-    case 'yellow':
-      return {
-        base: '#F5894A',
-        hover: '#FFAD6E',
-        active: '#F57A38',
-        disabled: '#FEB0A7',
-      };
-    case 'red':
-      return {
-        base: theme.palette.primary.red,
-        hover: '#FF5D4B',
-        active: '#FC3822',
-        disabled: '#FEB0A7',
-      };
-    case 'grey':
-      return {
-        base: theme.palette.base[100],
-        hover: '#F6F6F6',
-        active: '#EBEBEB',
-        disabled: '#EEEEEE',
-      };
-    case 'white':
-      return {
-        base: theme.palette.base.white,
-        hover: '#F6F6F6',
-        active: '#FAF8FF',
-        disabled: '#EEEEEE',
-      };
-    case 'blue':
-    default:
-      return {
-        base: theme.palette.secondary.main,
-        hover: '#769CF9',
-        active: '#5F74FB',
-        disabled: '#A8C1FF',
-      };
-  }
-};
-
 const useStyles = makeStyles((theme) => ({
   button: {
     minWidth: (props) => props.width,
@@ -69,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: 'solid',
     fontSize: (props) => props.width / 6,
     color: theme.palette.base.white,
+    fontFamily: theme.font.CeliasMedium,
     // background: `linear-gradient(${theme.palette.primary.buttonTopBorder}, ${theme.palette.primary.buttonBottomBorder})`,
 
     '&:hover': {

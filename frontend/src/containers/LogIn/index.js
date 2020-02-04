@@ -53,7 +53,6 @@ function LogIn(props) {
     }).then((result) => {
       setCookie('id', result._id, { path: '/', maxAge: 3600 });
       setCookie('token', result.token, { path: '/', maxAge: 3600 });
-      // setCookie('token', result._id, { path: '/' });
       setLoading(false);
       history.push('/game');
     }).catch((error) => {
@@ -71,7 +70,7 @@ function LogIn(props) {
             label="Email"
             leftText="Email: "
             width={300}
-            type="email"
+            type="email"s
           />
           <CustomInputBox
             onChange={handleChangePassword}

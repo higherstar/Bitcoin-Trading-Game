@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import makeStyles from '@material-ui/styles/makeStyles';
@@ -13,10 +14,8 @@ import { CustomButton } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: '40%',
-      minWidth: 450,
+      minWidth: 'fit-content',
       height: 'fit-content',
-      maxWidth: 'unset',
       padding: theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
@@ -27,10 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginBottom: theme.spacing(2),
-    color: 'white',
-    fontFamily: theme.font.CeliasMedium,
+    color: theme.palette.base.white,
     fontWeight: 'bold',
-    fontSize: 50,
+    fontSize: 45,
     textAlign: 'center',
   },
   content: {
@@ -38,17 +36,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   actions: {
-    display: 'flex',
     justifyContent: 'center',
-    '& p': {
-      fontSize: 70,
-      color: theme.palette.primary.buttonBottomBorder,
-      fontFamily: theme.font.CeliasMedium,
-      marginBottom: 0,
-      marginTop: 0,
-      cursor: 'pointer',
-      fontWeight: 'bold'
-    }
+    display: 'flex'
   },
   root: {
     margin: 0,
@@ -58,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    fontFamily: theme.font.CeliasMedium,
     color: theme.palette.base.white,
     '& svg': {
       fontSize: 50
@@ -79,9 +67,7 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-function AddAmountDialog(props) {
-  const classes = useStyles();
-
+function BuyModal(props) {
   const {
     opened,
     title,
@@ -91,14 +77,18 @@ function AddAmountDialog(props) {
     handleOK
   } = props;
 
+  const classes = useStyles();
+
   return (
     <Dialog
       className={classes.container}
       open={opened}
       aria-labelledby="customized-dialog-title"
     >
-      <DialogContent className={classes.content}>
+      <DialogTitle>
         <Typography className={classes.title}>{title}</Typography>
+      </DialogTitle>
+      <DialogContent className={classes.content}>
         {content}
         <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
           <CloseIcon />
@@ -106,13 +96,19 @@ function AddAmountDialog(props) {
       </DialogContent>
 
       <DialogActions className={classes.actions}>
-        <p onClick={handleOK}>{buttonTitle}</p>
+        <CustomButton
+          label={buttonTitle}
+          color="red"
+          onClick={handleOK}
+          width={260}
+          height={80}
+        />
       </DialogActions>
     </Dialog>
   );
 }
 
-AddAmountDialog.propTypes = {
+BuyModal.propTypes = {
   opened: PropTypes.bool.isRequired,
   title: PropTypes.node,
   content: PropTypes.node,
@@ -121,11 +117,11 @@ AddAmountDialog.propTypes = {
   handleOK: PropTypes.func
 };
 
-AddAmountDialog.defaultProps = {
+BuyModal.defaultProps = {
   title: '',
   content: '',
   buttonTitle: 'Cancel',
   handleOK: ()=>{}
 };
 
-export default AddAmountDialog;
+export default BuyModal;

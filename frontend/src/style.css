@@ -22,3 +22,43 @@ input[type=number]::-webkit-outer-spin-button {
   appearance: none;
   margin: 0;
 }
+
+@font-face {
+  font-family: 'celias-medium';
+  src: url('/font/Celias-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'vswiseb';
+  src: url('/font/FontDep.com-VSWISEB.ttf');
+}
+
+@font-face {
+  font-family: 'phagspa';
+  src: url('/font/phagspa.ttf');
+}
+
+@font-face {
+  font-family: 'phagspab';
+  src: url('/font/phagspab.ttf');
+}
+
+@font-face {
+  font-family: 'vavob';
+  src: url('/font/VAVOB.ttf');
+}
+
+@font-face {
+  font-family: 'vavobi';
+  src: url('/font/VAVOBI.ttf');
+}
+
+@font-face {
+  font-family: 'vavoi';
+  src: url('/font/VAVOI.ttf');
+}
+
+@font-face {
+  font-family: 'vavon';
+  src: url('/font/VAVON.ttf');
+}

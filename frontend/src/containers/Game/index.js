@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import TextField from '@material-ui/core/TextField/TextField';
 import { CustomAlert, Loading } from 'components/elements';
 import UserIcon from './components/UserIcon'
 import TradeToken from './components/TradeToken'
 import { Link } from 'react-router-dom';
-import { CustomModal } from 'components/modals';
 import { bindActionCreators } from 'redux';
 import { chargeStripe, getPaymentInfo, buyInStacke } from 'redux/actions/payment';
 import { getUserInfo } from 'redux/actions/user';
@@ -13,11 +11,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useCookies } from 'react-cookie';
 import BuyIn from './components/BuyIn';
+import BuyModal from './components/BuyModal';
 import MainSettingImage from 'assets/image/main_setting.png'
 import LeaderBoardImage from 'assets/image/leader_board.png'
 import AddAmountDialog from './components/AddAmountDialog'
 import AmountInput from './components/AmountInput';
-
+import { ProfileUserImage } from './components/UserImage'
 const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
@@ -48,12 +47,14 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: 'none',
+    fontFamily: theme.font.CeliasMedium,
   },
   title: {
     fontSize: 120,
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: 0
+    marginTop: 0,
+    fontFamily: theme.font.CeliasMedium,
   },
   userSection :{
     position: 'absolute',
@@ -80,6 +81,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& p': {
       fontSize: 29,
+      fontFamily: theme.font.CeliasMedium,
       margin: 0,
       color: theme.palette.primary.mainMenuButtonColor
     },
@@ -88,18 +90,21 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 54,
     color: theme.palette.primary.mainMenuButtonColor,
     fontWeight: 'bold',
-    marginTop: 0
+    marginTop: 0,
+    fontFamily: theme.font.CeliasMedium,
   },
   amountModalContentStyle: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50
+    paddingTop: 50,
+    fontFamily: theme.font.CeliasMedium,
   },
   amountInput: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: theme.font.CeliasMedium,
   },
   amountParent: {
     display: 'flex',
@@ -117,7 +122,8 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
       paddingRight: 20,
       margin: 0,
-      color: 'white'
+      color: 'white',
+      fontFamily: theme.font.CeliasMedium,
     },
     '& h1': {
       fontSize: 58,
@@ -125,7 +131,8 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
       paddingRight: 15,
       margin: 0,
-      color: 'white'
+      color: 'white',
+      fontFamily: theme.font.CeliasMedium,
     },
     '& h2': {
       padding: 0,
@@ -134,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
       margin: 0,
       fontWeight: 'bold',
       color: 'white',
-      fontWeight: 'bold',
+      fontWeight: 'bold',fontFamily: theme.font.CeliasMedium,
       cursor: 'pointer',
     },
   },
@@ -169,6 +176,7 @@ function Game(props) {
     }
   ];
 
+  const profileImage = ProfileUserImage();
   useEffect(()=>{
     if(paymentInfo.amount) {
       setAmount(paymentInfo.amount);
@@ -229,9 +237,6 @@ function Game(props) {
   const handleBuyInClick = () => {
     const buyInCoasts = buyInCoast.map((cost) => cost.value);
     buyInStacke(buyInCoasts[buyInSelect]).then(()=>{
-      // setErrorShow({show:true, message: 'Buy Success', type: 'success'});
-      // setAmountModalView(false);
-      // setAmount(0);
       history.push('/game/main');
     }).catch((error)=>{
       setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
@@ -270,6 +275,8 @@ function Game(props) {
             value={item.value} 
             label={item.level} 
             color={item.color}
+            width={200}
+            height={100}
             key={index} 
             active={index === buyInSelect} 
             onSelect={handleBuyInSelect}
@@ -281,7 +288,7 @@ function Game(props) {
   return (
     <div className={classes.container}>
       <div className={classes.userSection}>
-        <UserIcon name={userInfo.name}/>
+        <UserIcon name={userInfo.name} image={profileImage}/>
       </div>
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken}/>
@@ -314,15 +321,15 @@ function Game(props) {
         handleClose={onAmountModalClose}
         content={amountModalContent}
         title="Add Amount"
-        buttonTitle="Buy"
+        buttonTitle="BUY"
         handleOK={handleAmountChargeClick}
       />
-      <CustomModal
+      <BuyModal
         opened={buyInModalView}
         handleClose={onBuyInModalClose}
         content={buyInModalContent}
         title="Select Stackes"
-        buttonTitle="Buy-in"
+        buttonTitle="BUY-IN"
         handleOK={handleBuyInClick}
       />
       <CustomAlert 

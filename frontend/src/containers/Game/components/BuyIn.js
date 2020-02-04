@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     height: (props) => props.height,
     marginLeft: 20,
     marginRight: 20,
-    background: 'transparent',
+    background: (props) => props.active ? props.color : 'transparent',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -22,15 +22,15 @@ const useStyles = makeStyles((theme) => ({
     borderStyle:'solid',
     boxShadow: theme.palette.shadow.main,
     cursor: 'pointer',
-    color: theme.palette.base.white
+    color: (props) => props.color === '#ffffff' && props.active ? theme.palette.base[800] : theme.palette.base.white,
   },
   valueText: {
-    fontSize: 25,
+    fontSize: 45,
     fontWeight: 600,
   },
   label: {
     color: (props) => props.color,
-    fontSize: 25,
+    fontSize: 45,
     fontWeight: 600,
   },
 }));

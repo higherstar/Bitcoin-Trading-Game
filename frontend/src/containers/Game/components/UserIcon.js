@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/styles/makeStyles';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -14,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& p': {
       fontSize: 29,
+      fontFamily: theme.font.CeliasMedium,
       paddingLeft: 10,
       color: theme.palette.primary.mainMenuButtonColor
     }
@@ -21,23 +21,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CustomUserIcon(props) {
-  const { name } = props;
+  const { name, image } = props;
   const classes = useStyles(props);
 
   return (
     <div className={classes.container}>
-      <Link to="/login"><AccountCircleIcon /></Link>
+      <Link to="/login">
+        <img src={image}/>
+      </Link>
       <p>{name}</p>
     </div>
   );
 }
 
 CustomUserIcon.propTypes = {
-  name: PropTypes.string
+  name: PropTypes.string,
+  image: PropTypes.string
 };
 
 CustomUserIcon.defaultProps = {
-  name: 'Custom'
+  name: 'Custom',
+  image: 'Users/user1.png '
 };
 
 export default CustomUserIcon;
