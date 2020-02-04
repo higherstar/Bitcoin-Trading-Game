@@ -7,11 +7,15 @@ const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
-    background: theme.palette.base.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '& h1': {
+      fontSize: 50,
+      color: 'white',
+      fontFamily: theme.font.CeliasMedium,
+    }
   },
 }));
 

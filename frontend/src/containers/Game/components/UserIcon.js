@@ -26,7 +26,7 @@ function CustomUserIcon(props) {
 
   return (
     <div className={classes.container}>
-      <Link to="/login">
+      <Link to="/home">
         <img src={image}/>
       </Link>
       <p>{name}</p>

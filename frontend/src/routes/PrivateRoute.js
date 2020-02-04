@@ -8,7 +8,7 @@ const PrivateRoute = ({ component: C, props: cProps, ...rest }) => (
     render={(props) => (cProps.user ? (
       <C {...props} {...cProps} match={rest.computedMatch} />
     ) : (
-      <Redirect to="/login" />
+      <Redirect to="/home" />
     ))}
   />
 );

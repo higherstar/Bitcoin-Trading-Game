@@ -4,6 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton } from 'components/elements';
 import { Link } from 'react-router-dom';
 import LoginModal from './loginModal';
+import SignUpModal from './SignUpModal';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -37,6 +38,7 @@ function HomePage(props) {
   const classes = useStyles();
   const { history } = props;
   const [loginModalView, setLoginModalView] = useState(false);
+  const [signUpModalView, setSignUpModalView] = useState(false);
 
 const onClickLogin = () => {
   setLoginModalView(true);
@@ -46,12 +48,16 @@ const handleLoginClose = () => {
   setLoginModalView(false);
 }
 
+const handleSignUpClose = () => {
+  setSignUpModalView(false);
+}
+
 const handleLogin = () => {
   // setLoginModalView(true);
 }
 
 const onClickSignUp = () => {
-  console.log('signupButtonClicked');
+  setSignUpModalView(true);
 };
 
   return (
@@ -60,12 +66,18 @@ const onClickSignUp = () => {
         <div className={classes.link}>
           <CustomButton label='LOGIN' onClick={onClickLogin} width={550} height={150}/>
         </div>
-        <Link to="/signup" className={classes.link}>
+        <div className={classes.link}>
           <CustomButton label='SIGN UP' className={classes.signUpStyle} onClick={onClickSignUp} width={550} height={150}/>
-        </Link>
+        </div>
         <LoginModal
           opened={loginModalView}
           handleClose={handleLoginClose}
+          handleOK={handleLogin}
+          history={history}
+        />
+        <SignUpModal
+          opened={signUpModalView}
+          handleClose={handleSignUpClose}
           handleOK={handleLogin}
           history={history}
         />

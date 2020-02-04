@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton, Loading, CustomAlert } from 'components/elements';
@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { setPaymentToken } from 'redux/actions/payment';
 import { withRouter } from 'react-router-dom';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   cardInfo: {
     display: 'flex',
     flexDirection: 'column',
@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
   description: {
     marginBottom: 30,
     textAlign: 'center',
+    color: 'white',
+    fontSize: 20,
+    fontFamily: theme.font.CeliasMedium,
   },
   buttonGroup: {
     marginTop: 30,
@@ -43,7 +46,7 @@ function CheckoutForm(props) {
         paymentTokenID: result.token.id,
       }).then(() => {
         setLoading(false);
-        history.push('/login');
+        history.push('/home');
       });
     }).catch((error) => {
       setErrorShow({show: true, message: error, type: error});
@@ -56,7 +59,11 @@ function CheckoutForm(props) {
       <p className={classes.description}>Please input your payment info.</p>
       <CardElement />
       <div className={classes.buttonGroup}>
-        <CustomButton onClick={submit} label="Confirm" />
+        <CustomButton
+        onClick={submit}
+        label="Confirm"
+        width={200}
+        height={80} />
         {
           loading && <Loading />
         }

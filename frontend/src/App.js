@@ -7,8 +7,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import PublicRoute from 'routes/PublicRoute';
 import HomePage from 'containers/Homepage';
-import SignUp from 'containers/SignUp';
-import LogIn from 'containers/LogIn';
 import BillingUser from 'containers/BillingUser';
 import Game from 'containers/Game';
 import MainGameScreen from 'containers/Game/main';
@@ -86,8 +84,6 @@ const App = (props) => {
               <Switch>
                 <Redirect exact from="/" to="/home" />
                 <PublicRoute exact path="/home" component={HomePage} props={props} />
-                <PublicRoute exact path="/login" component={LogIn} props={props} />
-                <PublicRoute exact path="/signup" component={SignUp} props={props} />
                 <PublicRoute exact path="/billing" component={BillingUser} props={props} />
                 <PublicRoute exact path="/game" component={Game} props={props} />
                 <PublicRoute exact path="/game/main" component={MainGameScreen} props={props} />
