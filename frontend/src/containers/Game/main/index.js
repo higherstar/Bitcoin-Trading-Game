@@ -4,13 +4,13 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
 import { getUserInfo, setTradeToken } from 'redux/actions/user';
 import { bindActionCreators } from 'redux';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { CustomButton } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png'
 import { JoinedUserMockData } from 'MockData';
+import { ProfileUserImage } from '../components/UserImage'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     justifyContent: 'flex-end',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'end',
     padding: 20
   },
   userStakeInfoStyle: {
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 10,
     paddingRight: 30,
     paddingLeft: 30,
+    marginRight: 30,
     display: 'flex',
     borderWidth: 3,
     borderRadius: 10,
@@ -96,17 +97,29 @@ const useStyles = makeStyles((theme) => ({
   },
   joinedUserList: {
     display: 'flex',
-    padding: 15
+    padding: 15,
+    justifyContent: 'center',
+    borderWidth: 5,
+    borderRadius: 15,
+    borderColor: theme.palette.primary.buttonTopBorder,
+    borderStyle: 'double',
+    marginRight: 40,
+    marginLeft: 40,
+    marginBottom: 20
   },
   joinedUserStyle: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#fff',
     marginRight: 20,
     marginLeft: 20,
     '& p': {
       textAlign: 'center',
-      margin: 0
+      margin: 0,
+      color: theme.palette.base.white,
+      fontFamily: theme.font.CeliasMedium,
+      fontSize: 20,
+      paddingTop: 20,
+      fontWeight: 'bold'
     },
     '& svg': {
       fontSize: 40
@@ -245,7 +258,7 @@ function MainGameScreen(props) {
         {
           JoinedUserMockData.map((item, index) => (
             <div key={index} className={classes.joinedUserStyle}>
-              <AccountCircleIcon />
+              <img src={`/Users/user${index+1}.png`} />
               <p>{item}</p>
             </div>
           ))

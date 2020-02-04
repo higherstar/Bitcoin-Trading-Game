@@ -11,5 +11,5 @@ const users = [
 ];
 
 export const ProfileUserImage = () =>  {
-  return `Users/${users[Math.floor(Math.random() * 8)]}.png`
+  return `/Users/${users[Math.floor(Math.random() * 8)]}.png`
 }
