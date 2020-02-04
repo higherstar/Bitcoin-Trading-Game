@@ -3,41 +3,39 @@ import { createChart } from 'lightweight-charts';
 export const createLineChart = () => {
 	const chart = createChart(document.getElementById('line-chart'), { width: 400, height: 500 });
 	const lineSeries = chart.addLineSeries();
-	lineSeries.applyOptions({
-		color: '#aa8fb1',
-		lineStyle: 0,
-		lineWidth: 2,
-		crosshairMarkerVisible: true,
-		crosshairMarkerRadius: 6,
-		lineType: 2,
-		priceLineVisible: false,
-		priceLineWidth: 1,
-		priceLineColor: '#4682B4',
-		priceLineStyle: 1,
-		baseLineVisible: true,
-		baseLineColor: '#ff0000',
-		baseLineWidth: 3,
-		baseLineStyle: 1,
-		priceFormat: {
-			type: 'custom',
-			minMove: 0.02,
-			formatter: function(price) {
-					return '$' + price.toFixed(2);
+
+	chart.applyOptions({
+		priceScale: {
+			scaleMargins: {
+					top: 0.2,
+					bottom: 0.2,
 			},
+		},
+		timeScale: {
+			rightOffset: 3,
+			barSpacing: 20,
+			fixLeftEdge: true,
+			lockVisibleTimeRangeOnResize: true,
+			// rightBarStaysOnScroll: true,
+			borderVisible: false,
+			borderColor: '#fff000',
+			visible: false,
+			timeVisible: false,
+			secondsVisible: false,
 		},
 		crosshair: {
 			vertLine: {
 					color: '#6A5ACD',
 					width: 0.5,
 					style: 1,
-					visible: true,
+					visible: false,
 					labelVisible: false,
 			},
 			horzLine: {
 					color: '#6A5ACD',
 					width: 0.5,
 					style: 0,
-					visible: true,
+					visible: false,
 					labelVisible: true,
 			},
 			mode: 1,
@@ -46,20 +44,46 @@ export const createLineChart = () => {
 			vertLines: {
 					color: 'rgba(70, 130, 180, 0.5)',
 					style: 1,
-					visible: true,
+					visible: false,
 			},
 			horzLines: {
 					color: 'rgba(70, 130, 180, 0.5)',
 					style: 2,
-					visible: true,
+					visible: false,
 			},
 		},
 		layout: {
-			backgroundColor: '#FAEBD7',
+			backgroundColor: 'transparent',
 			textColor: '#696969',
 			fontSize: 20,
 			fontFamily: 'Calibri',
 		},
+	});
+
+	lineSeries.applyOptions({
+		overlay: true,
+		color: '#10abde',
+		lineStyle: 0,
+		lineWidth: 4,
+		crosshairMarkerVisible: true,
+		crosshairMarkerRadius: 6,
+		lineType: 2,
+		priceLineVisible: false,
+		priceLineWidth: 4,
+		priceLineColor: '#10abde',
+		priceLineStyle: 0,
+		baseLineVisible: true,
+		baseLineColor: '#ff0000',
+		baseLineWidth: 3,
+		baseLineStyle: 1,
+	});
+
+	const priceLine = lineSeries.createPriceLine({
+    price: 9370.0,
+    color: 'green',
+    lineWidth: 2,
+    lineStyle: 0,
+    axisLabelVisible: true,
 	});
 	return { chart, lineSeries };
 };

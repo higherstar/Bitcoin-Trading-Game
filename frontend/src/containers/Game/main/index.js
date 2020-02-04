@@ -27,7 +27,6 @@ const useStyles = makeStyles(() => ({
   headerBar: {
     width: '100%',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
     display: 'flex',
     alignItems: 'center',
     padding: 20
@@ -144,15 +143,6 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const cryptoParams = {
-  url: ['https://min-api.cryptocompare.com/data/histo', 'https://min-api.cryptocompare.com/data/ob/l2/snapshot'],
-  apiKey: process.env.REACT_APP_CRYPTO_API_KEY,
-  fsym: 'BTC',
-  tsym: 'USDT',
-  limit: 300,
-  aggregate: 1
-};
-
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history } = props;
   const [ waitingTime, setWaitingTime ] = useState(1);
@@ -167,15 +157,12 @@ function MainGameScreen(props) {
   let chartData = [];
 
   useEffect(async () => {
-    // const { chart } = createLegendChart();
-    // const { areaSeries } = setLegendChartStyle(chart);
-    // setLegendChartData(areaSeries);
     if (!paymentInfo.betCoin) {
       history.push('/game');
     } else {
       setTradeToken(-1);
       
-      // for chart
+      // drawing chart
       const res = createLineChart();
       chartWrapper = res.chart;
       lineSeries = res.lineSeries;
@@ -196,9 +183,11 @@ function MainGameScreen(props) {
   }
 
   const fetchApiData = async () => {
-    const data = await fetchData();
-    chartData.push(data);
-    lineSeries.setData(chartData);
+    const newData = await fetchData(chartData.length > 0 ? chartData[chartData.length-1] : {});
+    if (newData) {
+      chartData = [...chartData, ...newData];
+      lineSeries.setData(chartData);
+    }
   };
 
   const waitingUserTimeCountDown = () => {

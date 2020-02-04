@@ -9,12 +9,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     '& svg': {
-      fontSize: 50
+      fontSize: 90,
+      color: 'white'
     },
     '& p': {
-      fontSize: 22,
+      fontSize: 29,
       paddingLeft: 10,
-      fontWeight: 'bold'
+      color: theme.palette.primary.mainMenuButtonColor
     }
   }
 }));

@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import makeStyles from '@material-ui/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { CustomButton } from '../elements';
+import { CustomButton } from 'components/elements';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 500,
+      width: '40vw',
       maxWidth: 'unset',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
@@ -27,9 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginBottom: theme.spacing(2),
-    color: theme.palette.base.white,
+    color: 'white',
     fontWeight: 'bold',
-    fontSize: 26,
+    fontSize: 50,
     textAlign: 'center',
   },
   content: {
@@ -37,6 +36,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   actions: {
+    display: 'flex',
+    justifyContent: 'center'
   },
   root: {
     margin: 0,
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.base.white,
+    color: theme.palette.base.white
   },
 }));
 
@@ -63,7 +64,7 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-function CustomModal(props) {
+function AddAmountDialog(props) {
   const classes = useStyles();
 
   const {
@@ -74,7 +75,6 @@ function CustomModal(props) {
     buttonTitle,
     handleOK
   } = props;
-  const [open, setOpen] = useState(opened);
 
   return (
     <Dialog
@@ -82,10 +82,8 @@ function CustomModal(props) {
       open={opened}
       aria-labelledby="customized-dialog-title"
     >
-      <DialogTitle>
-        <Typography className={classes.title}>{title}</Typography>
-      </DialogTitle>
       <DialogContent className={classes.content}>
+        <Typography className={classes.title}>{title}</Typography>
         {content}
         <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
           <CloseIcon />
@@ -103,7 +101,7 @@ function CustomModal(props) {
   );
 }
 
-CustomModal.propTypes = {
+AddAmountDialog.propTypes = {
   opened: PropTypes.bool.isRequired,
   title: PropTypes.node,
   content: PropTypes.node,
@@ -112,11 +110,11 @@ CustomModal.propTypes = {
   handleOK: PropTypes.func
 };
 
-CustomModal.defaultProps = {
+AddAmountDialog.defaultProps = {
   title: '',
   content: '',
   buttonTitle: 'Cancel',
   handleOK: ()=>{}
 };
 
-export default CustomModal;
+export default AddAmountDialog;

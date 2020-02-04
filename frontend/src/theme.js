@@ -24,6 +24,7 @@ const theme = createMuiTheme({
       backLineBottomColor: '#2b104f',
       buttonTopBorder: '#8540d2',
       buttonBottomBorder: '#1d9edc',
+      mainMenuButtonColor: '#10abde',
       yellow: '#FDBA45',
       main: '#46CC93',
       red: '#F34734',

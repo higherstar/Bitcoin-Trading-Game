@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CustomButton, CustomInputBox, CustomAlert, Loading } from 'components/elements';
+import TextField from '@material-ui/core/TextField/TextField';
+import { CustomAlert, Loading } from 'components/elements';
 import UserIcon from './components/UserIcon'
 import TradeToken from './components/TradeToken'
 import { Link } from 'react-router-dom';
@@ -12,12 +13,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useCookies } from 'react-cookie';
 import BuyIn from './components/BuyIn';
+import MainSettingImage from 'assets/image/main_setting.png'
+import LeaderBoardImage from 'assets/image/leader_board.png'
+import AddAmountDialog from './components/AddAmountDialog'
+import AmountInput from './components/AmountInput';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
-    background: theme.palette.base.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -46,43 +50,90 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
   },
   title: {
-    fontSize: 50,
+    fontSize: 120,
+    color: theme.palette.base.white,
     fontWeight: 'bold',
+    marginTop: 0
   },
   userSection :{
     position: 'absolute',
     top: 20,
     left: 20
   },
+  mainSettingStyle: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    '& img': {
+      width: 75
+    }
+  },
+  leaderBoardStyle: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    flexDirection: 'column',
+    alignItems: 'center',
+    display: 'flex',
+    '& img': {
+      width: 75
+    },
+    '& p': {
+      fontSize: 29,
+      margin: 0,
+      color: theme.palette.primary.mainMenuButtonColor
+    },
+  },
+  gameMenuTitle: {
+    fontSize: 54,
+    color: theme.palette.primary.mainMenuButtonColor,
+    fontWeight: 'bold',
+    marginTop: 0
+  },
+  amountModalContentStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 50
+  },
+  amountInput: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   amountParent: {
     display: 'flex',
     position: 'absolute',
     top: 20,
-    padding: '0 10px',
-    borderColor: '#000000',
-    borderWidth: 2,
-    borderRadius: 7,
-    minWidth: 230,
+    padding: '0 20px 0 40px',
+    borderRadius: 8,
+    borderColor: theme.palette.primary.buttonBottomBorder,
+    borderWidth: 3,
     borderStyle: 'solid',
+    minWidth: 230,
     alignItems: 'center',
     '& p': {
-      fontSize: 30,
+      fontSize: 58,
       padding: 0,
+      paddingRight: 20,
       margin: 0,
+      color: 'white'
     },
     '& h1': {
-      fontSize: 40,
+      fontSize: 58,
       width: '100%',
       padding: 0,
       paddingRight: 15,
       margin: 0,
-      fontWeight: 'bold',
+      color: 'white'
     },
-    '& i': {
-      fontSize: 30,
+    '& h2': {
       padding: 0,
       paddingLeft: 15,
+      fontSize: 70,
       margin: 0,
+      fontWeight: 'bold',
+      color: 'white',
       fontWeight: 'bold',
       cursor: 'pointer',
     },
@@ -100,7 +151,23 @@ function Game(props) {
   const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
   const [loading, setLoading] = useState(false);
   const [buyInSelect, setBuyInSelect] = useState(0);
-  const buyInCoast = [20, 50, 100];
+  const buyInCoast = [
+    {
+      level: 'Easy',
+      value: 20,
+      color: '#ffffff',
+    },
+    {
+      level: 'Medium',
+      value: 50,
+      color: '#1d9edc',
+    },
+    {
+      level: 'Hard',
+      value: 100,
+      color: '#d70c8c',
+    }
+  ];
 
   useEffect(()=>{
     if(paymentInfo.amount) {
@@ -160,7 +227,8 @@ function Game(props) {
     setAmount(event.target.value);
   };
   const handleBuyInClick = () => {
-    buyInStacke(buyInCoast[buyInSelect]).then(()=>{
+    const buyInCoasts = buyInCoast.map((cost) => cost.value);
+    buyInStacke(buyInCoasts[buyInSelect]).then(()=>{
       // setErrorShow({show:true, message: 'Buy Success', type: 'success'});
       // setAmountModalView(false);
       // setAmount(0);
@@ -185,17 +253,12 @@ function Game(props) {
     setBuyInSelect(value);
   }
   const amountModalContent = (
-    <div>
-      <CustomInputBox
-        onChange={handleChangeAmount}
-        width={300}
+    <div className={classes.amountModalContentStyle}>
+      <AmountInput
+        className={classes.amountInput}
         type="number"
-        defaultValue={null}
-        marginBottom={0}
-        labelPadding={0}
-        leftText="$"
-        shrink
-        variant="outlined"
+        fontSize="75px"
+        width="70%"
       />
     </div>
   );
@@ -203,7 +266,14 @@ function Game(props) {
     <div className={classes.buyInContainer}>
       {
         buyInCoast.map((item, index)=> 
-          <BuyIn value={item} key={index} active={index === buyInSelect} onSelect={handleBuyInSelect}/> )
+          <BuyIn 
+            value={item.value} 
+            label={item.level} 
+            color={item.color}
+            key={index} 
+            active={index === buyInSelect} 
+            onSelect={handleBuyInSelect}
+          /> )
       }
     </div>
   );
@@ -216,23 +286,30 @@ function Game(props) {
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken}/>
       </div>
+      <div className={classes.mainSettingStyle}>
+        <img src={MainSettingImage}/>
+      </div>
+      <div className={classes.leaderBoardStyle}>
+        <img src={LeaderBoardImage}/>
+        <p>LeaderBoard</p>
+      </div>
       <div className={classes.amountParent}>
         <h1>$</h1>
         <p>{amountInput}</p>
-        <i className="material-icons" onClick={onClickAmount}>
-					add_circle
-        </i>
+        <h2 onClick={onClickAmount}>
+					+
+        </h2>
       </div>
-      <p className={classes.title}>BitCoin Trading</p>
+      <p className={classes.title}>BITCOIN TRADING</p>
       <div className={classes.buttonContainer}>
         <Link to={`/game${ paymentInfo.betCoin > 0 ? '/main' : ''}`} className={classes.link}>
-          <CustomButton label="Enter Game" onClick={onClickStart} />
+          <p className={classes.gameMenuTitle} onClick={onClickStart}>Enter Game</p>
         </Link>
         <Link to="/game" className={classes.link}>
-          <CustomButton label="How to Play" className={classes.howToPlay} onClick={onClickHowToPlay} />
+          <p className={classes.gameMenuTitle} onClick={onClickHowToPlay}>How to Play</p>
         </Link>
       </div>
-      <CustomModal
+      <AddAmountDialog
         opened={amountModalView}
         handleClose={onAmountModalClose}
         content={amountModalContent}

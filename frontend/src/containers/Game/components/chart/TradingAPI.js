@@ -1,12 +1,39 @@
 import axios from 'axios';
 
-export const fetchData = async (cryptoParams) => {
-  // const { url, apiKey, fsym, tsym, limit, aggregate } = cryptoParams;
-  // const timeUnit = aggregate < 60 ? 'minute' : aggregate < 1440 ? 'hour' : 'day';
-  // const aggregateNew = aggregate < 60 ? aggregate : aggregate < 1440 ? aggregate / 60 : aggregate > 1440 ? 7 : 1;
-  // const request1 = `${url[0]}${timeUnit}?fsym=${fsym}&tsym=${tsym}&aggregate=${aggregateNew}&limit=${limit}&api_key=${apiKey}`;
-  // const request2 = `${url[1]}?fsym=${fsym}&tsym=${tsym}&limit=${50}&api_key=${apiKey}`;
-  return { time: Date.now(), value: 100 * Math.random() };
+const getDateTime = (time) => {
+  const date = new Date(time);
+  const year = date.getUTCFullYear();
+  const month = '0' + (date.getUTCMonth() + 1);
+  const day = '0' + (date.getUTCMonth() + 1);
+  const hours = '0' + date.getUTCHours();
+  const minutes = '0' + date.getUTCMinutes();
+  return year + '-' + month.substr(-2) + '-' + day.substr(-2) + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':00';
+};
+
+export const fetchData = async (lastInfo) => {
+  const url = 'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USDT&limit=60&api_key=f5377b79b4b87040f9a8fffdcdcc45b575a54377308b7a9018d65949059fa0cf';
+  const data = await axios
+    .get(url)
+    .then(res => {
+      return res;
+    })
+    .catch(err => {
+      return false;
+    });
+  if (data) {
+    let newData = [];
+    data.data.Data.Data.forEach(item => {
+      if (item.time > lastInfo.time || !lastInfo.time) {
+        console.log(getDateTime(item.time * 1000));
+        newData.push({
+          time: item.time * 1000,
+          value: item.open
+        });  
+      }
+    });
+    return newData;
+  }
+  return false;
 };
 
 export const parseCandleData = (data) => {
@@ -25,61 +52,4 @@ export const parseCandleData = (data) => {
     ];
   });
   return { candleChartData, volumeChartData };
-};
-
-export const parseDepthData = (data) => {
-  let bids = [];
-  let asks = [];
-  data.bids.forEach((item) => {
-    let bid = item.split('~');
-    // @ts-ignore
-    bid = [parseFloat(bid[0]), parseFloat(bid[1])];
-    bids = [...bids, bid];
-  });
-  data.asks.forEach((item) => {
-    let ask = item.split('~');
-    // @ts-ignore
-    ask = [parseFloat(ask[0]), parseFloat(ask[1])];
-    asks = [...asks, ask];
-  });
-  bids = bids.sort((a, b) => (a[0] < b[0] ? -1 : 1));
-  asks = asks.sort((a, b) => (a[0] < b[0] ? -1 : 1));
-  return { bids, asks };
-};
-
-export const getDataOnTimeRange = (data, timeRange) => {
-  return data.filter((item) => {
-    return item.time >= timeRange.start && item.time <= timeRange.end;
-  });
-};
-
-export const getMaxMinValueOnTimeRange = (data) => {
-  const { high, low, ma7, ma30, ma60 } = data[data.length - 1];
-  let max = Math.max(high, low, ma7, ma30, ma60);
-  let min = Math.min(high, low, ma7, ma30, ma60);
-  data.forEach((item) => {
-    max = Math.max(max, Math.max(item.high, item.ma7, item.ma30, item.ma60));
-    min = Math.min(min, Math.min(item.low, item.ma7, item.ma30, item.ma60));
-  });
-  return { max, min };
-};
-
-export const getCoinApi = async () => {
-  await axios
-    .get(
-      'https://rest.coinapi.io/v1/ohlcv/BITSTAMP_SPOT_BTC_USD/latest?period_id=1MIN&apikey=F2F34C02-3125-42BD-A219-1B844CBD8000',
-    )
-    .then((res) => {
-      console.log('========== https://rest.coinapi.io ==========');
-      console.log(res.data);
-    });
-};
-
-export const getCoinMarketCap = async () => {
-  await axios
-    .get('https://api.coincap.io/v2/candles?exchange=poloniex&interval=h8&baseId=ethereum&quoteId=bitcoin')
-    .then((res) => {
-      console.log('========== https://api.coincap.io ==========');
-      console.log(res.data);
-    });
 };

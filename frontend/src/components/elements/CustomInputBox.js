@@ -20,8 +20,8 @@ const useStyles = makeStyles((theme) => ({
   label: {
     width: (props) => theme.spacing((props.labelPadding) + 3),
     marginRight: (props) => theme.spacing(props.labelPadding),
-    color: '#000000',
-    fontSize: 20,
+    color: '#fff',
+    fontSize: 45,
   },
 }));
 
@@ -45,7 +45,6 @@ function CustomInputBox({
         required
         className={classnames(classes.textField, className)}
         hiddenLabel
-        label={label}
         type={type}
         defaultValue={defaultValue}
         autoComplete={type}
