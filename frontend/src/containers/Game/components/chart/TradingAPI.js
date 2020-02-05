@@ -24,7 +24,6 @@ export const fetchData = async (lastInfo) => {
     let newData = [];
     data.data.Data.Data.forEach(item => {
       if (item.time > lastInfo.time || !lastInfo.time) {
-        console.log(getDateTime(item.time * 1000));
         newData.push({
           time: item.time * 1000,
           value: item.open

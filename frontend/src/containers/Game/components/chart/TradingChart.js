@@ -1,7 +1,7 @@
 import { createChart } from 'lightweight-charts';
 
 export const createLineChart = () => {
-	const chart = createChart(document.getElementById('line-chart'), { width: 400, height: 500 });
+	const chart = createChart(document.getElementById('line-chart'), { width: 400, height: '100%' });
 	const lineSeries = chart.addLineSeries();
 
 	chart.applyOptions({

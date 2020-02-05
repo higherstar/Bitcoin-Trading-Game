@@ -9,8 +9,6 @@ import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png'
-import { JoinedUserMockData } from 'MockData';
-import { ProfileUserImage } from '../components/UserImage'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -98,7 +96,8 @@ const useStyles = makeStyles((theme) => ({
   joinedUserList: {
     display: 'flex',
     padding: 15,
-    justifyContent: 'center',
+    minHeight: 190,
+    justifyContent: 'flex-start',
     borderWidth: 5,
     borderRadius: 15,
     borderColor: theme.palette.primary.buttonTopBorder,
@@ -153,38 +152,126 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history } = props;
-  const [ waitingTime, setWaitingTime ] = useState(1);
-  const [ gameTime, setGameTime ] = useState(1);
+const sendDataType = {
+  server: 0,
+  gameData: 1,
+  joinPing: 2
+};
 
+const gameServerStatus = {
+  pending: 0,
+  server: 1,
+  client: 2
+}
+
+let globalStatus = 0;
+let globalGameTime = 30;
+
+const SocketURL = process.env.REACT_APP_SOCKET
+function MainGameScreen(props) {
+  const { setTradeToken, paymentInfo, history, userInfo } = props;
+  const [ waitingTime, setWaitingTime ] = useState(30);
+  const [ gameTime, setGameTime ] = useState(90);
+  const ws = new WebSocket(SocketURL)
+  const [ gameData, setGameData ] = useState([]);
   const classes = useStyles();
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
+  let serverSocketSendId = useRef(null);
   let chartWrapper = null;
   let lineSeries = null;
   let chartData = [];
-
   useEffect(async () => {
-    if (!paymentInfo.betCoin) {
+    if (!paymentInfo || !paymentInfo.betCoin) {
       history.push('/game');
     } else {
       setTradeToken(-1);
       
+      ws.onopen = () => {
+        sendJoinStatus();
+      }
+      ws.onmessage = evt => {
+        console.log(JSON.parse(evt.data))
+        const message = JSON.parse(evt.data);
+        if (message.type === sendDataType.server) {
+          if (globalStatus === gameServerStatus.pending) {
+            changeGameData(message);
+            globalStatus = gameServerStatus.client;
+          }
+          setWaitingTime(parseInt(message.message));
+          if (parseInt(message.message) === 1)
+            setTimeout(()=> {
+              setWaitingTime((preState)=>preState-1);
+            }, 1000)
+        }
+        if (message.type !== sendDataType.server)
+          changeGameData(message);
+      }
+  
+      ws.onclose = () => {
+        console.log('disconnected')
+      }
       // drawing chart
       const res = createLineChart();
       chartWrapper = res.chart;
       lineSeries = res.lineSeries;
       handleWindowResize();
       apiFetchTimerId.current = setInterval(fetchApiData, 1000);
+    }
+    setTimeout (()=> {
+      if (globalStatus === gameServerStatus.pending) {
+        globalStatus = gameServerStatus.server;
+        serverSocketSendId.current = setInterval(()=> {
+          sendServerData();
+        }, 300);
+        startGame();
+      }
+    }, 2000);
+    window.addEventListener('resize', handleWindowResize);
 
-      waitingUserTimeCountDown();
+  }, []);
+
+
+  useEffect(()=> {
+    console.log('venusTimessss->', waitingTime)
+    if (waitingTime === 0 ) {
+      clearInterval(waitingTimerId.current);
+      clearInterval(serverSocketSendId.current);
       gamePlayTimeCountDown();
     }
+    
+  }, [waitingTime])
 
-    window.addEventListener('resize', handleWindowResize);
-  }, []);
+  useEffect(()=> {
+    if (gameTime === 0)
+    clearInterval(gamePlayTimeId.current);  
+  }, [gameTime])
+
+  const startGame = () => {
+    waitingUserTimeCountDown();
+  }
+
+  const changeGameData = (message) => {
+    let tempArray = []
+    tempArray.push(message);
+    setGameData(prevState => ([...tempArray, ...prevState]));
+  }
+
+  const sendJoinStatus = () => {
+    const message = { name: userInfo.name, message: 'join', type: sendDataType.joinPing }
+    ws.send(JSON.stringify(message));
+  }
+
+  const sendMyGameData = messageString => {
+    const message = { name: userInfo.name, message: messageString, type: sendDataType.gameData }
+    ws.send(JSON.stringify(message))
+  }
+
+  const sendServerData = () => {
+    const message = { name: userInfo.name, message: globalGameTime, type: sendDataType.server }
+    ws.send(JSON.stringify(message))
+  }
 
   const handleWindowResize = () => {
     const htmlWrapper = document.getElementById('line-chart');
@@ -203,6 +290,7 @@ function MainGameScreen(props) {
   const waitingUserTimeCountDown = () => {
     waitingTimerId.current = setInterval(()=> {
       setWaitingTime((t)=> t-1);
+      globalGameTime -=1;
     }, 1000);
   }
 
@@ -212,15 +300,10 @@ function MainGameScreen(props) {
     }, 1000);
   }
 
-  const onClickTakeWin = () => {}
-
-  if(waitingTime == 0) {
-    clearInterval(waitingTimerId.current);
+  const onClickTakeWin = () => {
+    sendMyGameData('join me!!!!!');
   }
 
-  if(gameTime == 0) {
-    clearInterval(gamePlayTimeId.current);
-  }
   let tmpGameTime = gameTime > 90 ? 90 : gameTime;
   const min = Math.floor(tmpGameTime / 60);
   const sec = tmpGameTime - 60 * min;
@@ -228,6 +311,7 @@ function MainGameScreen(props) {
   let gamePlaySec = sec;
   if(sec < 10) gamePlaySec = `0${sec}`;
   if(min < 10) gamePlayMin = `0${min}`
+  const joinedUsers = gameData.filter(item=>item.type !== sendDataType.gameData && item.name !== userInfo.name)
   return (
     <div className={classes.container} >
       <div className={classes.headerBar}>
@@ -256,10 +340,10 @@ function MainGameScreen(props) {
       </div>
       <div className={classes.joinedUserList}>
         {
-          JoinedUserMockData.map((item, index) => (
+          joinedUsers.map((item, index) => (
             <div key={index} className={classes.joinedUserStyle}>
               <img src={`/Users/user${index+1}.png`} />
-              <p>{item}</p>
+              <p>{item.name}</p>
             </div>
           ))
         }
@@ -279,7 +363,8 @@ function MainGameScreen(props) {
 MainGameScreen.propTypes = {
   setTradeToken: PropTypes.func.isRequired,
   paymentInfo: PropTypes.object,
-  history: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired,
+  userInfo: PropTypes.object.isRequired
 };
 
 MainGameScreen.defaultProps = {
@@ -287,7 +372,8 @@ MainGameScreen.defaultProps = {
 };
 
 const mapStateToProps = (store) => ({
-  paymentInfo: store.paymentData.paymentInfo
+  paymentInfo: store.paymentData.paymentInfo,
+  userInfo: store.userData.userInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

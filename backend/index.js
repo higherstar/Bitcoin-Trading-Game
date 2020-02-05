@@ -5,9 +5,21 @@ var PORT = process.env.PORT || 4000;
 
 const app = require('./config/express');
 const mongoose = require('./config/mongoose');
-
+const WebSocket = require('ws');
 // open mongoose connection
 mongoose.connect();
+
+const wss = new WebSocket.Server({ port: 3933 });
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(data) {
+    wss.clients.forEach(function each(client) {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
+  });
+});
 
 if (process.env.NODE_ENV === 'development') {
     http.createServer(app).listen(PORT, function(){

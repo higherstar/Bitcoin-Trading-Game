@@ -264,6 +264,7 @@ function Game(props) {
         type="number"
         fontSize="75px"
         width="70%"
+        handleChange={handleChangeAmount}
       />
     </div>
   );
