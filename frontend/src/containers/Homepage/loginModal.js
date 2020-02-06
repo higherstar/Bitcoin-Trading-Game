@@ -16,9 +16,10 @@ import { CustomButton, CustomInputBox, CustomAlert } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: '50vw',
+      width: 'fit-content',
       maxWidth: 'unset',
-      height: '50vh',
+      minWidth: '50vw',
+      height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,

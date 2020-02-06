@@ -68,10 +68,10 @@ export const createLineChart = () => {
 		crosshairMarkerVisible: true,
 		crosshairMarkerRadius: 6,
 		lineType: 2,
-		priceLineVisible: false,
-		priceLineWidth: 4,
-		priceLineColor: '#10abde',
-		priceLineStyle: 0,
+		priceLineVisible: true,
+		priceLineWidth: 1,
+		priceLineColor: '#f0abde',
+		priceLineStyle: 1,
 		baseLineVisible: true,
 		baseLineColor: '#ff0000',
 		baseLineWidth: 3,
@@ -85,5 +85,6 @@ export const createLineChart = () => {
     lineStyle: 0,
     axisLabelVisible: true,
 	});
+
 	return { chart, lineSeries };
 };

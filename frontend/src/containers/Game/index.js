@@ -53,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 120,
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: 0,
+    marginTop: '20vh',
+    marginBottom: '6vh',
     fontFamily: theme.font.CeliasMedium,
   },
   userSection :{
@@ -110,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     position: 'absolute',
     top: 20,
+    minWidth: '20vw',
     padding: '0 20px 0 40px',
     borderRadius: 8,
     borderColor: theme.palette.primary.buttonBottomBorder,
@@ -223,7 +225,7 @@ function Game(props) {
     console.log('signupButtonClicked');
   };
   const gotoLogIn = () => {
-    history.push('/login');
+    history.push('/home');
   };
   const onClickAmount = () => {
     setAmountModalView(true);
@@ -292,7 +294,7 @@ function Game(props) {
         <UserIcon name={userInfo.name} image={profileImage}/>
       </div>
       <div className={classes.tradeTokenSection}>
-        <TradeToken name={userTradeToken}/>
+        <TradeToken name={userTradeToken.toString()}/>
       </div>
       <div className={classes.mainSettingStyle}>
         <img src={MainSettingImage}/>

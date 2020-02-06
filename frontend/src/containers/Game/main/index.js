@@ -170,7 +170,7 @@ let globalGameTime = 30;
 const SocketURL = process.env.REACT_APP_SOCKET
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo } = props;
-  const [ waitingTime, setWaitingTime ] = useState(30);
+  const [ waitingTime, setWaitingTime ] = useState(2);
   const [ gameTime, setGameTime ] = useState(90);
   const ws = new WebSocket(SocketURL)
   const [ gameData, setGameData ] = useState([]);
@@ -182,8 +182,11 @@ function MainGameScreen(props) {
   let chartWrapper = null;
   let lineSeries = null;
   let chartData = [];
-  useEffect(async () => {
+  useEffect(() => {
     if (!paymentInfo || !paymentInfo.betCoin) {
+      clearInterval(waitingTimerId.current);
+      clearInterval(serverSocketSendId.current);
+      clearInterval(gamePlayTimeId.current);
       history.push('/game');
     } else {
       setTradeToken(-1);
@@ -218,18 +221,17 @@ function MainGameScreen(props) {
       lineSeries = res.lineSeries;
       handleWindowResize();
       apiFetchTimerId.current = setInterval(fetchApiData, 1000);
+      setTimeout (()=> {
+        if (globalStatus === gameServerStatus.pending) {
+          globalStatus = gameServerStatus.server;
+          serverSocketSendId.current = setInterval(()=> {
+            sendServerData();
+          }, 300);
+          startGame();
+        }
+      }, 2000);
+      window.addEventListener('resize', handleWindowResize);
     }
-    setTimeout (()=> {
-      if (globalStatus === gameServerStatus.pending) {
-        globalStatus = gameServerStatus.server;
-        serverSocketSendId.current = setInterval(()=> {
-          sendServerData();
-        }, 300);
-        startGame();
-      }
-    }, 2000);
-    window.addEventListener('resize', handleWindowResize);
-
   }, []);
 
 
@@ -239,7 +241,6 @@ function MainGameScreen(props) {
       clearInterval(serverSocketSendId.current);
       gamePlayTimeCountDown();
     }
-    
   }, [waitingTime])
 
   useEffect(()=> {
@@ -283,6 +284,18 @@ function MainGameScreen(props) {
     if (newData) {
       chartData = [...chartData, ...newData];
       lineSeries.setData(chartData);
+
+      const now = new Date();
+
+      lineSeries.setMarkers([
+        {
+          time: 1580978704*1000,
+          position: 'aboveBar',
+          color: 'red',
+          shape: 'square',
+          text: 'text'
+        }
+      ]);
     }
   };
 
