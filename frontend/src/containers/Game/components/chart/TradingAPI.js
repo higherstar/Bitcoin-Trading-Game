@@ -23,7 +23,7 @@ export const fetchData = async (lastInfo) => {
   if (data) {
     let newData = [];
     data.data.Data.Data.forEach(item => {
-      if (item.time > lastInfo.time || !lastInfo.time) {
+      if (item.time * 1000 > lastInfo.time || !lastInfo.time) {
         newData.push({
           time: item.time * 1000,
           value: item.open

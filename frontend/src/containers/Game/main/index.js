@@ -234,7 +234,6 @@ function MainGameScreen(props) {
 
 
   useEffect(()=> {
-    console.log('venusTimessss->', waitingTime)
     if (waitingTime === 0 ) {
       clearInterval(waitingTimerId.current);
       clearInterval(serverSocketSendId.current);
