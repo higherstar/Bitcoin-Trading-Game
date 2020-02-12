@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
 import { getUserInfo, setTradeToken } from 'redux/actions/user';
@@ -152,84 +153,59 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const sendDataType = {
-  server: 0,
-  gameData: 1,
-  joinPing: 2
-};
-
-const gameServerStatus = {
-  pending: 0,
-  server: 1,
-  client: 2
-}
-
 let globalStatus = 0;
 let globalGameTime = 30;
-
+let chartData = [];
+const markColorList = [
+  '#ee4035',
+  '#f37736',
+  '#fdf498',
+  '#7bc043',
+  '#0392cf',
+  '#fe9c8f',
+  '#f9caa7',
+  'fe8a71'
+]
 const SocketURL = process.env.REACT_APP_SOCKET
+const client = new W3CWebSocket(SocketURL);
+const contentDefaultMessage = [];
+
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo } = props;
-  const [ waitingTime, setWaitingTime ] = useState(2);
+  const [ waitingTime, setWaitingTime ] = useState(30);
   const [ gameTime, setGameTime ] = useState(90);
-  const ws = new WebSocket(SocketURL)
-  const [ gameData, setGameData ] = useState([]);
+  const [ currentGameData, setCurrentGameData] = useState({
+    currentUsers: [],
+    userActivity: [],
+    userName: null,
+    data: []
+  });
   const classes = useStyles();
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
-  let serverSocketSendId = useRef(null);
   let chartWrapper = null;
-  let lineSeries = null;
-  let chartData = [];
+  let lineSeries = useRef(null);
+  let markers = useRef([])
   useEffect(() => {
     if (!paymentInfo || !paymentInfo.betCoin) {
       clearInterval(waitingTimerId.current);
-      clearInterval(serverSocketSendId.current);
       clearInterval(gamePlayTimeId.current);
       history.push('/game');
     } else {
       setTradeToken(-1);
-      
-      ws.onopen = () => {
-        sendJoinStatus();
-      }
-      ws.onmessage = evt => {
-        console.log(JSON.parse(evt.data))
-        const message = JSON.parse(evt.data);
-        if (message.type === sendDataType.server) {
-          if (globalStatus === gameServerStatus.pending) {
-            changeGameData(message);
-            globalStatus = gameServerStatus.client;
-          }
-          setWaitingTime(parseInt(message.message));
-          if (parseInt(message.message) === 1)
-            setTimeout(()=> {
-              setWaitingTime((preState)=>preState-1);
-            }, 1000)
-        }
-        if (message.type !== sendDataType.server)
-          changeGameData(message);
-      }
-  
-      ws.onclose = () => {
-        console.log('disconnected')
-      }
+      //socket connection
+      client.onopen = () => {
+        console.log('WebSocket Client Connected');
+      };
+      receiveGameData();
+      loginGameRoom();
       // drawing chart
       const res = createLineChart();
       chartWrapper = res.chart;
-      lineSeries = res.lineSeries;
+      lineSeries.current = res.lineSeries;
       handleWindowResize();
       apiFetchTimerId.current = setInterval(fetchApiData, 1000);
-      setTimeout (()=> {
-        if (globalStatus === gameServerStatus.pending) {
-          globalStatus = gameServerStatus.server;
-          serverSocketSendId.current = setInterval(()=> {
-            sendServerData();
-          }, 300);
-          startGame();
-        }
-      }, 2000);
       window.addEventListener('resize', handleWindowResize);
     }
   }, []);
@@ -238,7 +214,6 @@ function MainGameScreen(props) {
   useEffect(()=> {
     if (waitingTime === 0 ) {
       clearInterval(waitingTimerId.current);
-      clearInterval(serverSocketSendId.current);
       gamePlayTimeCountDown();
     }
   }, [waitingTime])
@@ -248,29 +223,60 @@ function MainGameScreen(props) {
     clearInterval(gamePlayTimeId.current);  
   }, [gameTime])
 
+
+  const loginGameRoom = () => {
+    const username = userInfo.name;
+    if (username.trim()) {
+      setCurrentGameData({
+        ...currentGameData,
+        userName: username
+      })
+      client.send(JSON.stringify({
+        text: '',
+        username: username,
+        type: "userevent"
+      }));
+    }
+  }
+
+  const receiveGameData = () => {
+    client.onmessage = (message) => {
+      const dataFromServer = JSON.parse(message.data);
+      const stateToChange = {};
+      stateToChange.data = [];
+      stateToChange.userName = userInfo.name;
+      if (dataFromServer.type === "userevent") {
+        stateToChange.currentUsers = Object.values(dataFromServer.data.users);
+        stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
+        if( stateToChange.currentUsers.length < 2)
+          startGame();
+      } else if (dataFromServer.type === "contentchange") {
+        stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
+        stateToChange.currentUsers = Object.values(dataFromServer.data.users);
+      }
+      stateToChange.userActivity = dataFromServer.data.userActivity;
+      console.log(stateToChange)
+      if (stateToChange.data.length > 0)
+        lineSeries.current.setMarkers([
+          ...markers.current,
+          stateToChange.data.map(item=> {
+            return {
+              time:  JSON.parse(item).time,
+              position: 'aboveBar',
+              color: markColorList[0],
+              shape: 'arrowDown',
+              text: 'text'
+            }
+          })
+        ]);
+      setCurrentGameData({
+        ...stateToChange
+      })
+    };
+  }
+
   const startGame = () => {
     waitingUserTimeCountDown();
-  }
-
-  const changeGameData = (message) => {
-    let tempArray = []
-    tempArray.push(message);
-    setGameData(prevState => ([...tempArray, ...prevState]));
-  }
-
-  const sendJoinStatus = () => {
-    const message = { name: userInfo.name, message: 'join', type: sendDataType.joinPing }
-    ws.send(JSON.stringify(message));
-  }
-
-  const sendMyGameData = messageString => {
-    const message = { name: userInfo.name, message: messageString, type: sendDataType.gameData }
-    ws.send(JSON.stringify(message))
-  }
-
-  const sendServerData = () => {
-    const message = { name: userInfo.name, message: globalGameTime, type: sendDataType.server }
-    ws.send(JSON.stringify(message))
   }
 
   const handleWindowResize = () => {
@@ -283,19 +289,7 @@ function MainGameScreen(props) {
     const newData = await fetchData(chartData.length > 0 ? chartData[chartData.length-1] : {});
     if (newData) {
       chartData = [...chartData, ...newData];
-      lineSeries.setData(chartData);
-
-      const now = new Date();
-
-      lineSeries.setMarkers([
-        {
-          time: 1580978704*1000,
-          position: 'aboveBar',
-          color: 'red',
-          shape: 'square',
-          text: 'text'
-        }
-      ]);
+      lineSeries.current.setData(chartData);
     }
   };
 
@@ -313,7 +307,29 @@ function MainGameScreen(props) {
   }
 
   const onClickTakeWin = () => {
-    sendMyGameData('join me!!!!!');
+    const chooseTime = chartData[chartData.length-1].time
+    markers.current = [
+      ...markers.current,
+      {
+        time: 123123213,
+        position: 'aboveBar',
+        color: markColorList[0],
+        shape: 'arrowDown',
+        text: 'text'
+      }
+    ]
+    lineSeries.current.setMarkers(markers.current);
+    const sendData = JSON.stringify({
+      time : chooseTime,
+      name : currentGameData.userName,
+      color: markColorList[Math.floor(Math.random() * 7)]
+    })
+    console.log('current Data',currentGameData.userName)
+    client.send(JSON.stringify({
+      type: "contentchange",
+      username: currentGameData.userName,
+      content: sendData
+    }));
   }
 
   let tmpGameTime = gameTime > 90 ? 90 : gameTime;
@@ -323,7 +339,7 @@ function MainGameScreen(props) {
   let gamePlaySec = sec;
   if(sec < 10) gamePlaySec = `0${sec}`;
   if(min < 10) gamePlayMin = `0${min}`
-  const joinedUsers = gameData.filter(item=>item.type !== sendDataType.gameData && item.name !== userInfo.name)
+  const joinedUsers = currentGameData.currentUsers
   return (
     <div className={classes.container} >
       <div className={classes.headerBar}>
@@ -355,7 +371,7 @@ function MainGameScreen(props) {
           joinedUsers.map((item, index) => (
             <div key={index} className={classes.joinedUserStyle}>
               <img src={`/Users/user${index+1}.png`} />
-              <p>{item.name}</p>
+              <p>{item.username}</p>
             </div>
           ))
         }

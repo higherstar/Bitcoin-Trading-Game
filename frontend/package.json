@@ -30,7 +30,8 @@
     "recharts": "^1.7.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "websocket": "^1.0.28"
   },
   "devDependencies": {
     "@date-io/core": "^1.3.11",
