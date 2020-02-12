@@ -1,4 +1,6 @@
 import axios from 'axios';
+import httpService from '../../../../services/http.service';
+import { errorMessage } from '../../../../utils'
 
 const getDateTime = (time) => {
   const date = new Date(time);
@@ -27,7 +29,7 @@ export const fetchData = async (lastInfo) => {
         newData.push({
           time: item.time * 1000,
           value: item.open
-        });  
+        });
       }
     });
     return newData;
@@ -52,3 +54,11 @@ export const parseCandleData = (data) => {
   });
   return { candleChartData, volumeChartData };
 };
+
+export const getCryptoData = async() => {
+  const getCryptoData = httpService
+  .get('/crypto/getcryptodata')
+    .then(({ data }) => {return data})
+    .catch((err) => Promise.reject(errorMessage(err.response)));
+  return getCryptoData
+}

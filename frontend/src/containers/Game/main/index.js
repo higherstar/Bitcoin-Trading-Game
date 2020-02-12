@@ -7,7 +7,7 @@ import { getUserInfo, setTradeToken } from 'redux/actions/user';
 import { bindActionCreators } from 'redux';
 import { CustomButton } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
-import { fetchData } from '../components/chart/TradingAPI';
+import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png'
 
@@ -134,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     backgroundColor: '#0000008f',
     position: 'absolute',
-    zIndex: 5,
+    zIndex: 25,
     '& p': {
       color: '#fff',
       fontWeight: 'bold',
@@ -155,7 +155,6 @@ const useStyles = makeStyles((theme) => ({
 
 let globalStatus = 0;
 let globalGameTime = 30;
-let chartData = [];
 const markColorList = [
   '#ee4035',
   '#f37736',
@@ -187,6 +186,7 @@ function MainGameScreen(props) {
   let chartWrapper = null;
   let lineSeries = useRef(null);
   let markers = useRef([])
+  let chartData = useRef([])
   useEffect(() => {
     if (!paymentInfo || !paymentInfo.betCoin) {
       clearInterval(waitingTimerId.current);
@@ -205,7 +205,7 @@ function MainGameScreen(props) {
       chartWrapper = res.chart;
       lineSeries.current = res.lineSeries;
       handleWindowResize();
-      apiFetchTimerId.current = setInterval(fetchApiData, 1000);
+      apiFetchTimerId.current = setInterval(fetchApiData, 2000);
       window.addEventListener('resize', handleWindowResize);
     }
   }, []);
@@ -256,19 +256,20 @@ function MainGameScreen(props) {
       }
       stateToChange.userActivity = dataFromServer.data.userActivity;
       console.log(stateToChange)
-      if (stateToChange.data.length > 0)
-        lineSeries.current.setMarkers([
-          ...markers.current,
-          stateToChange.data.map(item=> {
-            return {
-              time:  JSON.parse(item).time,
-              position: 'aboveBar',
-              color: markColorList[0],
-              shape: 'arrowDown',
-              text: 'text'
-            }
-          })
-        ]);
+      if (stateToChange.data.length > 0) {
+        const getMarkerInfo = stateToChange.data.map(item=> {
+          const parseItem = JSON.parse(item);
+          if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 )
+          return {
+            time:  parseItem.time,
+            position: 'aboveBar',
+            color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
+            shape: 'arrowDown',
+            text: 'text'
+          }
+        })
+        lineSeries.current.setMarkers(getMarkerInfo);
+      }
       setCurrentGameData({
         ...stateToChange
       })
@@ -286,10 +287,10 @@ function MainGameScreen(props) {
   }
 
   const fetchApiData = async () => {
-    const newData = await fetchData(chartData.length > 0 ? chartData[chartData.length-1] : {});
-    if (newData) {
-      chartData = [...chartData, ...newData];
-      lineSeries.current.setData(chartData);
+    const cryptoData = await getCryptoData();
+    if (cryptoData) {
+      chartData.current = cryptoData;
+      lineSeries.current.setData(cryptoData);
     }
   };
 
@@ -306,25 +307,13 @@ function MainGameScreen(props) {
     }, 1000);
   }
 
-  const onClickTakeWin = () => {
-    const chooseTime = chartData[chartData.length-1].time
-    markers.current = [
-      ...markers.current,
-      {
-        time: 123123213,
-        position: 'aboveBar',
-        color: markColorList[0],
-        shape: 'arrowDown',
-        text: 'text'
-      }
-    ]
-    lineSeries.current.setMarkers(markers.current);
+  const onClickTakeWin = async () => {
+    const chooseTime = chartData.current[chartData.current.length-1].time;
     const sendData = JSON.stringify({
       time : chooseTime,
       name : currentGameData.userName,
-      color: markColorList[Math.floor(Math.random() * 7)]
+      color: markColorList[Math.floor(Math.random() * 7 + 1)]
     })
-    console.log('current Data',currentGameData.userName)
     client.send(JSON.stringify({
       type: "contentchange",
       username: currentGameData.userName,

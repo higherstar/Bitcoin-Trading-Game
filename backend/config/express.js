@@ -21,6 +21,7 @@ app.use(jwt());
 
 app.use('/users', require('../routes/users/user.controller'));
 app.use('/payment', require('../routes/payment/payment.controller'));
+app.use('/crypto', require('../routes/crypto/crypto.controller'))
 
 // global error handler
 app.use(errorHandler);

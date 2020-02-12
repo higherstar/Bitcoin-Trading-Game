@@ -96,10 +96,10 @@ wsServer.on('request', function(request) {
   connection.on('close', function(connection) {
     console.log((new Date()) + " Peer " + userID + " disconnected.");
     const json = { type: typesDef.USER_EVENT };
-    if (users[userID] && users[userID].username)
+    if (users[userID] && users[userID].username) {
       userActivity.push(`${users[userID].username} left the document`);
-    if( users[userID] && users[userID])
-      editorContent = editorContent.filter(item => JSON.parse(item).name !== users[userID])
+      editorContent = editorContent.filter(item => JSON.parse(item).name !== users[userID].username)
+    }
 
     if (users.length === 0) {
       userActivity = [];
