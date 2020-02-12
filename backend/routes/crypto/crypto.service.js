@@ -3,9 +3,11 @@ const config = require('../../config/vars');
 const axios = require('axios');
 const app = require("express")();
 app.use(require("body-parser").text());
+const Crypto = require('./crypto.model');
 
 module.exports = {
 	getData,
+	setGameStatus
 };
 
 let chartData = [];
@@ -49,3 +51,12 @@ const fetchData = async (lastInfo) => {
   }
   return false;
 };
+
+async function setGameStatus (res) {
+	const newCriptoData = new Crypto({
+		roomId: 123,
+		playerName: res.name,
+		score: res.score
+	})
+	return await newCriptoData.save();
+}

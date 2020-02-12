@@ -10,6 +10,9 @@ import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png'
+import httpService from '../../../services/http.service';
+import { errorMessage } from '../../../utils'
+import { CustomAlert } from 'components/elements';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -153,8 +156,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-let globalStatus = 0;
-let globalGameTime = 30;
 const markColorList = [
   '#ee4035',
   '#f37736',
@@ -168,25 +169,31 @@ const markColorList = [
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const contentDefaultMessage = [];
-
+const totalGameTime = 300;
+const gameWatingTime = 30;
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo } = props;
-  const [ waitingTime, setWaitingTime ] = useState(30);
-  const [ gameTime, setGameTime ] = useState(90);
+  const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
+  const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ currentGameData, setCurrentGameData] = useState({
     currentUsers: [],
     userActivity: [],
     userName: null,
-    data: []
+    data: [],
+    startGameTime: -1
   });
+  const [ jackPot, setJackPot ] = useState(0);
   const classes = useStyles();
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
   let chartWrapper = null;
   let lineSeries = useRef(null);
-  let markers = useRef([])
-  let chartData = useRef([])
+  let chartData = useRef([]);
+  let startingGame = useRef(false);
+  let takeTokenCount = useRef(2);
+  const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
+
   useEffect(() => {
     if (!paymentInfo || !paymentInfo.betCoin) {
       clearInterval(waitingTimerId.current);
@@ -234,7 +241,8 @@ function MainGameScreen(props) {
       client.send(JSON.stringify({
         text: '',
         username: username,
-        type: "userevent"
+        type: "userevent",
+        betCoin: paymentInfo.betCoin
       }));
     }
   }
@@ -248,26 +256,35 @@ function MainGameScreen(props) {
       if (dataFromServer.type === "userevent") {
         stateToChange.currentUsers = Object.values(dataFromServer.data.users);
         stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
-        if( stateToChange.currentUsers.length < 2)
-          startGame();
+        stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
+        const startSec = gameWatingTime - Math.floor((Date.now() - stateToChange.startGameTime)/1000);
+        console.log(dataFromServer.data.totalBetCoin);
+        setJackPot(dataFromServer.data.totalBetCoin);
+        if (!startingGame.current) {
+          startingGame.current=true;
+          startGame(startSec);
+        }
       } else if (dataFromServer.type === "contentchange") {
         stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
         stateToChange.currentUsers = Object.values(dataFromServer.data.users);
       }
       stateToChange.userActivity = dataFromServer.data.userActivity;
-      console.log(stateToChange)
+      stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
       if (stateToChange.data.length > 0) {
-        const getMarkerInfo = stateToChange.data.map(item=> {
+        const getMarkerInfo = stateToChange.data.reduce((prev, item)=> {
           const parseItem = JSON.parse(item);
           if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 )
-          return {
-            time:  parseItem.time,
-            position: 'aboveBar',
-            color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
-            shape: 'arrowDown',
-            text: 'text'
-          }
-        })
+            return [
+              ...prev,
+              {
+              time:  parseItem.time,
+              position: 'aboveBar',
+              color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
+              shape: 'arrowDown',
+              text: 'text'
+            }
+          ];
+        }, []);
         lineSeries.current.setMarkers(getMarkerInfo);
       }
       setCurrentGameData({
@@ -276,8 +293,8 @@ function MainGameScreen(props) {
     };
   }
 
-  const startGame = () => {
-    waitingUserTimeCountDown();
+  const startGame = (startTime) => {
+    waitingUserTimeCountDown(startTime);
   }
 
   const handleWindowResize = () => {
@@ -294,10 +311,10 @@ function MainGameScreen(props) {
     }
   };
 
-  const waitingUserTimeCountDown = () => {
+  const waitingUserTimeCountDown = (startTime) => {
+    setWaitingTime(startTime);
     waitingTimerId.current = setInterval(()=> {
       setWaitingTime((t)=> t-1);
-      globalGameTime -=1;
     }, 1000);
   }
 
@@ -307,21 +324,47 @@ function MainGameScreen(props) {
     }, 1000);
   }
 
+  const setGameScore = async (body) => {
+    const getCryptoData = httpService
+    .post('/crypto/recordscore', body)
+      .then(() => {return true})
+      .catch(() => {
+        return false;
+      }
+    );
+    return getCryptoData
+  }
+
   const onClickTakeWin = async () => {
-    const chooseTime = chartData.current[chartData.current.length-1].time;
+    if (takeTokenCount.current < 1) {
+      setErrorShow({show:true, message: 'There is no Token', type: 'warning'});
+      return;
+    }
+
+    const currentData = chartData.current[chartData.current.length-1];
+    const chooseTime = currentData.time;
     const sendData = JSON.stringify({
       time : chooseTime,
       name : currentGameData.userName,
       color: markColorList[Math.floor(Math.random() * 7 + 1)]
     })
-    client.send(JSON.stringify({
-      type: "contentchange",
-      username: currentGameData.userName,
-      content: sendData
-    }));
+
+    const saveData = await setGameScore({
+      score: currentData.value,
+      name: userInfo.name
+    });
+    if (saveData) {
+      takeTokenCount.current -= 1;
+      client.send(JSON.stringify({
+        type: "contentchange",
+        username: currentGameData.userName,
+        content: sendData
+      }));
+    }
+    else setErrorShow({show:true, message: 'Your score did not update! Try again.', type: 'error'});
   }
 
-  let tmpGameTime = gameTime > 90 ? 90 : gameTime;
+  let tmpGameTime = gameTime > totalGameTime ? totalGameTime : gameTime;
   const min = Math.floor(tmpGameTime / 60);
   const sec = tmpGameTime - 60 * min;
   let gamePlayMin = min;
@@ -336,7 +379,7 @@ function MainGameScreen(props) {
           <p>{`Stake : $ ${paymentInfo.betCoin}`}</p>
         </div>
         <div className={classes.jackpotInfoStyle}>
-          <p>{`Jackpot : $ 40,000`}</p>
+          <p>{`Jackpot : $ ${jackPot}`}</p>
         </div>
         <div className={classes.pauseGameStyle}>
           <img src={PauseImage}/>
@@ -372,7 +415,11 @@ function MainGameScreen(props) {
           <p>{waitingTime}</p>
         </div>
       }
-
+      <CustomAlert 
+        title={errorShow.message}
+        open={errorShow.show}
+        handleClose={()=>setErrorShow(false)}
+        type={errorShow.type}/>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 var http = require('http');
 var https = require('https');
 
-
 const webSocketsServerPort = 3933;
 const webSocketServer = require('websocket').server;
 // Spinning the http server and the websocket server.
@@ -57,6 +56,9 @@ let editorContent = [];
 // User activity history.
 let userActivity = [];
 
+let startGameTime = -1;
+let totalBetCoin = 0;
+
 const sendMessage = (json) => {
   // We are sending the current data to all connected clients
   Object.keys(clients).map((client) => {
@@ -68,6 +70,9 @@ const typesDef = {
   USER_EVENT: "userevent",
   CONTENT_CHANGE: "contentchange"
 }
+
+
+/*Set Socket Connect*/
 
 wsServer.on('request', function(request) {
   var userID = getUniqueID();
@@ -81,15 +86,25 @@ wsServer.on('request', function(request) {
       const dataFromClient = JSON.parse(message.utf8Data);
       const json = { type: dataFromClient.type };
       if (dataFromClient.type === typesDef.USER_EVENT) {
+        /* Join the game */
+        if (Object.keys(users).length === 0 ) startGameTime = Date.now();
         users[userID] = dataFromClient;
         if (dataFromClient.username)
           userActivity.push(`${dataFromClient.username} joined to edit the document`);
-        json.data = { editorContent, users, userActivity };
+        if ( dataFromClient.beCoin ) totalBetCoin += dataFromClient.beCoin;
+        json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
+        sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
+        /* Save the users mark info to DB and send all users */
         editorContent.push(dataFromClient.content);
-        json.data = { editorContent, userActivity, users };
+        /* datafronClient.content = {
+            time: "",
+            name: "",
+            color: ""
+        } */
+        json.data = { editorContent, userActivity, users, startGameTime };
+        sendMessage(JSON.stringify(json));
       }
-      sendMessage(JSON.stringify(json));
     }
   });
   // user disconnected
@@ -104,12 +119,10 @@ wsServer.on('request', function(request) {
     if (users.length === 0) {
       userActivity = [];
     }
-    json.data = { editorContent, users, userActivity };
+    json.data = { editorContent, users, userActivity, startGameTime };
     delete clients[userID];
     delete users[userID];
     sendMessage(JSON.stringify(json));
   });
 });
-
-
 
