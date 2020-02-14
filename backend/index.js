@@ -87,11 +87,14 @@ wsServer.on('request', function(request) {
       const json = { type: dataFromClient.type };
       if (dataFromClient.type === typesDef.USER_EVENT) {
         /* Join the game */
-        if (Object.keys(users).length === 0 ) startGameTime = Date.now();
+        if (Object.keys(users).length === 0 ) {
+          startGameTime = Date.now();
+          totalBetCoin = 0;
+        }
         users[userID] = dataFromClient;
         if (dataFromClient.username)
           userActivity.push(`${dataFromClient.username} joined to edit the document`);
-        if ( dataFromClient.beCoin ) totalBetCoin += dataFromClient.beCoin;
+        if ( dataFromClient.betCoin ) totalBetCoin += dataFromClient.betCoin;
         json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
@@ -116,10 +119,11 @@ wsServer.on('request', function(request) {
       editorContent = editorContent.filter(item => JSON.parse(item).name !== users[userID].username)
     }
 
-    if (users.length === 0) {
+    if (Object.keys(users).length === 0) {
       userActivity = [];
+      totalBetCoin = 0;
     }
-    json.data = { editorContent, users, userActivity, startGameTime };
+    json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
     delete clients[userID];
     delete users[userID];
     sendMessage(JSON.stringify(json));

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderWidth: 3,
     borderStyle: 'solid',
-    fontSize: (props) => props.width / 6,
+    fontSize: (props) => props.width / 7,
     color: theme.palette.base.white,
     fontFamily: theme.font.CeliasMedium,
     // background: `linear-gradient(${theme.palette.primary.buttonTopBorder}, ${theme.palette.primary.buttonBottomBorder})`,

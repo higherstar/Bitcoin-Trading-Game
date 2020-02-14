@@ -3,16 +3,18 @@ import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
+import { buyInStacke } from 'redux/actions/payment';
 import { getUserInfo, setTradeToken } from 'redux/actions/user';
 import { bindActionCreators } from 'redux';
 import { CustomButton } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
-import ClockImage from 'assets/image/clock.png'
-import httpService from '../../../services/http.service';
-import { errorMessage } from '../../../utils'
+import ClockImage from 'assets/image/clock.png';
+import { setGameScore, setGameInfo, getWinnerState } from './gameAPICalls';
 import { CustomAlert } from 'components/elements';
+import WinnerModal from './winnerModal';
+import LoserModal from './loserModal';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -169,10 +171,10 @@ const markColorList = [
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const contentDefaultMessage = [];
-const totalGameTime = 300;
+const totalGameTime = 30;
 const gameWatingTime = 30;
 function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history, userInfo } = props;
+  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ currentGameData, setCurrentGameData] = useState({
@@ -183,6 +185,9 @@ function MainGameScreen(props) {
     startGameTime: -1
   });
   const [ jackPot, setJackPot ] = useState(0);
+  const [ gameWinDialogShow, setGameWinDialogShow] = useState(false);
+  const [ gameLoseDialogShow, setGameLoseDialogShow] = useState(false)
+  const [ gameBetCoin, setGameBetCoin ] = useState(0);
   const classes = useStyles();
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
@@ -205,6 +210,7 @@ function MainGameScreen(props) {
       client.onopen = () => {
         console.log('WebSocket Client Connected');
       };
+      setGameBetCoin(paymentInfo.betCoin);
       receiveGameData();
       loginGameRoom();
       // drawing chart
@@ -226,8 +232,17 @@ function MainGameScreen(props) {
   }, [waitingTime])
 
   useEffect(()=> {
-    if (gameTime === 0)
-    clearInterval(gamePlayTimeId.current);  
+    if (gameTime === 0) {
+      clearInterval(gamePlayTimeId.current);
+      getWinnerState({playerName: userInfo.name, roomId: '123'})
+        .then((res)=> {
+          if (res) setGameWinDialogShow(true);
+          else setGameLoseDialogShow(true);
+        })
+        .catch(()=> {
+          setGameLoseDialogShow(true);
+        })
+    }
   }, [gameTime])
 
 
@@ -238,12 +253,25 @@ function MainGameScreen(props) {
         ...currentGameData,
         userName: username
       })
-      client.send(JSON.stringify({
-        text: '',
-        username: username,
-        type: "userevent",
-        betCoin: paymentInfo.betCoin
-      }));
+
+      const result = setGameInfo({
+        roomId: "123",
+        playerName: userInfo.name,
+        betCoin: paymentInfo.betCoin,
+        score1: 0,
+        score2: 0
+      })
+      if ( result ) {
+        client.send(JSON.stringify({
+          text: '',
+          username: username,
+          type: "userevent",
+          betCoin: paymentInfo.betCoin
+        }));
+        buyInStacke(0);
+      } else {
+        history.push('/game');
+      }
     }
   }
 
@@ -273,7 +301,7 @@ function MainGameScreen(props) {
       if (stateToChange.data.length > 0) {
         const getMarkerInfo = stateToChange.data.reduce((prev, item)=> {
           const parseItem = JSON.parse(item);
-          if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 )
+          if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 ) {
             return [
               ...prev,
               {
@@ -284,6 +312,8 @@ function MainGameScreen(props) {
               text: 'text'
             }
           ];
+        }
+        return prev;
         }, []);
         lineSeries.current.setMarkers(getMarkerInfo);
       }
@@ -324,17 +354,6 @@ function MainGameScreen(props) {
     }, 1000);
   }
 
-  const setGameScore = async (body) => {
-    const getCryptoData = httpService
-    .post('/crypto/recordscore', body)
-      .then(() => {return true})
-      .catch(() => {
-        return false;
-      }
-    );
-    return getCryptoData
-  }
-
   const onClickTakeWin = async () => {
     if (takeTokenCount.current < 1) {
       setErrorShow({show:true, message: 'There is no Token', type: 'warning'});
@@ -351,7 +370,7 @@ function MainGameScreen(props) {
 
     const saveData = await setGameScore({
       score: currentData.value,
-      name: userInfo.name
+      playerName: userInfo.name
     });
     if (saveData) {
       takeTokenCount.current -= 1;
@@ -376,7 +395,7 @@ function MainGameScreen(props) {
     <div className={classes.container} >
       <div className={classes.headerBar}>
         <div className={classes.userStakeInfoStyle}>
-          <p>{`Stake : $ ${paymentInfo.betCoin}`}</p>
+          <p>{`Stake : $ ${gameBetCoin}`}</p>
         </div>
         <div className={classes.jackpotInfoStyle}>
           <p>{`Jackpot : $ ${jackPot}`}</p>
@@ -420,6 +439,13 @@ function MainGameScreen(props) {
         open={errorShow.show}
         handleClose={()=>setErrorShow(false)}
         type={errorShow.type}/>
+      <WinnerModal
+        opened={gameWinDialogShow}
+        jackPot={jackPot}
+      />
+      <LoserModal
+        opened={gameLoseDialogShow}
+      />
     </div>
   );
 }
@@ -428,7 +454,8 @@ MainGameScreen.propTypes = {
   setTradeToken: PropTypes.func.isRequired,
   paymentInfo: PropTypes.object,
   history: PropTypes.object.isRequired,
-  userInfo: PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired,
+  buyInStacke: PropTypes.func.isRequired,
 };
 
 MainGameScreen.defaultProps = {
@@ -441,7 +468,8 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setTradeToken
+  setTradeToken,
+  buyInStacke
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainGameScreen);

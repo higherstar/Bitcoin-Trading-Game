@@ -45,7 +45,7 @@ async function getByEmail(email) {
 
 async function create(userParam) {
     // validate
-    if (await User.findOne({ email: userParam.email })) {
+    if (await User.findOne({ email: userParam.email }) || User.findOne({ name: userParam.name })) {
         throw 'Email "' + userParam.email + '" is already taken';
     }
 
@@ -90,7 +90,6 @@ async function update(userParam) {
 				email: user.email,
 				name: user.name
 		});
-	console.log('venus--->create customer',customer);
 	if(customer.id){
 		const status = await stripe.customers.createSource(customer.id, {
       source: user.paymentTokenID,

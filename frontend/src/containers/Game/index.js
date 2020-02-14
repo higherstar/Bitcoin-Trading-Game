@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     '& h2': {
       padding: 0,
       paddingLeft: 15,
-      fontSize: 70,
+      fontSize: 60,
       margin: 0,
       fontWeight: 'bold',
       color: 'white',

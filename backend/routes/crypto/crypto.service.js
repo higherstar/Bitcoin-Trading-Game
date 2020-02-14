@@ -7,7 +7,9 @@ const Crypto = require('./crypto.model');
 
 module.exports = {
 	getData,
-	setGameStatus
+  setGamePlayInfo,
+  setGameScore,
+  resultWinner
 };
 
 let chartData = [];
@@ -52,11 +54,32 @@ const fetchData = async (lastInfo) => {
   return false;
 };
 
-async function setGameStatus (res) {
-	const newCriptoData = new Crypto({
-		roomId: 123,
-		playerName: res.name,
-		score: res.score
-	})
+async function setGamePlayInfo (res) {
+	const newCriptoData = new Crypto(res)
 	return await newCriptoData.save();
+}
+
+async function resultWinner(res) {
+  const allData = await Crypto.find({roomId: res.roomId});
+  const myData = await Crypto.findOne({playerName : res.playerName});
+  const myScore = (myData.score1 > myData.score2 ? myData.score1 : myData.score2);
+  let result = false;
+  allData.forEach(item => {
+    result = (item.score1 > item.score2 ? item.score1 : item.score2) > myScore ? false : true
+  })
+  return result
+}
+
+async function setGameScore(res) {
+  const player = await Crypto.findOne({ playerName : res.playerName})
+  if (player) {
+    Object.assign(player, {
+      roomId: player.roomId,
+      playerName: player.playerName,
+      betCoin: player.betCoin,
+      score1: player.score1 === 0 ? res.score : player.score1,
+      score2: player.score1 !== 0 ? res.score : player.score2
+    });
+    return await player.save();
+  } else throw "There is no User";
 }
