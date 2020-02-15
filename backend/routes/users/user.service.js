@@ -45,7 +45,7 @@ async function getByEmail(email) {
 
 async function create(userParam) {
     // validate
-    if (await User.findOne({ email: userParam.email }) || User.findOne({ name: userParam.name })) {
+    if (await User.findOne({ email: userParam.email })) {
         throw 'Email "' + userParam.email + '" is already taken';
     }
 
