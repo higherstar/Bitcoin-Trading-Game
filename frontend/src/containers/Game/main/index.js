@@ -391,6 +391,7 @@ function MainGameScreen(props) {
   if(sec < 10) gamePlaySec = `0${sec}`;
   if(min < 10) gamePlayMin = `0${min}`
   const joinedUsers = currentGameData.currentUsers
+
   return (
     <div className={classes.container} >
       <div className={classes.headerBar}>

@@ -1,6 +1,3 @@
-const config = require('../../config/vars');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const Payment = require('./payment.model');
 const User = require('../users/user.model');
 const app = require("express")();
