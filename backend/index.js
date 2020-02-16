@@ -47,22 +47,16 @@ const getUniqueID = () => {
   return s4() + s4() + '-' + s4();
 };
 
-// I'm maintaining all active connections in this object
-const clients = {};
-// I'm maintaining all active users in this object
-const users = {};
-// The current editor content is maintained here.
-let editorContent = [];
-// User activity history.
-let userActivity = [];
 
-let startGameTime = -1;
-let totalBetCoin = 0;
+const rooms = {}
+const clients = {};
 
 const sendMessage = (json) => {
+  const sendData = JSON.stringify(json);
+  const mapData = json.data.roomPlayers;
   // We are sending the current data to all connected clients
-  Object.keys(clients).map((client) => {
-    clients[client].sendUTF(json);
+  Object.keys(mapData).forEach((client) => {
+    if (client !== 'jackPot') clients[client].sendUTF(sendData);
   });
 }
 
@@ -73,6 +67,30 @@ const typesDef = {
 
 
 /*Set Socket Connect*/
+
+/*Temp Object */
+/*
+rooms = {
+  roomId:{
+    jackPot: 0,
+    userID: {
+      roomId: "",
+      username: "",
+      type: "userevent",
+      tokenTimes: [],
+      betCoin: 0
+    },
+    userID1: {
+      roomId: "",
+      username: "",
+      type: "userevent",
+      tokenTimes: [],
+      betCoin: 0
+    }
+  }
+}
+
+*/
 
 wsServer.on('request', function(request) {
   var userID = getUniqueID();
@@ -87,46 +105,62 @@ wsServer.on('request', function(request) {
       const json = { type: dataFromClient.type };
       if (dataFromClient.type === typesDef.USER_EVENT) {
         /* Join the game */
-        if (Object.keys(users).length === 0 ) {
-          startGameTime = Date.now();
-          totalBetCoin = 0;
+        if (!rooms[dataFromClient.roomId]) {
+          rooms[dataFromClient.roomId] = {};
+          rooms[dataFromClient.roomId]["jackPot"] = 0;
         }
-        users[userID] = dataFromClient;
-        if (dataFromClient.username)
-          userActivity.push(`${dataFromClient.username} joined to edit the document`);
-        if ( dataFromClient.betCoin ) totalBetCoin = dataFromClient.jackPot;
-        json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
-        sendMessage(JSON.stringify(json));
+        rooms[dataFromClient.roomId]["jackPot"] = rooms[dataFromClient.roomId]["jackPot"] + dataFromClient.betCoin;
+        rooms[dataFromClient.roomId][userID] = dataFromClient;
+        json.data = { roomPlayers: rooms[dataFromClient.roomId] };
+        sendMessage(json);
       } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
-        /* Save the users mark info to DB and send all users */
-        editorContent.push(dataFromClient.content);
-        /* datafronClient.content = {
-            time: "",
-            name: "",
-            color: ""
-        } */
-        json.data = { editorContent, userActivity, users, startGameTime };
-        sendMessage(JSON.stringify(json));
+        /*
+        dataFromClient Data Object
+        {
+          type: "contentchange",
+          roomId : playRoom.id,
+          userName: userInfo.name,
+          tokenTime: chooseTime
+        }
+       */
+        Object.keys(rooms[dataFromClient.roomId]).forEach(userId=> {
+          if(userId !== 'jackPot' && rooms[dataFromClient.roomId][userId].username === dataFromClient.userName) {
+            rooms[dataFromClient.roomId][userId].tokenTimes.push(dataFromClient.tokenTime);
+          }
+        })
+        json.data = { roomPlayers: rooms[dataFromClient.roomId] };
+        sendMessage(json);
       }
     }
   });
   // user disconnected
   connection.on('close', function(connection) {
     console.log((new Date()) + " Peer " + userID + " disconnected.");
-    const json = { type: typesDef.USER_EVENT };
-    if (users[userID] && users[userID].username) {
-      userActivity.push(`${users[userID].username} left the document`);
-      editorContent = editorContent.filter(item => JSON.parse(item).name !== users[userID].username)
-    }
-
-    if (Object.keys(users).length === 0) {
-      userActivity = [];
-      totalBetCoin = 0;
-    }
-    json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
     delete clients[userID];
-    delete users[userID];
-    sendMessage(JSON.stringify(json));
+    Object.keys(rooms).forEach((roomId) => {
+      Object.keys(rooms[roomId]).forEach(userId => {
+        if (userId === userID) {
+          delete rooms[roomId][userID];
+        }
+      })
+      if (Object.keys(rooms[roomId]).length < 2) {
+        delete rooms[roomId];
+      }
+    })
+    console.log('rooms>>>>>', rooms)
+    // const json = { type: typesDef.USER_EVENT };
+    // if (users[userID] && users[userID].username) {
+    //   userActivity.push(`${users[userID].username} left the document`);
+    //   editorContent = editorContent.filter(item => JSON.parse(item).name !== users[userID].username)
+    // }
+
+    // if (Object.keys(users).length === 0) {
+    //   userActivity = [];
+    //   totalBetCoin = 0;
+    // }
+    // json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
+    // delete clients[userID];
+    // delete users[userID];
+    // sendMessage(JSON.stringify(json));
   });
 });
-

@@ -3,7 +3,7 @@ import types from '../actionTypes';
 const INITIAL_STATE = {
   isFetching: false,
 
-  gameActiveRoom: {},
+  playRoom: {},
 
   errors: '',
 };
@@ -19,7 +19,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        gameActiveRoom: action.payload.room,
+        playRoom: action.payload.room,
       };
     case types.GET_ACTIVE_GAME_ROOM_FAILED:
       return {
@@ -38,7 +38,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        gameActiveRoom: action.payload.room,
+        playRoom: action.payload.room,
       };
     case types.CREATE_ROOM_FAILED:
       return {
@@ -58,7 +58,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        gameActiveRoom: action.payload.room,
+        playRoom: action.payload.room,
       };
     case types.CREATE_ROOM_FAILDED:
       return {

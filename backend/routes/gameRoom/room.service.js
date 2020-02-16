@@ -16,14 +16,18 @@ async function createRoom(body) {
 }
 
 async function getActiveRoom() {
-  const room = await Room.findOne({status: "pending"});
-  if (room) {
-    if ((Date.now() - room.createdDate.getTime())/1000 > 30) {
-      Object.assign(room, {status: 'rejected'});
-      await room.save();
-      throw "timeout Room";
+  const rooms = await Room.find({status: "pending"});
+  if (rooms) {
+    let activeRoom={};
+    rooms.forEach(async(room)=> {
+      if ((Date.now() - room.createdDate.getTime())/1000 > 30) {
+        Object.assign(room, {status: 'rejected'});
+        await room.save();
+      } else activeRoom = room;
+    });
+    if(activeRoom._id) {
+      return activeRoom
     }
-    return room;
   }
   throw "There is no active room";
 }

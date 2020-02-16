@@ -171,20 +171,14 @@ const markColorList = [
 ]
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
-const contentDefaultMessage = [];
-const totalGameTime = 30;
+const totalGameTime = 60;
 const gameWatingTime = 30;  
 function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom } = props;
+  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
-  const [ currentGameData, setCurrentGameData] = useState({
-    currentUsers: [],
-    userActivity: [],
-    userName: null,
-    data: [],
-    startGameTime: -1
-  });
+  const [ playersTokens, setPlayersTokens] = useState([]);
+  const [ currentPlayers, setCurrentPlayers] = useState([]);
   const [ jackPot, setJackPot ] = useState(0);
   const [ gameWinDialogShow, setGameWinDialogShow] = useState(false);
   const [ gameLoseDialogShow, setGameLoseDialogShow] = useState(false)
@@ -217,6 +211,21 @@ function MainGameScreen(props) {
     }
   }, []);
 
+  useEffect(()=> {
+    let getMarkerInfo = [];
+    playersTokens.forEach(item=> {
+        getMarkerInfo.push({
+          time:  item.time,
+          position: 'aboveBar',
+          color: userInfo.name === item.userName ? markColorList[0] : markColorList[1],
+          shape: 'arrowDown',
+          text: 'text'
+      })
+    });
+    if (getMarkerInfo.length > 0)
+      lineSeries.current.setMarkers(getMarkerInfo);
+  }, [playersTokens])
+
 
   useEffect(()=> {
     if (waitingTime === 0 ) {
@@ -228,7 +237,7 @@ function MainGameScreen(props) {
   useEffect(()=> {
     if (gameTime === 0) {
       clearInterval(gamePlayTimeId.current);
-      getWinnerState({playerName: userInfo.name, roomId: '123'})
+      getWinnerState({playerName: userInfo.name, roomId: playRoom.id})
         .then((res)=> {
           if (res) setGameWinDialogShow(true);
           else setGameLoseDialogShow(true);
@@ -243,13 +252,9 @@ function MainGameScreen(props) {
   const loginGameRoom = () => {
     const username = userInfo.name;
     if (username.trim()) {
-      setCurrentGameData({
-        ...currentGameData,
-        userName: username
-      })
       getActiveRoom()
         .then((r)=> {
-          joinRoom({roomId: r.roomId, betCoin: paymentInfo.betCoin})
+          joinRoom({roomId: r.id, betCoin: paymentInfo.betCoin})
             .then((res)=> {
               joinGameSuccess(res);
             })          
@@ -267,7 +272,7 @@ function MainGameScreen(props) {
   const joinGameSuccess = async(response) => {
     const username = userInfo.name;
     const result = await setGameInfo({
-      roomId: response.roomId,
+      roomId: response.id,
       playerName: userInfo.name,
       betCoin: paymentInfo.betCoin,
       score1: 0,
@@ -275,12 +280,17 @@ function MainGameScreen(props) {
     });
     if (result) {
       client.send(JSON.stringify({
-        text: '',
+        roomId: response.id,
         username: username,
         type: "userevent",
-        jackPot: response.jackPot
+        betCoin: paymentInfo.betCoin,
+        tokenTimes: []
       }));
       setGameBetCoin(paymentInfo.betCoin);
+      const startGameTime = (Date.now() - (new Date(response.createdDate)).getTime())/1000;
+      startingGame.current=true;
+      startGame(Math.floor(30 - startGameTime));
+      
       receiveGameData();
       const res = createLineChart();
       chartWrapper = res.chart;
@@ -295,48 +305,77 @@ function MainGameScreen(props) {
   const receiveGameData = () => {
     client.onmessage = (message) => {
       const dataFromServer = JSON.parse(message.data);
-      const stateToChange = {};
-      stateToChange.data = [];
-      stateToChange.userName = userInfo.name;
+      console.log(dataFromServer)
+      setJackPot(dataFromServer.data.roomPlayers.jackPot);
       if (dataFromServer.type === "userevent") {
-        stateToChange.currentUsers = Object.values(dataFromServer.data.users);
-        stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
-        stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
-        const startSec = gameWatingTime - Math.floor((Date.now() - stateToChange.startGameTime)/1000);
-        console.log(dataFromServer.data.totalBetCoin);
-        setJackPot(dataFromServer.data.totalBetCoin);
-        if (!startingGame.current) {
-          startingGame.current=true;
-          startGame(startSec);
-        }
-      } else if (dataFromServer.type === "contentchange") {
-        stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
-        stateToChange.currentUsers = Object.values(dataFromServer.data.users);
+        let players = []
+        Object.keys(dataFromServer.data.roomPlayers).forEach(item=>{
+          if (item !== 'jackPot') {
+            players.push(dataFromServer.data.roomPlayers[item].username);
+          }
+        })
+        setCurrentPlayers([
+          ...currentPlayers,
+          ...players
+        ]);
       }
-      stateToChange.userActivity = dataFromServer.data.userActivity;
-      stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
-      if (stateToChange.data.length > 0) {
-        const getMarkerInfo = stateToChange.data.reduce((prev, item)=> {
-          const parseItem = JSON.parse(item);
-          if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 ) {
-            return [
-              ...prev,
-              {
-              time:  parseItem.time,
-              position: 'aboveBar',
-              color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
-              shape: 'arrowDown',
-              text: 'text'
-            }
-          ];
-        }
-        return prev;
-        }, []);
-        lineSeries.current.setMarkers(getMarkerInfo);
+
+      if (dataFromServer.type === "contentchange") {
+        let tokens = [];
+        Object.keys(dataFromServer.data.roomPlayers).forEach(userId => {
+          if (userId !== 'jackPot') {
+            dataFromServer.data.roomPlayers[userId].tokenTimes.forEach(time => {
+              tokens.push({
+                time: time,
+                userName: dataFromServer.data.roomPlayers[userId].username
+              })
+            })
+          }
+        })
+        setPlayersTokens(tokens);
       }
-      setCurrentGameData({
-        ...stateToChange
-      })
+      // const stateToChange = {};
+      // stateToChange.data = [];
+      // stateToChange.userName = userInfo.name;
+      // if (dataFromServer.type === "userevent") {
+      //   stateToChange.currentUsers = Object.values(dataFromServer.data.users);
+      //   stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
+      //   stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
+      //   const startSec = gameWatingTime - Math.floor((Date.now() - stateToChange.startGameTime)/1000);
+      //   console.log(dataFromServer.data.totalBetCoin);
+      //   setJackPot(dataFromServer.data.totalBetCoin);
+      //   if (!startingGame.current) {
+      //     startingGame.current=true;
+      //     startGame(startSec);
+      //   }
+      // } else if (dataFromServer.type === "contentchange") {
+      //   stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
+      //   stateToChange.currentUsers = Object.values(dataFromServer.data.users);
+      // }
+      // stateToChange.userActivity = dataFromServer.data.userActivity;
+      // stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
+      // if (stateToChange.data.length > 0) {
+      //   const getMarkerInfo = stateToChange.data.reduce((prev, item)=> {
+      //     const parseItem = JSON.parse(item);
+      //     if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 ) {
+      //       return [
+      //         ...prev,
+      //         {
+      //         time:  parseItem.time,
+      //         position: 'aboveBar',
+      //         color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
+      //         shape: 'arrowDown',
+      //         text: 'text'
+      //       }
+      //     ];
+      //   }
+      //   return prev;
+      //   }, []);
+      //   lineSeries.current.setMarkers(getMarkerInfo);
+      // }
+      // setCurrentGameData({
+      //   ...stateToChange
+      // })
     };
   }
 
@@ -372,6 +411,7 @@ function MainGameScreen(props) {
   }
 
   const onClickTakeWin = async () => {
+
     if (takeTokenCount.current < 1) {
       setErrorShow({show:true, message: 'There is no Token', type: 'warning'});
       return;
@@ -379,22 +419,20 @@ function MainGameScreen(props) {
 
     const currentData = chartData.current[chartData.current.length-1];
     const chooseTime = currentData.time;
-    const sendData = JSON.stringify({
-      time : chooseTime,
-      name : currentGameData.userName,
-      color: markColorList[Math.floor(Math.random() * 7 + 1)]
-    })
 
     const saveData = await setGameScore({
+      roomId : playRoom.id,
       score: currentData.value,
       playerName: userInfo.name
     });
+
     if (saveData) {
       takeTokenCount.current -= 1;
       client.send(JSON.stringify({
         type: "contentchange",
-        username: currentGameData.userName,
-        content: sendData
+        roomId : playRoom.id,
+        userName: userInfo.name,
+        tokenTime: chooseTime
       }));
     }
     else setErrorShow({show:true, message: 'Your score did not update! Try again.', type: 'error'});
@@ -407,7 +445,6 @@ function MainGameScreen(props) {
   let gamePlaySec = sec;
   if(sec < 10) gamePlaySec = `0${sec}`;
   if(min < 10) gamePlayMin = `0${min}`
-  const joinedUsers = currentGameData.currentUsers
 
   return (
     <div className={classes.container} >
@@ -437,10 +474,10 @@ function MainGameScreen(props) {
       </div>
       <div className={classes.joinedUserList}>
         {
-          joinedUsers.map((item, index) => (
+          currentPlayers.map((item, index) => (
             <div key={index} className={classes.joinedUserStyle}>
               <img src={`/Users/user${index+1}.png`} />
-              <p>{item.username}</p>
+              <p>{item}</p>
             </div>
           ))
         }
@@ -476,7 +513,8 @@ MainGameScreen.propTypes = {
   buyInStacke: PropTypes.func.isRequired,
   createRoom: PropTypes.func.isRequired,
   joinRoom: PropTypes.func.isRequired,
-  getAcitveRoom: PropTypes.func.isRequired
+  getAcitveRoom: PropTypes.func.isRequired,
+  playRoom: PropTypes.object.isRequired
 };
 
 MainGameScreen.defaultProps = {
@@ -485,7 +523,8 @@ MainGameScreen.defaultProps = {
 
 const mapStateToProps = (store) => ({
   paymentInfo: store.paymentData.paymentInfo,
-  userInfo: store.userData.userInfo
+  userInfo: store.userData.userInfo,
+  playRoom: store.gamePlayData.playRoom
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

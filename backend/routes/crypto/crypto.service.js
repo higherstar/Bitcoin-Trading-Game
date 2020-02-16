@@ -61,20 +61,29 @@ async function setGamePlayInfo (res) {
 
 async function resultWinner(res) {
   const allData = await Crypto.find({roomId: res.roomId});
-  const myData = await Crypto.findOne({playerName : res.playerName});
-  const myScore = (myData.score1 > myData.score2 ? myData.score1 : myData.score2);
-  let result = false;
-  allData.forEach(item => {
-    result = (item.score1 > item.score2 ? item.score1 : item.score2) > myScore ? false : true
+  let myData = [];
+  myData = allData.filter(item=> item.playerName === res.playerName);
+  const otherData = allData.filter(item=> item.playerName !== res.playerName);
+  if(myData.length === 0) {
+    return false;
+  }
+  const myScore = (myData[0].score1 > myData[0].score2 ? myData[0].score1 : myData[0].score2);
+  
+  let maxScore = 0;
+  otherData.forEach(item => {
+    const itemMax = (item.score1 > item.score2 ? item.score1 : item.score2);
+    maxScore = itemMax > maxScore ? itemMax : maxScore
   })
-  return result
+  if (myScore >= maxScore) {
+    return true;
+  }
+  return false
 }
 
 async function setGameScore(res) {
-  const player = await Crypto.findOne({ playerName : res.playerName})
+  const player = await Crypto.findOne({ roomId: res.roomId, playerName : res.playerName})
   if (player) {
     Object.assign(player, {
-      roomId: player.roomId,
       playerName: player.playerName,
       betCoin: player.betCoin,
       score1: player.score1 === 0 ? res.score : player.score1,
