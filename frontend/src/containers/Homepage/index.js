@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton } from 'components/elements';
-import { Link } from 'react-router-dom';
 import LoginModal from './loginModal';
 import SignUpModal from './SignUpModal';
 

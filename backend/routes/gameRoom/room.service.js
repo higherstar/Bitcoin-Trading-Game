@@ -8,8 +8,10 @@ module.exports = {
     joinRoom
 }
 
-async function createRoom() {
-    const room = new Room({})
+async function createRoom(body) {
+    const room = new Room({
+      jackPot: body.betCoin
+    })
     return await room.save();
 }
 
@@ -31,7 +33,8 @@ async function joinRoom(body) {
   if (room && room.members < 11 && room.status === "pending") {
     Object.assign(room, {
       members: room.members + 1,
-      status: room.members >= 9 ? "playing" : room.status
+      status: room.members >= 9 ? "playing" : room.status,
+      jackPot: room.jackPot + body.betCoin
     });
     return await room.save();
   }

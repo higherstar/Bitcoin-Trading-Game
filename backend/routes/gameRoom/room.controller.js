@@ -8,7 +8,7 @@ router.post('/joinRoom', joinRoom)
 module.exports = router;
 
 function createRoom(req, res, next) {
-	roomService.createRoom()
+	roomService.createRoom(req.body)
 	.then(room => room ? res.json(room) : res.sendStatus(404))
 	.catch(err => next(err));
 }

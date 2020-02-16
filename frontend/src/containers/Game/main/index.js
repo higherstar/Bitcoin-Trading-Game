@@ -4,7 +4,8 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
 import { buyInStacke } from 'redux/actions/payment';
-import { getUserInfo, setTradeToken } from 'redux/actions/user';
+import { setTradeToken } from 'redux/actions/user';
+import { createRoom, joinRoom, getActiveRoom} from 'redux/actions/gamePlay';
 import { bindActionCreators } from 'redux';
 import { CustomButton } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
@@ -172,9 +173,9 @@ const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const contentDefaultMessage = [];
 const totalGameTime = 30;
-const gameWatingTime = 30;
+const gameWatingTime = 30;  
 function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke } = props;
+  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ currentGameData, setCurrentGameData] = useState({
@@ -210,16 +211,9 @@ function MainGameScreen(props) {
       client.onopen = () => {
         console.log('WebSocket Client Connected');
       };
-      setGameBetCoin(paymentInfo.betCoin);
-      receiveGameData();
+      
       loginGameRoom();
       // drawing chart
-      const res = createLineChart();
-      chartWrapper = res.chart;
-      lineSeries.current = res.lineSeries;
-      handleWindowResize();
-      apiFetchTimerId.current = setInterval(fetchApiData, 2000);
-      window.addEventListener('resize', handleWindowResize);
     }
   }, []);
 
@@ -253,28 +247,51 @@ function MainGameScreen(props) {
         ...currentGameData,
         userName: username
       })
-
-      const result = setGameInfo({
-        roomId: "123",
-        playerName: userInfo.name,
-        betCoin: paymentInfo.betCoin,
-        score1: 0,
-        score2: 0
-      })
-      if ( result ) {
-        client.send(JSON.stringify({
-          text: '',
-          username: username,
-          type: "userevent",
-          betCoin: paymentInfo.betCoin
-        }));
-        buyInStacke(0);
-      } else {
-        history.push('/game');
-      }
+      getActiveRoom()
+        .then((r)=> {
+          joinRoom({roomId: r.roomId, betCoin: paymentInfo.betCoin})
+            .then((res)=> {
+              joinGameSuccess(res);
+            })          
+        })
+        .catch(()=>{
+          createRoom({betCoin: paymentInfo.betCoin})
+            .then((res)=> {
+              joinGameSuccess(res);
+            })
+            .catch(()=> history.push('/game'))
+        })
     }
   }
 
+  const joinGameSuccess = async(response) => {
+    const username = userInfo.name;
+    const result = await setGameInfo({
+      roomId: response.roomId,
+      playerName: userInfo.name,
+      betCoin: paymentInfo.betCoin,
+      score1: 0,
+      score2: 0
+    });
+    if (result) {
+      client.send(JSON.stringify({
+        text: '',
+        username: username,
+        type: "userevent",
+        jackPot: response.jackPot
+      }));
+      setGameBetCoin(paymentInfo.betCoin);
+      receiveGameData();
+      const res = createLineChart();
+      chartWrapper = res.chart;
+      lineSeries.current = res.lineSeries;
+      handleWindowResize();
+      apiFetchTimerId.current = setInterval(fetchApiData, 2000);
+      window.addEventListener('resize', handleWindowResize);
+      buyInStacke(0);
+
+    } else history.push('/game');
+  }
   const receiveGameData = () => {
     client.onmessage = (message) => {
       const dataFromServer = JSON.parse(message.data);
@@ -457,6 +474,9 @@ MainGameScreen.propTypes = {
   history: PropTypes.object.isRequired,
   userInfo: PropTypes.object.isRequired,
   buyInStacke: PropTypes.func.isRequired,
+  createRoom: PropTypes.func.isRequired,
+  joinRoom: PropTypes.func.isRequired,
+  getAcitveRoom: PropTypes.func.isRequired
 };
 
 MainGameScreen.defaultProps = {
@@ -470,7 +490,10 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setTradeToken,
-  buyInStacke
+  buyInStacke,
+  createRoom,
+  joinRoom,
+  getActiveRoom
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainGameScreen);

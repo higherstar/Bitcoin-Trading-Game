@@ -19,9 +19,48 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        gameActiveRoom: action.payload.data.room,
+        gameActiveRoom: action.payload.room,
       };
-    case types.GET_ACTIVE_GAME_ROOM_FAILDED:
+    case types.GET_ACTIVE_GAME_ROOM_FAILED:
+      return {
+        ...state,
+        isFetching: false,
+        errors: action.payload.error,
+      };
+    
+      
+    case types.CREATE_ROOM_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case types.CREATE_ROOM_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        gameActiveRoom: action.payload.room,
+      };
+    case types.CREATE_ROOM_FAILED:
+      return {
+        ...state,
+        isFetching: false,
+        errors: action.payload.error,
+      };
+
+
+    
+    case types.CREATE_ROOM_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case types.CREATE_ROOM_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        gameActiveRoom: action.payload.room,
+      };
+    case types.CREATE_ROOM_FAILDED:
       return {
         ...state,
         isFetching: false,

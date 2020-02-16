@@ -94,7 +94,7 @@ wsServer.on('request', function(request) {
         users[userID] = dataFromClient;
         if (dataFromClient.username)
           userActivity.push(`${dataFromClient.username} joined to edit the document`);
-        if ( dataFromClient.betCoin ) totalBetCoin += dataFromClient.betCoin;
+        if ( dataFromClient.betCoin ) totalBetCoin = dataFromClient.jackPot;
         json.data = { editorContent, users, userActivity, startGameTime, totalBetCoin };
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
