@@ -214,12 +214,12 @@ function MainGameScreen(props) {
   useEffect(()=> {
     let getMarkerInfo = [];
     playersTokens.forEach(item=> {
-        getMarkerInfo.push({
-          time:  item.time,
-          position: 'aboveBar',
-          color: userInfo.name === item.userName ? markColorList[0] : markColorList[1],
-          shape: 'arrowDown',
-          text: 'text'
+      getMarkerInfo.push({
+        time:  item.time,
+        position: 'aboveBar',
+        color: userInfo.name === item.userName ? markColorList[0] : markColorList[1],
+        shape: 'arrowDown',
+        text: 'text'
       })
     });
     if (getMarkerInfo.length > 0)
@@ -332,50 +332,9 @@ function MainGameScreen(props) {
             })
           }
         })
+        console.log('venus>>>>>>>>>>tokens', tokens)
         setPlayersTokens(tokens);
       }
-      // const stateToChange = {};
-      // stateToChange.data = [];
-      // stateToChange.userName = userInfo.name;
-      // if (dataFromServer.type === "userevent") {
-      //   stateToChange.currentUsers = Object.values(dataFromServer.data.users);
-      //   stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
-      //   stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
-      //   const startSec = gameWatingTime - Math.floor((Date.now() - stateToChange.startGameTime)/1000);
-      //   console.log(dataFromServer.data.totalBetCoin);
-      //   setJackPot(dataFromServer.data.totalBetCoin);
-      //   if (!startingGame.current) {
-      //     startingGame.current=true;
-      //     startGame(startSec);
-      //   }
-      // } else if (dataFromServer.type === "contentchange") {
-      //   stateToChange.data = dataFromServer.data.editorContent || contentDefaultMessage;
-      //   stateToChange.currentUsers = Object.values(dataFromServer.data.users);
-      // }
-      // stateToChange.userActivity = dataFromServer.data.userActivity;
-      // stateToChange.startGameTime = dataFromServer.data.startGameTime || -1;
-      // if (stateToChange.data.length > 0) {
-      //   const getMarkerInfo = stateToChange.data.reduce((prev, item)=> {
-      //     const parseItem = JSON.parse(item);
-      //     if ( chartData.current.filter(chartItem=>chartItem.time === parseItem.time).length > 0 ) {
-      //       return [
-      //         ...prev,
-      //         {
-      //         time:  parseItem.time,
-      //         position: 'aboveBar',
-      //         color: userInfo.name === parseItem.name ? markColorList[0] : parseItem.color,
-      //         shape: 'arrowDown',
-      //         text: 'text'
-      //       }
-      //     ];
-      //   }
-      //   return prev;
-      //   }, []);
-      //   lineSeries.current.setMarkers(getMarkerInfo);
-      // }
-      // setCurrentGameData({
-      //   ...stateToChange
-      // })
     };
   }
 

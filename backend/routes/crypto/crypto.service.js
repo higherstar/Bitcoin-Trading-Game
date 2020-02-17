@@ -13,24 +13,31 @@ module.exports = {
 };
 
 let chartData = [];
-
+let fetchingDataTimer = null;
 async function getData() {
-	const cryptoData = await fetchApiData();
-	if (cryptoData) {
-		return await cryptoData;
-	} else throw "Can not get the Crypto Data";
+  if(fetchingDataTimer)
+    return chartData;
+  else {
+    fetchingDataTimer = setInterval(()=> {
+      fetchApiData();
+    }, 2000)
+    return [];
+  }
 };
 
 const fetchApiData = async () => {
 	const newData = await fetchData(chartData.length > 0 ? chartData[chartData.length-1] : {});
 	if (newData) {
-		chartData = [...chartData, ...newData];
+    chartData = [...chartData, ...newData];
+    if (chartData.length > 200) {
+      chartData.splice(0, chartData.length - 200);
+    }
 	}
 	return chartData
 };
 
 const fetchData = async (lastInfo) => {
-  const url = 'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USDT&limit=60&api_key=f5377b79b4b87040f9a8fffdcdcc45b575a54377308b7a9018d65949059fa0cf';
+  const url = 'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USDT&limit=60&api_key=585142d902ea6c7b46f56502ce21a6afd2f0122bc68a7d1c17884db9d36035af';
   const data = await axios
     .get(url)
     .then(res => {
@@ -41,17 +48,19 @@ const fetchData = async (lastInfo) => {
     });
   if (data) {
     let newData = [];
-    data.data.Data.Data.forEach(item => {
-      if (item.time * 1000 > lastInfo.time || !lastInfo.time) {
-        newData.push({
-          time: item.time * 1000,
-          value: item.open
-        });  
-      }
-    });
+    if (data.data.Data.Data && data.data.Data.Data.length > 0)
+      data.data.Data.Data.forEach(item => {
+        if (item.time * 1000 > lastInfo.time || !lastInfo.time) {
+          newData.push({
+            time: item.time * 1000,
+            value: item.open
+          });  
+        }
+      });
+    else return [];
     return newData;
   }
-  return false;
+  return [];
 };
 
 async function setGamePlayInfo (res) {
