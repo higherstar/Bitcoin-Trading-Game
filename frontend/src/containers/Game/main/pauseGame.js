@@ -33,26 +33,10 @@ const useStyles = makeStyles((theme) => ({
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
-      marginBottom: '2.2vw',
+      color: theme.palette.primary.buttonBottomBorder,
+      padding: '2vw',
       textDecoration: 'none'
     }
-  },
-  headerTitle: {
-    fontSize: '2.5vw',
-    color: theme.palette.primary.buttonBottomBorder,
-    fontFamily: theme.font.CeliasMedium,
-    marginBottom: 0,
-  },
-  jackpotText: {
-    fontSize: '2.5vw',
-    color: theme.palette.primary.buttonBottomBorder,
-    fontFamily: theme.font.CeliasMedium
-  },
-  coin: {
-    fontSize: '2.5vw',
-    color: 'white',
-    paddingLeft: 15,
-    fontFamily: theme.font.CeliasMedium
   },
   headerText: {
     fontSize: '5vw',
@@ -60,31 +44,17 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     fontFamily: theme.font.CeliasMedium
   },
-  jackpotContainer: {
-    display: 'flex'
-  },
-  content: {
-    padding: theme.spacing(1, 0),
-    flex: 1,
-  },
-  actions: {
-    justifyContent: 'center'
-  },
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  signUpStyle: {
-    marginTop: 20,
-  },
+  linkCotainer: {
+      display: 'flex',
+      justifyContent:'space-content'
+  }
 }));
 
-function WinnerModal(props) {
+function PauseModal(props) {
   const classes = useStyles();
 
   const {
-    opened,
-    jackPot
+    opened, close
   } = props;
   
   return (
@@ -94,29 +64,26 @@ function WinnerModal(props) {
       aria-labelledby="customized-dialog-title"
     >
       <div className={classes.inputContainer}>
-        <p className={classes.headerTitle}>CONTRATULATIONS!</p>
-        <p className={classes.headerText}>YOU WIN</p>
-        <div className={classes.jackpotContainer}>
-          <p className={classes.jackpotText}>Jackpot: </p>
-          <p className={classes.coin}>{` $ ${jackPot}`}</p>
+        <p className={classes.headerText}>PAUSE</p>
+        <div className={classes.linkCotainer}>
+            <a onClick={close}>Resume</a>
+            <Link to='/game'>Main Menu</Link>
         </div>
-        <Link to='/game'>New Game</Link>
-        <Link to='/game'>Main Menu</Link>
       </div>
     </Dialog>
   );
 }
 
-WinnerModal.propTypes = {
+PauseModal.propTypes = {
   opened: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   logInUser: PropTypes.func.isRequired,
   history: PropTypes.func.isRequired,
-  jackPot: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   logInUser,
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(WinnerModal);
+export default connect(null, mapDispatchToProps)(PauseModal);

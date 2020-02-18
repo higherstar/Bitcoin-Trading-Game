@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,12 +24,12 @@ const useStyles = makeStyles((theme) => ({
     color: (props) => props.color === '#ffffff' && props.active ? theme.palette.base[800] : theme.palette.base.white,
   },
   valueText: {
-    fontSize: 45,
+    fontSize: '2.7vw',
     fontWeight: 600,
   },
   label: {
     color: (props) => props.color,
-    fontSize: 45,
+    fontSize: '2.7vw',
     fontWeight: 600,
   },
 }));

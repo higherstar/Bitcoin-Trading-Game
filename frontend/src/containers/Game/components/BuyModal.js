@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    fontSize: 45,
+    fontSize: '3vw',
     textAlign: 'center',
   },
   content: {
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: 50
+      fontSize: '2.9vw'
     }
   },
 }));
@@ -100,8 +100,8 @@ function BuyModal(props) {
           label={buttonTitle}
           color="red"
           onClick={handleOK}
-          width={260}
-          height={80}
+          width={'16vw'}
+          height={'5vw'}
         />
       </DialogActions>
     </Dialog>

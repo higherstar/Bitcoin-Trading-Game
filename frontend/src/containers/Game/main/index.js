@@ -16,6 +16,7 @@ import { setGameScore, setGameInfo, getWinnerState } from './gameAPICalls';
 import { CustomAlert } from 'components/elements';
 import WinnerModal from './winnerModal';
 import LoserModal from './loserModal';
+import PauseModal from './pauseGame';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -94,6 +95,8 @@ const useStyles = makeStyles((theme) => ({
   },
   pauseGameStyle: {
     position: 'absolute',
+    zIndex: 50,
+    cursor: 'pointer',
     left: '5vw',
     top: 20,
     '& img': {
@@ -180,8 +183,9 @@ function MainGameScreen(props) {
   const [ playersTokens, setPlayersTokens] = useState([]);
   const [ currentPlayers, setCurrentPlayers] = useState([]);
   const [ jackPot, setJackPot ] = useState(0);
-  const [ gameWinDialogShow, setGameWinDialogShow] = useState(false);
-  const [ gameLoseDialogShow, setGameLoseDialogShow] = useState(false)
+  const [ gameWinDialogShow, setGameWinDialogShow ] = useState(false);
+  const [ gameLoseDialogShow, setGameLoseDialogShow ] = useState(false)
+  const [ gamePauseDialogShow, setGamePauseDialogShow ] = useState(false);
   const [ gameBetCoin, setGameBetCoin ] = useState(0);
   const classes = useStyles();
   let waitingTimerId = useRef(null);
@@ -332,7 +336,6 @@ function MainGameScreen(props) {
             })
           }
         })
-        console.log('venus>>>>>>>>>>tokens', tokens)
         setPlayersTokens(tokens);
       }
     };
@@ -397,6 +400,12 @@ function MainGameScreen(props) {
     else setErrorShow({show:true, message: 'Your score did not update! Try again.', type: 'error'});
   }
 
+  const handlePauseGame = () => {
+    setGamePauseDialogShow(true);
+  }
+  const handlePauseGameModalClose = () => {
+    setGamePauseDialogShow(false);
+  }
   let tmpGameTime = gameTime > totalGameTime ? totalGameTime : gameTime;
   const min = Math.floor(tmpGameTime / 60);
   const sec = tmpGameTime - 60 * min;
@@ -414,7 +423,7 @@ function MainGameScreen(props) {
         <div className={classes.jackpotInfoStyle}>
           <p>{`Jackpot : $ ${jackPot}`}</p>
         </div>
-        <div className={classes.pauseGameStyle}>
+        <div className={classes.pauseGameStyle} onClick={()=> handlePauseGame()}>
           <img src={PauseImage}/>
         </div>
       </div>
@@ -426,8 +435,8 @@ function MainGameScreen(props) {
         <div className={classes.takeWinStyle}>
           <CustomButton
             onClick={onClickTakeWin} 
-            width={200}
-            height={80} 
+            width={'10vw'}
+            height={'4vw'} 
             label="TAKE WIN"/>
         </div>
       </div>
@@ -459,6 +468,10 @@ function MainGameScreen(props) {
       />
       <LoserModal
         opened={gameLoseDialogShow}
+      />
+      <PauseModal
+        opened={gamePauseDialogShow}
+        close={handlePauseGameModalClose}
       />
     </div>
   );

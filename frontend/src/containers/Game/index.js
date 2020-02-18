@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium,
   },
   title: {
-    fontSize: 120,
+    fontSize: '7vw',
     color: theme.palette.base.white,
     fontWeight: 'bold',
     marginTop: '20vh',
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gameMenuTitle: {
-    fontSize: 54,
+    fontSize: '3vw',
     color: theme.palette.primary.mainMenuButtonColor,
     fontWeight: 'bold',
     marginTop: 0,
@@ -117,10 +117,10 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderWidth: 3,
     borderStyle: 'solid',
-    minWidth: 230,
+    minWidth: '11.5vw',
     alignItems: 'center',
     '& p': {
-      fontSize: 58,
+      fontSize: '3vw',
       padding: 0,
       paddingRight: 20,
       margin: 0,
@@ -128,7 +128,7 @@ const useStyles = makeStyles((theme) => ({
       fontFamily: theme.font.CeliasMedium,
     },
     '& h1': {
-      fontSize: 58,
+      fontSize: '3vw',
       width: '100%',
       padding: 0,
       paddingRight: 15,
@@ -178,7 +178,7 @@ function Game(props) {
     }
   ];
 
-  const profileImage = ProfileUserImage();
+  const profileImage = '/Users/user1.png';//ProfileUserImage();
   useEffect(()=>{
     if(paymentInfo.amount) {
       setAmount(paymentInfo.amount);
@@ -278,8 +278,8 @@ function Game(props) {
             value={item.value} 
             label={item.level} 
             color={item.color}
-            width={200}
-            height={100}
+            width={'12vw'}
+            height={'6vw'}
             key={index} 
             active={index === buyInSelect} 
             onSelect={handleBuyInSelect}
