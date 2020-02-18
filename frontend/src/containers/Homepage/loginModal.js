@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: 65
+      fontSize: '3.25vw'
     }
   },
   inputContainer: {
@@ -134,22 +134,22 @@ function LoginModal(props) {
             onChange={handleChangeEmail}
             label="Email"
             leftText="Email: "
-            width={300}
-            labelPadding={14}
+            width={'17VW'}
+            labelPadding={'20vw'}
             type="email"
           />
           <CustomInputBox
             onChange={handleChangePassword}
             label="Password"
             leftText="Password: "
-            width={300}
-            labelPadding={14}
+            width={'17VW'}
+            labelPadding={'20vw'}
             type="password"
           />
           <CustomButton label="LOGIN"
             onClick={onClickLogin} 
-            width={300}
-            height={100}
+            width={'14.7VW'}
+            height={'5vw'}
             type="submit"/>
           <CustomAlert 
             title={errorShow.message}

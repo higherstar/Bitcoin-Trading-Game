@@ -63,10 +63,10 @@ const onClickSignUp = () => {
     <div className={classes.container}>
       <div className={classes.buttonContainer}>
         <div className={classes.link}>
-          <CustomButton label='LOGIN' onClick={onClickLogin} width={550} height={150}/>
+          <CustomButton label='LOGIN' onClick={onClickLogin} width={'27vw'} height={'8vw'}/>
         </div>
         <div className={classes.link}>
-          <CustomButton label='SIGN UP' className={classes.signUpStyle} onClick={onClickSignUp} width={550} height={150}/>
+          <CustomButton label='SIGN UP' className={classes.signUpStyle} onClick={onClickSignUp} width={'27vw'} height={'8vw'}/>
         </div>
         <LoginModal
           opened={loginModalView}

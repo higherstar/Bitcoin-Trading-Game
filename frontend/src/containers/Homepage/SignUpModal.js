@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: 65
+      fontSize: '3.25vw'
     }
   },
   inputContainer: {
@@ -138,23 +138,25 @@ function SignUpModal(props) {
             onChange={handleChangeName}
             label="UserName"
             leftText="UserName: "
-            width={300}            
-            labelPadding={16} />
+            width={'18VW'}
+            labelPadding={'20vw'} />
           <CustomInputBox 
             onChange={handleChangeEmail}
             label="Email" leftText="Email: "
-            width={300} type="email"
-            labelPadding={16} />
+            type="email"
+            width={'18VW'}
+            labelPadding={'20vw'} />
           <CustomInputBox 
             onChange={handleChangePassword}
             label="Password" leftText="Password: "
-            width={300} type="password"
-            labelPadding={16} />
+            type="password"
+            width={'18VW'}
+            labelPadding={'20vw'} />
           <CustomButton
             onClick={handleOnClickSignUp}
             label="Sign Up"
-            width={300}
-            height={100}
+            width={'14.7VW'}
+            height={'5vw'}
             className={classes.signUpButtonStyle} />
           <CustomAlert 
             title={errorShow.message}

@@ -19,10 +19,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   label: {
-    width: (props) => theme.spacing((props.labelPadding) + 3),
-    marginRight: (props) => theme.spacing(props.labelPadding),
+    width: (props) => `${props.width.toString().slice(0, -2)/2}vw`,
+    marginRight: (props) => `${props.width.toString().slice(0, -2)/5}vw`,
     color: '#fff',
-    fontSize: 45,
+    fontSize: '2.25VW',
     fontFamily: theme.font.CeliasMedium,
   },
 }));
@@ -52,7 +52,7 @@ function CustomInputBox({
         autoComplete={type}
         variant="outlined"
         inputProps={{style: {
-          fontSize: 25,
+          fontSize: '1.6vw',
         }}}
         onChange={onChange}
       />
