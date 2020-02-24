@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
-      padding: theme.spacing(8.25, 8.25),
+      padding: '4vw',
       borderStyle: 'solid',
       background: 'black',
     },
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: 40,
+      fontSize: '3vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
@@ -33,9 +33,9 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   headerTitle: {
-    fontSize: 40,
+    fontSize: '4vw',
     width: '100%',
-    textAlign: 'right',
+    textAlign: 'center',
     margin: 0,
     marginBottom: 50,
     color: theme.palette.primary.buttonBottomBorder,
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium
   },
   headerText: {
-    fontSize: 100,
+    fontSize: '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     justifyContent: 'space-between',
     display: 'flex',
-    margintop: 50
+    marginTop: '4vw'
   },
   content: {
     padding: theme.spacing(1, 0),
