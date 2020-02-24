@@ -180,7 +180,7 @@ const markColorList = [
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 60;
-const gameWatingTime = 10;  
+const gameWatingTime = 30;  
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
