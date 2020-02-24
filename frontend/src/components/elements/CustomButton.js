@@ -7,7 +7,9 @@ import makeStyles from '@material-ui/styles/makeStyles';
 const useStyles = makeStyles((theme) => ({
   button: {
     minWidth: (props) => props.width,
-    height: (props) => props.height,
+    minHeight: (props) => props.height,
+    paddingTop: '1vw',
+    paddingBottom: '1vw',
     borderRadius: 15,
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderWidth: 3,

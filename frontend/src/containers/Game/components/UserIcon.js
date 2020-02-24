@@ -12,10 +12,14 @@ const useStyles = makeStyles((theme) => ({
       color: 'white'
     },
     '& p': {
-      fontSize: 29,
+      fontSize: '2.4vw',
+      margin: 0,
       fontFamily: theme.font.CeliasMedium,
       paddingLeft: 10,
       color: theme.palette.primary.mainMenuButtonColor
+    },
+    '& img': {
+      width: '6vw'
     }
   }
 }));

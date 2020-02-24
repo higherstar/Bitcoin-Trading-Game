@@ -33,21 +33,21 @@ const useStyles = makeStyles((theme) => ({
   graphView : {
     position: 'absolute',
     width: '80%',
-    height: '90%',
+    height: '66%',
   },
   headerBar: {
     width: '100%',
     justifyContent: 'flex-end',
     display: 'flex',
     alignItems: 'end',
-    padding: 20
+    padding: '1.7vw'
   },
   userStakeInfoStyle: {
     paddingTop: 10,
     paddingBottom: 10,
-    paddingRight: 30,
-    paddingLeft: 30,
-    marginRight: 30,
+    paddingRight: '2vw',
+    paddingLeft: '2vw',
+    marginRight: '2vw',
     display: 'flex',
     borderWidth: 3,
     borderRadius: 10,
@@ -57,26 +57,26 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
-      fontSize: 25,
+      fontSize: '2vw',
       margin: 0
     }
   },
   jackpotInfoStyle: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingRight: 30,
-    paddingLeft: 30,    
+    paddingTop: '1vw',
+    paddingBottom: '1vw',
+    paddingRight: '2vw',
+    paddingLeft: '2vw',    
     display: 'flex',
     borderWidth: 3,
     borderRadius: 10,
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderStyle: 'solid',
-    marginRight: 60,
+    marginRight: '3vw',
     '& p': {
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
       fontWeight: 'bold',
-      fontSize: 30,
+      fontSize: '2.5vw',
       margin: 0
     }
   },
@@ -110,8 +110,9 @@ const useStyles = makeStyles((theme) => ({
   },
   joinedUserList: {
     display: 'flex',
-    padding: 15,
-    minHeight: 190,
+    paddingTop: '1vw',
+    paddingBottom: '3vw',
+    minHeight: '10vw', 
     justifyContent: 'flex-start',
     borderWidth: 5,
     borderRadius: 15,
@@ -131,12 +132,14 @@ const useStyles = makeStyles((theme) => ({
       margin: 0,
       color: theme.palette.base.white,
       fontFamily: theme.font.CeliasMedium,
-      fontSize: 20,
-      paddingTop: 20,
+      fontSize: '1.5vw',
       fontWeight: 'bold'
     },
     '& svg': {
       fontSize: 40
+    },
+    '& img': {
+      width: '6vw'
     }
   },
   waitingScreenStyle: {
@@ -230,14 +233,14 @@ function MainGameScreen(props) {
   }, []);
 
   useEffect(()=> {
-    if (waitingTime === 0 ) {
+    if (waitingTime < 1 ) {
       clearInterval(waitingTimerId.current);
       gamePlayTimeCountDown();
     }
   }, [waitingTime])
 
   useEffect(()=> {
-    if (gameTime === 0) {
+    if (gameTime < 1 ) {
       clearInterval(gamePlayTimeId.current);
       getWinnerState({playerName: userInfo.name, roomId: playRoom.id})
         .then((res)=> {
@@ -403,10 +406,15 @@ function MainGameScreen(props) {
   };
 
   const waitingUserTimeCountDown = (startTime) => {
-    setWaitingTime(startTime);
-    waitingTimerId.current = setInterval(()=> {
-      setWaitingTime((t)=> t-1);
-    }, 1000);
+    if (startTime < 1) {
+      clearInterval(waitingTimerId.current);
+      gamePlayTimeCountDown();
+    } else {
+      setWaitingTime(startTime);
+      waitingTimerId.current = setInterval(()=> {
+        setWaitingTime((t)=> t-1);
+      }, 1000);
+    }
   }
 
   const gamePlayTimeCountDown = () => {

@@ -25,7 +25,7 @@ const CustomLineChart = (props) => {
         type: 'line',
         height: 800,
         offsetY: 100,
-        offsetX: 100,
+        offsetX: 0,
         toolbar: {
           autoSelected: 'pan',
           show: false
