@@ -13,13 +13,29 @@ module.exports = {
 };
 
 let chartData = [];
+let repeatTime = 0;
+let nowTime = 0;
 let fetchingDataTimer = null;
 async function getData() {
-  if(fetchingDataTimer)
+  if(fetchingDataTimer){
+    if (chartData.length > 200) {
+      chartData.splice(0, chartData.length - 200);
+    }
     return chartData;
+  }
   else {
+    nowTime = new Date().getTime();
     fetchingDataTimer = setInterval(()=> {
-      fetchApiData();
+      if (repeatTime < 1) {
+        fetchApiData();
+        repeatTime ++;
+      } else {
+        const values = chartData.map(item => item.value)
+        setRandomPrice(values[values.length-2], values[values.length-1]);
+        repeatTime ++;
+        if (repeatTime > 60)
+          repeatTime = 0;
+      }
     }, 2000)
     return [];
   }
@@ -29,15 +45,12 @@ const fetchApiData = async () => {
 	const newData = await fetchData(chartData.length > 0 ? chartData[chartData.length-1] : {});
 	if (newData) {
     chartData = [...chartData, ...newData];
-    if (chartData.length > 200) {
-      chartData.splice(0, chartData.length - 200);
-    }
 	}
 	return chartData
 };
 
 const fetchData = async (lastInfo) => {
-  const url = 'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USDT&limit=60&api_key=585142d902ea6c7b46f56502ce21a6afd2f0122bc68a7d1c17884db9d36035af';
+  const url = 'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USDT&limit=1&api_key=197089f2de9f79be0592ceac176b4956a68460bfc0b8fcfe76f0ccdd6b180491';
   const data = await axios
     .get(url)
     .then(res => {
@@ -50,9 +63,10 @@ const fetchData = async (lastInfo) => {
     let newData = [];
     if (data.data.Data.Data && data.data.Data.Data.length > 0)
       data.data.Data.Data.forEach(item => {
-        if (item.time * 1000 > lastInfo.time || !lastInfo.time) {
+        if (item.time) {
+          nowTime += 1000;
           newData.push({
-            time: item.time * 1000,
+            time: nowTime,
             value: item.open
           });  
         }
@@ -100,4 +114,19 @@ async function setGameScore(res) {
     });
     return await player.save();
   } else throw "There is no User";
+}
+
+function setRandomPrice(lastData, lastData1) {
+  nowTime += 1000;
+  let shouldChangeDirection = false;
+  const speed = lastData1 - lastData;
+  if (Math.random() < Math.random() * 0.5) {
+    shouldChangeDirection = true;
+  }
+  const ramdomValue = lastData1 + (lastData < lastData1 ? 1 : -1) * (2 + Math.random() * 3) * (shouldChangeDirection ? -1 : 1); 
+  if (ramdomValue)
+    chartData.push({
+      time: nowTime,
+      value: ramdomValue
+    })
 }

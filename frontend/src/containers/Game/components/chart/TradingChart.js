@@ -9,8 +9,8 @@ export const createLineChart = () => {
 	chart.applyOptions({
 		priceScale: {
 			scaleMargins: {
-					top: 0.2,
-					bottom: 0.2,
+				top: 0.2,
+				bottom: 0.2,
 			},
 		},
 		timeScale: {
@@ -27,31 +27,31 @@ export const createLineChart = () => {
 		},
 		crosshair: {
 			vertLine: {
-					color: '#6A5ACD',
-					width: 0.5,
-					style: 1,
-					visible: false,
-					labelVisible: false,
+				color: '#6A5ACD',
+				width: 0.5,
+				style: 1,
+				visible: false,
+				labelVisible: false,
 			},
 			horzLine: {
-					color: '#6A5ACD',
-					width: 0.5,
-					style: 0,
-					visible: false,
-					labelVisible: true,
+				color: '#6A5ACD',
+				width: 0.5,
+				style: 0,
+				visible: false,
+				labelVisible: true,
 			},
 			mode: 1,
 		},
 		grid: {
 			vertLines: {
-					color: 'rgba(70, 130, 180, 0.5)',
-					style: 1,
-					visible: false,
+				color: 'rgba(70, 130, 180, 0.5)',
+				style: 1,
+				visible: false,
 			},
 			horzLines: {
-					color: 'rgba(70, 130, 180, 0.5)',
-					style: 2,
-					visible: false,
+				color: 'rgba(70, 130, 180, 0.5)',
+				style: 2,
+				visible: false,
 			},
 		},
 		layout: {
@@ -60,10 +60,22 @@ export const createLineChart = () => {
 			fontSize: 20,
 			fontFamily: 'Calibri',
 		},
+		watermark: {
+			color: 'rgba(11,94,29,0.4)',
+			visible: true,
+			text: "TradingView Watermark Example",
+			horzAlign: 'left',
+			vertAlign: 'bottom'
+		}
 	});
 
-	chart.subscribeCrosshairMove((param)=> {
-		// chart.timeScale().scrollToPosition(4, true);
+	// chart.subscribeCrosshairMove((param)=> {
+	// 	console.log('venus---->crosshairMove', param)
+	// 	// chart.timeScale().scrollToPosition(4, true);
+	// })
+
+	chart.subscribeVisibleTimeRangeChange((handle)=> {
+		console.log('venus----->TimeScale',handle)
 	})
 
 	lineSeries.applyOptions({

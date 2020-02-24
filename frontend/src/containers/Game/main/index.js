@@ -7,7 +7,7 @@ import { buyInStacke } from 'redux/actions/payment';
 import { setTradeToken } from 'redux/actions/user';
 import { createRoom, joinRoom, getActiveRoom} from 'redux/actions/gamePlay';
 import { bindActionCreators } from 'redux';
-import { CustomButton } from 'components/elements';
+import { CustomButton, CustomLineChart } from 'components/elements';
 import { createLineChart } from '../components/chart/TradingChart';
 import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
@@ -29,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     position: 'relative'
+  },
+  graphView : {
+    position: 'absolute',
+    width: '80%',
+    height: '90%',
   },
   headerBar: {
     width: '100%',
@@ -175,7 +180,7 @@ const markColorList = [
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 60;
-const gameWatingTime = 30;  
+const gameWatingTime = 10;  
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
@@ -187,12 +192,21 @@ function MainGameScreen(props) {
   const [ gameLoseDialogShow, setGameLoseDialogShow ] = useState(false)
   const [ gamePauseDialogShow, setGamePauseDialogShow ] = useState(false);
   const [ gameBetCoin, setGameBetCoin ] = useState(0);
+  const [ chartProps, setChartProps ] = useState({
+    range : 1000 * 150,
+    graphData : {
+      prices: [],
+      dates: [],
+      lastPrice: -20000
+    }
+  });
+  useEffect(() => console.log('RESTARTED'), [])
   const classes = useStyles();
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
   let chartWrapper = null;
-  let lineSeries = useRef(null);
+  // let lineSeries = useRef(null);
   let chartData = useRef([]);
   let startingGame = useRef(false);
   let takeTokenCount = useRef(2);
@@ -214,22 +228,6 @@ function MainGameScreen(props) {
       // drawing chart
     }
   }, []);
-
-  useEffect(()=> {
-    let getMarkerInfo = [];
-    playersTokens.forEach(item=> {
-      getMarkerInfo.push({
-        time:  item.time,
-        position: 'aboveBar',
-        color: userInfo.name === item.userName ? markColorList[0] : markColorList[1],
-        shape: 'arrowDown',
-        text: 'text'
-      })
-    });
-    if (getMarkerInfo.length > 0)
-      lineSeries.current.setMarkers(getMarkerInfo);
-  }, [playersTokens])
-
 
   useEffect(()=> {
     if (waitingTime === 0 ) {
@@ -288,20 +286,21 @@ function MainGameScreen(props) {
         username: username,
         type: "userevent",
         betCoin: paymentInfo.betCoin,
-        tokenTimes: []
+        tokenTimes: [],
+        tokenPrices: []
       }));
       setGameBetCoin(paymentInfo.betCoin);
       const startGameTime = (Date.now() - (new Date(response.createdDate)).getTime())/1000;
       startingGame.current=true;
-      startGame(Math.floor(30 - startGameTime));
-      
+      startGame(Math.floor(waitingTime - startGameTime));
       receiveGameData();
-      const res = createLineChart();
-      chartWrapper = res.chart;
-      lineSeries.current = res.lineSeries;
-      handleWindowResize();
       apiFetchTimerId.current = setInterval(fetchApiData, 2000);
-      window.addEventListener('resize', handleWindowResize);
+      // const res = createLineChart();
+      // chartWrapper = res.chart;
+      // lineSeries.current = res.lineSeries;
+      // handleWindowResize();
+      
+      // window.addEventListener('resize', handleWindowResize);
       buyInStacke(0);
 
     } else history.push('/game');
@@ -325,18 +324,44 @@ function MainGameScreen(props) {
       }
 
       if (dataFromServer.type === "contentchange") {
-        let tokens = [];
+        let playerTokens = [];
         Object.keys(dataFromServer.data.roomPlayers).forEach(userId => {
           if (userId !== 'jackPot') {
-            dataFromServer.data.roomPlayers[userId].tokenTimes.forEach(time => {
-              tokens.push({
+            dataFromServer.data.roomPlayers[userId].tokenTimes.forEach((time, index) => {
+              playerTokens.push({
+                x: time,
+                y: dataFromServer.data.roomPlayers[userId].tokenPrices[index],
+                marker: {
+                  size: 5,
+                  fillColor: '#fff',
+                  strokeColor: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
+                  radius: 2,
+                  cssClass: 'apexcharts-custom-class',
+                  offsetY: 0,
+                },
+                label: {
+                  offsetY: 10,
+                  borderColor: 'transparent',
+                  style: {
+                    strokeColor: 'transparent',
+                    fontWeight: 'bold',
+                    background: 'transparent',
+                    fontFamily: "celias-medium",
+                    color: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
+                    fillColor: 'transparent',
+                    fontSize: 24
+                  },
+            
+                  text: dataFromServer.data.roomPlayers[userId].username,
+                },
                 time: time,
                 userName: dataFromServer.data.roomPlayers[userId].username
               })
             })
           }
         })
-        setPlayersTokens(tokens);
+
+        setPlayersTokens(playerTokens);
       }
     };
   }
@@ -345,17 +370,35 @@ function MainGameScreen(props) {
     waitingUserTimeCountDown(startTime);
   }
 
-  const handleWindowResize = () => {
-    const htmlWrapper = document.getElementById('line-chart');
-    if (!htmlWrapper || !chartWrapper) return;
-    chartWrapper.resize(htmlWrapper.clientHeight, htmlWrapper.clientWidth);
-  }
+  // const handleWindowResize = () => {
+  //   const htmlWrapper = document.getElementById('line-chart');
+  //   if (!htmlWrapper || !chartWrapper) return;
+  //   chartWrapper.resize(htmlWrapper.clientHeight, htmlWrapper.clientWidth);
+  // }
 
   const fetchApiData = async () => {
     const cryptoData = await getCryptoData();
-    if (cryptoData) {
-      chartData.current = cryptoData;
-      lineSeries.current.setData(cryptoData);
+    if (cryptoData.length > 0) {
+      let prices = [];
+      let dates = [];
+      cryptoData.forEach(item => {
+        prices.push(item.value);
+        dates.push(item.time);
+      })
+      const lastPrice = cryptoData[cryptoData.length-1].value ? cryptoData[cryptoData.length-1].value: -200000;
+      const graphData = {
+        ...chartProps.graphData,
+        dates,
+        prices,
+        lastPrice
+      }
+      
+      chartData.current = graphData;
+      setChartProps({
+        ...chartProps,
+        graphData
+      })
+      // lineSeries.current.setData(cryptoData);
     }
   };
 
@@ -379,12 +422,12 @@ function MainGameScreen(props) {
       return;
     }
 
-    const currentData = chartData.current[chartData.current.length-1];
-    const chooseTime = currentData.time;
+    const currentDate = chartData.current.dates[chartData.current.dates.length-1];
+    const currentPrice = chartData.current.prices[chartData.current.prices.length-1];
 
     const saveData = await setGameScore({
       roomId : playRoom.id,
-      score: currentData.value,
+      score: currentPrice,
       playerName: userInfo.name
     });
 
@@ -394,7 +437,8 @@ function MainGameScreen(props) {
         type: "contentchange",
         roomId : playRoom.id,
         userName: userInfo.name,
-        tokenTime: chooseTime
+        tokenTime: currentDate,
+        tokenPrice: currentPrice
       }));
     }
     else setErrorShow({show:true, message: 'Your score did not update! Try again.', type: 'error'});
@@ -427,7 +471,10 @@ function MainGameScreen(props) {
           <img src={PauseImage}/>
         </div>
       </div>
-      <div className={classes.tradingView} id='line-chart'>
+      <div className={classes.tradingView}>
+        <div className={classes.graphView}>
+          <CustomLineChart chartProps={chartProps} playerTokens={playersTokens}/>
+        </div>
         <div className={classes.gameTime}>
           <img src={ClockImage}/>
           <p>{`${gamePlayMin}:${gamePlaySec}`}</p>

@@ -78,6 +78,7 @@ rooms = {
       username: "",
       type: "userevent",
       tokenTimes: [],
+      tokenPrices: []
       betCoin: 0
     },
     userID1: {
@@ -85,6 +86,7 @@ rooms = {
       username: "",
       type: "userevent",
       tokenTimes: [],
+      tokenPrices: [],
       betCoin: 0
     }
   }
@@ -126,6 +128,7 @@ wsServer.on('request', function(request) {
         Object.keys(rooms[dataFromClient.roomId]).forEach(userId=> {
           if(userId !== 'jackPot' && rooms[dataFromClient.roomId][userId].username === dataFromClient.userName) {
             rooms[dataFromClient.roomId][userId].tokenTimes.push(dataFromClient.tokenTime);
+            rooms[dataFromClient.roomId][userId].tokenPrices.push(dataFromClient.tokenPrice);
           }
         })
         json.data = { roomPlayers: rooms[dataFromClient.roomId] };

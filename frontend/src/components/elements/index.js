@@ -12,3 +12,4 @@ export { default as CustomInputBox } from './CustomInputBox'
 export { default as CustomAlert } from './CustomAlert';
 export { default as CustomBack } from './CustomBack';
 export { default as Loading } from './Loading';
+export { default as CustomLineChart } from './CustomLineChart';
