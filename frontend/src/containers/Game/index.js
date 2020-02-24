@@ -296,13 +296,13 @@ function Game(props) {
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken.toString()}/>
       </div>
-      <div className={classes.mainSettingStyle}>
+      {/* <div className={classes.mainSettingStyle}>
         <img src={MainSettingImage}/>
-      </div>
-      <div className={classes.leaderBoardStyle}>
+      </div> */}
+      {/* <div className={classes.leaderBoardStyle}>
         <img src={LeaderBoardImage}/>
         <p>LeaderBoard</p>
-      </div>
+      </div> */}
       <div className={classes.amountParent}>
         <h1>$</h1>
         <p>{amountInput}</p>
@@ -315,9 +315,9 @@ function Game(props) {
         <Link to={`/game${ paymentInfo.betCoin > 0 ? '/main' : ''}`} className={classes.link}>
           <p className={classes.gameMenuTitle} onClick={onClickStart}>Enter Game</p>
         </Link>
-        <Link to="/game" className={classes.link}>
+        {/* <Link to="/game" className={classes.link}>
           <p className={classes.gameMenuTitle} onClick={onClickHowToPlay}>How to Play</p>
-        </Link>
+        </Link> */}
       </div>
       <AddAmountDialog
         opened={amountModalView}
