@@ -4,6 +4,7 @@ const axios = require('axios');
 const app = require("express")();
 app.use(require("body-parser").text());
 const Crypto = require('./crypto.model');
+const Payment = require('../payment/payment.model');
 
 module.exports = {
 	getData,
@@ -85,6 +86,11 @@ async function setGamePlayInfo (res) {
 async function resultWinner(res) {
   const allData = await Crypto.find({roomId: res.roomId});
   let myData = [];
+  let jackPot = 0;
+  allData.forEach( member => {
+    jackPot += member.betCoin;
+  });
+
   myData = allData.filter(item=> item.playerName === res.playerName);
   const otherData = allData.filter(item=> item.playerName !== res.playerName);
   if(myData.length === 0) {
@@ -98,6 +104,9 @@ async function resultWinner(res) {
     maxScore = itemMax > maxScore ? itemMax : maxScore
   })
   if (myScore >= maxScore) {
+    const paymentInfo = await Payment.findOne({ name: res.playerName });
+    Object.assign(paymentInfo, {amount: paymentInfo.amount + jackPot});
+    await paymentInfo.save();
     return true;
   }
   return false
