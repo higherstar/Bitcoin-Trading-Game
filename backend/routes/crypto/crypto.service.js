@@ -19,8 +19,8 @@ let nowTime = 0;
 let fetchingDataTimer = null;
 async function getData() {
   if(fetchingDataTimer){
-    if (chartData.length > 70) {
-      chartData.splice(0, chartData.length - 70);
+    if (chartData.length > 125) {
+      chartData.splice(0, chartData.length - 125);
     }
     return chartData;
   }
@@ -34,7 +34,7 @@ async function getData() {
         const values = chartData.map(item => item.value)
         setRandomPrice(values[values.length-2], values[values.length-1]);
         repeatTime ++;
-        if (repeatTime > 20)
+        if (repeatTime > 46)
           repeatTime = 0;
       }
     }, 2000)
@@ -132,7 +132,7 @@ function setRandomPrice(lastData, lastData1) {
   if (Math.random() < Math.random() * 0.5) {
     shouldChangeDirection = true;
   }
-  const ramdomValue = lastData1 + (lastData < lastData1 ? 1 : -1) * (2 + Math.random() * 3) * (shouldChangeDirection ? -1 : 1); 
+  const ramdomValue = lastData1 + (lastData < lastData1 ? 1 : -1) * (1 + Math.random() * 2) * (shouldChangeDirection ? -1 : 1); 
   if (ramdomValue)
     chartData.push({
       time: nowTime,

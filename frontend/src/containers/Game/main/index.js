@@ -179,7 +179,7 @@ const markColorList = [
 ]
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
-const totalGameTime = 60;
+const totalGameTime = 120;
 const gameWatingTime = 30;  
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
@@ -193,7 +193,7 @@ function MainGameScreen(props) {
   const [ gamePauseDialogShow, setGamePauseDialogShow ] = useState(false);
   const [ gameBetCoin, setGameBetCoin ] = useState(0);
   const [ chartProps, setChartProps ] = useState({
-    range : 1000 * 70,
+    range : 1000 * 125,
     graphData : {
       prices: [],
       dates: [],
