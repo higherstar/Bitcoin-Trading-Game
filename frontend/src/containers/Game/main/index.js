@@ -193,7 +193,7 @@ function MainGameScreen(props) {
   const [ gamePauseDialogShow, setGamePauseDialogShow ] = useState(false);
   const [ gameBetCoin, setGameBetCoin ] = useState(0);
   const [ chartProps, setChartProps ] = useState({
-    range : 1000 * 150,
+    range : 1000 * 70,
     graphData : {
       prices: [],
       dates: [],

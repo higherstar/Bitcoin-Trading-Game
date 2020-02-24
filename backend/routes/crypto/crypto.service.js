@@ -19,8 +19,8 @@ let nowTime = 0;
 let fetchingDataTimer = null;
 async function getData() {
   if(fetchingDataTimer){
-    if (chartData.length > 200) {
-      chartData.splice(0, chartData.length - 200);
+    if (chartData.length > 70) {
+      chartData.splice(0, chartData.length - 70);
     }
     return chartData;
   }
@@ -34,7 +34,7 @@ async function getData() {
         const values = chartData.map(item => item.value)
         setRandomPrice(values[values.length-2], values[values.length-1]);
         repeatTime ++;
-        if (repeatTime > 60)
+        if (repeatTime > 20)
           repeatTime = 0;
       }
     }, 2000)
