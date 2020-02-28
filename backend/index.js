@@ -50,6 +50,7 @@ const getUniqueID = () => {
 
 const rooms = {}
 const clients = {};
+const chatMessage = {};
 
 const sendMessage = (json) => {
   const sendData = JSON.stringify(json);
@@ -62,7 +63,8 @@ const sendMessage = (json) => {
 
 const typesDef = {
   USER_EVENT: "userevent",
-  CONTENT_CHANGE: "contentchange"
+  CONTENT_CHANGE: "contentchange",
+  MESSAGE: "messageChange"
 }
 
 
@@ -89,6 +91,12 @@ rooms = {
       tokenPrices: [],
       betCoin: 0
     }
+  }
+}
+
+chatMessage = {
+  roomId: {
+    messages:[{}]
   }
 }
 
@@ -133,6 +141,20 @@ wsServer.on('request', function(request) {
         })
         json.data = { roomPlayers: rooms[dataFromClient.roomId] };
         sendMessage(json);
+      } else if (dataFromClient.type === typesDef.MESSAGE) {
+        Object.keys(rooms[dataFromClient.roomId]).forEach(userId=> {
+
+          if(userId !== 'jackPot' && rooms[dataFromClient.roomId][userId].username === dataFromClient.sendUserName) {
+            rooms[dataFromClient.roomId][userId].sendMessage = {
+              user1: dataFromClient.userName,
+              user2: dataFromClient.sendUserName,
+              message: dataFromClient.message
+            };
+            json.type = typesDef.MESSAGE;
+            json.data = { roomMessages: rooms[dataFromClient.roomId][userId].sendMessage};
+            clients[userId].sendUTF(JSON.stringify(json));
+          }
+        })
       }
     }
   });
@@ -148,6 +170,7 @@ wsServer.on('request', function(request) {
       })
       if (Object.keys(rooms[roomId]).length < 2) {
         delete rooms[roomId];
+        delete chatMessage[roomId]
       }
     })
     console.log('rooms>>>>>', rooms)

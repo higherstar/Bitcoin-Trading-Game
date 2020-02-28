@@ -5,10 +5,12 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { connect } from 'react-redux';
 import { buyInStacke } from 'redux/actions/payment';
 import { setTradeToken } from 'redux/actions/user';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton'
 import { createRoom, joinRoom, getActiveRoom} from 'redux/actions/gamePlay';
 import { bindActionCreators } from 'redux';
 import { CustomButton, CustomLineChart } from 'components/elements';
-import { createLineChart } from '../components/chart/TradingChart';
+import ChatUI from '../components/chat'
 import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png';
@@ -61,6 +63,16 @@ const useStyles = makeStyles((theme) => ({
       margin: 0
     }
   },
+  closeUI: {
+    padding: 9,
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'space-between',
+    '& p': {
+      fontSize: 15,
+      fontWeight: 'bold'
+    }
+  },
   jackpotInfoStyle: {
     paddingTop: '1vw',
     paddingBottom: '1vw',
@@ -79,6 +91,12 @@ const useStyles = makeStyles((theme) => ({
       fontSize: '2.5vw',
       margin: 0
     }
+  },
+  chatUI: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    zIndex: 100
   },
   gameTime : {
     position: 'absolute',
@@ -123,6 +141,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 20
   },
   joinedUserStyle: {
+    cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     marginRight: 20,
@@ -183,7 +202,7 @@ const markColorList = [
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 120;
-const gameWatingTime = 30;  
+const gameWatingTime = 10;  
 function MainGameScreen(props) {
   const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
@@ -195,6 +214,9 @@ function MainGameScreen(props) {
   const [ gameLoseDialogShow, setGameLoseDialogShow ] = useState(false)
   const [ gamePauseDialogShow, setGamePauseDialogShow ] = useState(false);
   const [ gameBetCoin, setGameBetCoin ] = useState(0);
+  const [ sendingMessageUser, setSendingMessageUser ] = useState('');
+  const [ chatMessages, setChatMessages ] = useState([]);
+  const [ messageUIOpen, setMessageUIOpen ] = useState(false);
   const [ chartProps, setChartProps ] = useState({
     range : 1000 * 125,
     graphData : {
@@ -312,59 +334,71 @@ function MainGameScreen(props) {
     client.onmessage = (message) => {
       const dataFromServer = JSON.parse(message.data);
       console.log(dataFromServer)
-      setJackPot(dataFromServer.data.roomPlayers.jackPot);
-      if (dataFromServer.type === "userevent") {
-        let players = []
-        Object.keys(dataFromServer.data.roomPlayers).forEach(item=>{
-          if (item !== 'jackPot') {
-            players.push(dataFromServer.data.roomPlayers[item].username);
-          }
-        })
-        setCurrentPlayers([
-          ...currentPlayers,
-          ...players
-        ]);
-      }
+      if (dataFromServer.type === "messageChange") {
+        if (dataFromServer.data.roomMessages)
+          setSendingMessageUser(dataFromServer.data.roomMessages.user1);
+        setChatMessages(
+          [
+            ...chatMessages,
+            dataFromServer.data.roomMessages
+          ]
+        );
+        setMessageUIOpen(true);
+      } else {
+        setJackPot(dataFromServer.data.roomPlayers.jackPot);
+        if (dataFromServer.type === "userevent") {
+          let players = []
+          Object.keys(dataFromServer.data.roomPlayers).forEach(item=>{
+            if (item !== 'jackPot') {
+              players.push(dataFromServer.data.roomPlayers[item].username);
+            }
+          })
+          setCurrentPlayers([
+            ...currentPlayers,
+            ...players
+          ]);
+        }
 
-      if (dataFromServer.type === "contentchange") {
-        let playerTokens = [];
-        Object.keys(dataFromServer.data.roomPlayers).forEach(userId => {
-          if (userId !== 'jackPot') {
-            dataFromServer.data.roomPlayers[userId].tokenTimes.forEach((time, index) => {
-              playerTokens.push({
-                x: time,
-                y: dataFromServer.data.roomPlayers[userId].tokenPrices[index],
-                marker: {
-                  size: 5,
-                  fillColor: '#fff',
-                  strokeColor: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
-                  radius: 2,
-                  cssClass: 'apexcharts-custom-class',
-                  offsetY: 0,
-                },
-                label: {
-                  offsetY: 10,
-                  borderColor: 'transparent',
-                  style: {
-                    strokeColor: 'transparent',
-                    fontWeight: 'bold',
-                    background: 'transparent',
-                    fontFamily: "celias-medium",
-                    color: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
-                    fillColor: 'transparent',
-                    fontSize: 24
+        if (dataFromServer.type === "contentchange") {
+          let playerTokens = [];
+          Object.keys(dataFromServer.data.roomPlayers).forEach(userId => {
+            if (userId !== 'jackPot') {
+              dataFromServer.data.roomPlayers[userId].tokenTimes.forEach((time, index) => {
+                playerTokens.push({
+                  x: time,
+                  y: dataFromServer.data.roomPlayers[userId].tokenPrices[index],
+                  marker: {
+                    size: 5,
+                    fillColor: '#fff',
+                    strokeColor: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
+                    radius: 2,
+                    cssClass: 'apexcharts-custom-class',
+                    offsetY: 0,
                   },
-            
-                  text: dataFromServer.data.roomPlayers[userId].username,
-                },
-                time: time,
-                userName: dataFromServer.data.roomPlayers[userId].username
+                  label: {
+                    offsetY: 10,
+                    borderColor: 'transparent',
+                    style: {
+                      strokeColor: 'transparent',
+                      fontWeight: 'bold',
+                      background: 'transparent',
+                      fontFamily: "celias-medium",
+                      color: dataFromServer.data.roomPlayers[userId].username === userInfo.name ? 'red' : markColorList[2],
+                      fillColor: 'transparent',
+                      fontSize: 24
+                    },
+              
+                    text: dataFromServer.data.roomPlayers[userId].username,
+                  },
+                  time: time,
+                  userName: dataFromServer.data.roomPlayers[userId].username
+                })
               })
-            })
-          }
-        })
+            }
+          })
 
-        setPlayersTokens(playerTokens);
+          setPlayersTokens(playerTokens);
+        }
       }
     };
   }
@@ -458,6 +492,28 @@ function MainGameScreen(props) {
   const handlePauseGameModalClose = () => {
     setGamePauseDialogShow(false);
   }
+
+  const handleOnClickUser = (userName) => {
+    if (userName !== userInfo.name) {
+      setSendingMessageUser(userName);
+      setMessageUIOpen(true);
+    }
+  }
+
+  const closeChatUI = () => {
+    setMessageUIOpen(false);
+  }
+  const sendMessage = (message) => {
+    console.log('sendMessage', message);
+    client.send(JSON.stringify({
+      type: "messageChange",
+      roomId : playRoom.id,
+      userName: userInfo.name,
+      sendUserName: sendingMessageUser,
+      message
+    }));
+  }
+
   let tmpGameTime = gameTime > totalGameTime ? totalGameTime : gameTime;
   const min = Math.floor(tmpGameTime / 60);
   const sec = tmpGameTime - 60 * min;
@@ -498,13 +554,31 @@ function MainGameScreen(props) {
       <div className={classes.joinedUserList}>
         {
           currentPlayers.map((item, index) => (
-            <div key={index} className={classes.joinedUserStyle}>
+            <div key={index} className={classes.joinedUserStyle} onClick={()=> handleOnClickUser(item)}>
               <img src={`/Users/user${index+1}.png`} />
               <p>{item}</p>
             </div>
           ))
         }
       </div>
+      {
+        messageUIOpen &&
+          <div className={classes.chatUI}>
+            <div className={classes.closeUI}>
+              <p>{`Chatting With ${sendingMessageUser} ....`}</p>
+              <IconButton onClick={closeChatUI}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <ChatUI 
+              avatarUrl='./Users/user1.png' 
+              avatarUrlBot ='./Users/user2.png'
+              newMessages={chatMessages}
+              sendMessage={sendMessage}
+              userName={userInfo.name}
+              receiveUser={sendingMessageUser}/>
+          </div>
+      }
       {
         waitingTime > 0 &&
         <div className={classes.waitingScreenStyle}>

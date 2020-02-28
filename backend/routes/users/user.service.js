@@ -16,7 +16,8 @@ module.exports = {
     create,
     update,
     delete: _delete,
-    getUserInfo
+    getUserInfo,
+    updateProfileInfo
 };
 
 async function authenticate({ email, password }) {
@@ -139,4 +140,10 @@ async function googleLogin(userParam) {
 
 async function getUserInfo(id) {
 	return await User.findById(id).select('-hash');
+}
+
+async function updateProfileInfo(newUser) {
+    const user = await User.findById(newUser._id);
+    Object.assign(user, newUser);
+    return user.save()
 }

@@ -6,7 +6,8 @@ const schema = new Schema({
     hash: { type: String, required: true },
     name: { type: String, required: true },
     createdDate: { type: Date, default: Date.now },
-    paymentTokenID: { type: String, required: false}
+    paymentTokenID: { type: String, required: false},
+    signature: {type: String, default: ''}
 });
 
 schema.set('toJSON', { virtuals: true });

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userService = require('./user.service');
+const talkJSModule = require('./talkJsModule')
 
 // routes
 router.post('/authenticate', authenticate);
@@ -13,6 +14,7 @@ router.get('/:id', getById);
 router.get('/getInfo/:id', getUserInfo);
 router.put('/updatePayInfo', update);
 router.delete('/:id', _delete);
+router.post('/setConversation', setConversation)
 
 module.exports = router;
 
@@ -77,4 +79,10 @@ function getUserInfo(req, res, next) {
     userService.getUserInfo(req.params.id)
         .then(userInfo => userInfo ? res.json(userInfo) : res.sendStatus(404))
         .catch(err => next(err));
-  }
+}
+
+function setConversation(req, res, next) {
+    talkJSModule.openConversation(req, res)
+		.then(user => res.json(user))
+		.catch(err => next(err));
+}
