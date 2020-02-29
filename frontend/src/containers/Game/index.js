@@ -16,6 +16,7 @@ import MainSettingImage from 'assets/image/main_setting.png'
 import LeaderBoardImage from 'assets/image/leader_board.png'
 import AddAmountDialog from './components/AddAmountDialog'
 import DashBoard from './components/DashBoard'
+import Setting from './components/Setting'
 import AmountInput from './components/AmountInput';
 import { ProfileUserImage } from './components/UserImage'
 const useStyles = makeStyles((theme) => ({
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '7vw',
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: '20vh',
+    marginTop: '36vh',
     marginBottom: '6vh',
     fontFamily: theme.font.CeliasMedium,
   },
@@ -65,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainSettingStyle: {
     position: 'absolute',
+    cursor: 'pointer',
     bottom: 20,
     left: 20,
     '& img': {
@@ -162,6 +164,7 @@ function Game(props) {
   const [loading, setLoading] = useState(false);
   const [buyInSelect, setBuyInSelect] = useState(0);
   const [openDashBoard, setOpenDashBoard] = useState(false);
+  const [openSetting, setOpenSetting] = useState(false);
   const buyInCoast = [
     {
       level: 'Easy',
@@ -296,6 +299,14 @@ function Game(props) {
       }
     </div>
   );
+
+  const handleOpenSetting = () => {
+    setOpenSetting(true);
+  };
+
+  const handleCloseSetting = () => {
+    setOpenSetting(false);
+  }
   if (loading) { return <Loading />; }
   return (
     <div className={classes.container}>
@@ -305,7 +316,7 @@ function Game(props) {
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken.toString()}/>
       </div>
-      <div className={classes.mainSettingStyle}>
+      <div className={classes.mainSettingStyle} onClick={()=>handleOpenSetting()}>
         <img src={MainSettingImage}/>
       </div>
       <div className={classes.leaderBoardStyle} onClick={()=>handleOpenDashBoard()}>
@@ -352,6 +363,10 @@ function Game(props) {
       <DashBoard
         opened={openDashBoard}
         handleClose={handleCloseDashBoard}
+        />
+      <Setting
+        opened={openSetting}
+        handleClose={handleCloseSetting}
         />
     </div>
   );
