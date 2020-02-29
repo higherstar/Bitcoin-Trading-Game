@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   paymentInfo: {},
   paymentToken: '',
   errors: '',
+  leaderBoardScores: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -63,6 +64,25 @@ export default (state = INITIAL_STATE, action) => {
         isFetching: false,
         errors: action.payload.error,
       };
+
+      /* GET LEADER BOARD SCORE */
+    case types.LEADER_BOARD_SCORE_LIST_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case types.LEADER_BOARD_SCORE_LIST_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        leaderBoardScores: action.payload.response
+      }
+    case types.LEADER_BOARD_SCORE_LIST_FAILED:
+      return {
+        ...state,
+        isFetching: false,
+        errors: action.payload.error
+      }
     default:
       return state;
   }

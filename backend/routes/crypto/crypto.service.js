@@ -105,7 +105,7 @@ async function resultWinner(res) {
   })
   if (myScore >= maxScore) {
     const paymentInfo = await Payment.findOne({ name: res.playerName });
-    Object.assign(paymentInfo, {amount: paymentInfo.amount + jackPot});
+    Object.assign(paymentInfo, {amount: paymentInfo.amount + jackPot, totalScore: paymentInfo.totalScore + jackPot });
     await paymentInfo.save();
     return true;
   }

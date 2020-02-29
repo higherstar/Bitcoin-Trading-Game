@@ -125,3 +125,31 @@ export const buyInStacke = (buyInAmount) => (dispatch, getState) => {
       throw error;
     });
 }
+
+export const getLeaderBoardScore = () => (dispatch, getState) => {
+  if (getState().paymentData.isFetching) {
+    return Promise.reject();
+  }
+
+  dispatch({
+    type: types.LEADER_BOARD_SCORE_LIST_REQUEST,
+  });
+
+  return paymentService.leaderBoardScores()
+    .then((response) => {
+      dispatch({
+        type: types.LEADER_BOARD_SCORE_LIST_SUCCESS,
+        payload: { response },
+      });
+
+      return response;
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.LEADER_BOARD_SCORE_LIST_FAILED,
+        payload: { error },
+      });
+
+      throw error;
+    });
+};

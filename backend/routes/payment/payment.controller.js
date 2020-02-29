@@ -5,6 +5,7 @@ const paymentService = require('./payment.service');
 // routes
 router.post('/charge', chargeAmount);
 router.post('/buyin', buyInStacke);
+router.post('/leaderBoardList', getLeaderBoardList);
 router.get('/getInfo/:id', getPaymentInfo);
 module.exports = router;
 
@@ -25,3 +26,9 @@ function getPaymentInfo(req, res, next) {
 		.then(paymentInfo => paymentInfo ? res.json(paymentInfo) : res.sendStatus(404))
 		.catch(err => next(err));
 };
+
+function getLeaderBoardList(req, res, next) {
+	paymentService.getLeaderBoardList()
+		.then(scores => scores ? res.json(scores) : res.sendStatus(404))
+		.catch(err => next(err));
+}

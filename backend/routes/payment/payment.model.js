@@ -8,7 +8,8 @@ const schema = new Schema({
     betCoin: { type : Number, default: 0 },
     paymentToken: { type: String, required: true },
     customerID: { type: String, required: true },
-    createdDate: { type: Date, default: Date.now }
+    createdDate: { type: Date, default: Date.now },
+    totalScore: { type: Number, default: 0}
 });
 
 schema.set('toJSON', { virtuals: true });

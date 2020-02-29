@@ -5,7 +5,7 @@ import UserIcon from './components/UserIcon'
 import TradeToken from './components/TradeToken'
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { chargeStripe, getPaymentInfo, buyInStacke } from 'redux/actions/payment';
+import { chargeStripe, getPaymentInfo, buyInStacke, getLeaderBoardScore } from 'redux/actions/payment';
 import { getUserInfo } from 'redux/actions/user';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,6 +15,7 @@ import BuyModal from './components/BuyModal';
 import MainSettingImage from 'assets/image/main_setting.png'
 import LeaderBoardImage from 'assets/image/leader_board.png'
 import AddAmountDialog from './components/AddAmountDialog'
+import DashBoard from './components/DashBoard'
 import AmountInput from './components/AmountInput';
 import { ProfileUserImage } from './components/UserImage'
 const useStyles = makeStyles((theme) => ({
@@ -77,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     display: 'flex',
+    cursor: 'pointer',
     '& img': {
       width: 75
     },
@@ -151,7 +153,7 @@ const useStyles = makeStyles((theme) => ({
 function Game(props) {
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(['id', 'token']);
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken, getLeaderBoardScore } = props;
   const [amountModalView, setAmountModalView] = useState(false);
   const [buyInModalView, setBuyInModalView] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -159,6 +161,7 @@ function Game(props) {
   const [errorShow, setErrorShow] = useState({show: false, message: 'Net Error', type: 'error'});
   const [loading, setLoading] = useState(false);
   const [buyInSelect, setBuyInSelect] = useState(0);
+  const [openDashBoard, setOpenDashBoard] = useState(false);
   const buyInCoast = [
     {
       level: 'Easy',
@@ -187,6 +190,7 @@ function Game(props) {
 
   useEffect(()=>{
     setLoading(true);
+    getLeaderBoardScore();
     if(!userInfo.id) {
       if(cookies.id){
         localStorage.setItem('kc_token', cookies.token);
@@ -258,6 +262,12 @@ function Game(props) {
   const handleBuyInSelect = (value) => {
     setBuyInSelect(value);
   }
+  const handleOpenDashBoard = () => {
+    setOpenDashBoard(true);
+  }
+  const handleCloseDashBoard = () => {
+    setOpenDashBoard(false);
+  }
   const amountModalContent = (
     <div className={classes.amountModalContentStyle}>
       <AmountInput
@@ -295,13 +305,13 @@ function Game(props) {
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken.toString()}/>
       </div>
-      {/* <div className={classes.mainSettingStyle}>
+      <div className={classes.mainSettingStyle}>
         <img src={MainSettingImage}/>
-      </div> */}
-      {/* <div className={classes.leaderBoardStyle}>
+      </div>
+      <div className={classes.leaderBoardStyle} onClick={()=>handleOpenDashBoard()}>
         <img src={LeaderBoardImage}/>
         <p>LeaderBoard</p>
-      </div> */}
+      </div>
       <div className={classes.amountParent}>
         <h1>$</h1>
         <p>{amountInput}</p>
@@ -339,6 +349,10 @@ function Game(props) {
         open={errorShow.show}
         handleClose={()=>setErrorShow(false)}
         type={errorShow.type}/>
+      <DashBoard
+        opened={openDashBoard}
+        handleClose={handleCloseDashBoard}
+        />
     </div>
   );
 }
@@ -351,7 +365,8 @@ Game.TypeProps = {
   history: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
   buyInStacke: PropTypes.func.isRequired,
-  userTradeToken: PropTypes.number.isRequired
+  userTradeToken: PropTypes.number.isRequired,
+  getLeaderBoardScore: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (store) => ({
@@ -364,6 +379,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   chargeStripe,
   getPaymentInfo,
   getUserInfo,
-  buyInStacke
+  buyInStacke,
+  getLeaderBoardScore
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

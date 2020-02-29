@@ -19,9 +19,16 @@ const buyInStacke = (buyInBody) => httpService
   .post('/payment/buyin', buyInBody)
   .then(({ data }) => data)
   .catch((err) => Promise.reject(errorMessage(err.response)));
+
+const leaderBoardScores = () => httpService
+  .post('/payment/leaderBoardList')
+  .then(({ data }) => data)
+  .catch((err) => Promise.reject(errorMessage(err.response)));
+
 export default {
   chargeStripe,
   updateInfo,
   getPaymentInfo,
-  buyInStacke
+  buyInStacke,
+  leaderBoardScores
 };

@@ -6,8 +6,9 @@ app.use(require("body-parser").text());
 
 module.exports = {
     chargeAmount,
-		getPaymentInfo,
-		buyInStacke
+	getPaymentInfo,
+	buyInStacke,
+	getLeaderBoardList
 };
 
 async function chargeAmount(body) {
@@ -52,6 +53,12 @@ async function getPaymentInfo(id) {
 		return await Payment.findOne({ email: userInfo.email });
 	} else throw "Can not find the User"
 };
+
+async function getLeaderBoardList() {
+	const paymentUsers = await Payment.find();
+	const leaderSocres = [].concat(paymentUsers).sort((a, b) => a.totalScore < b.totalScore);
+	return leaderSocres;
+}
 
 /* Stripe API Call Functions */
 async function chargeAmountStripe({amount, userToken, customerID, description}) {
