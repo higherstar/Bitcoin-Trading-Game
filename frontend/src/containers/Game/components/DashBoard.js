@@ -8,7 +8,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import makeStyles from '@material-ui/styles/makeStyles';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-
+import { changeAmountUnit } from '../../../utils'
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
@@ -188,7 +188,7 @@ function DashBoard(props) {
                 <img src='./Users/user.png'></img>
                 <p>{item.name}</p>
               </div>
-              <p className={classes.win}>{item.totalScore}</p>
+              <p className={classes.win}>{changeAmountUnit (item.totalScore)}</p>
             </div>
           ))
         }

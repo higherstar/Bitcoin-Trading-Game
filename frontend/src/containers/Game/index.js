@@ -19,6 +19,7 @@ import DashBoard from './components/DashBoard'
 import Setting from './components/Setting'
 import AmountInput from './components/AmountInput';
 import { ProfileUserImage } from './components/UserImage'
+import { changeAmountUnit } from '../../utils'
 const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '7vw',
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: '36vh',
+    marginTop: '15vh',
     marginBottom: '6vh',
     fontFamily: theme.font.CeliasMedium,
   },
@@ -141,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& h2': {
       padding: 0,
-      paddingLeft: 15,
+      paddingLeft: '1vw',
       fontSize: '5vw',
       margin: 0,
       fontWeight: 'bold',
@@ -325,7 +326,7 @@ function Game(props) {
       </div>
       <div className={classes.amountParent}>
         <h1>$</h1>
-        <p>{amountInput}</p>
+        <p>{changeAmountUnit(amountInput)}</p>
         <h2 onClick={onClickAmount}>
 					+
         </h2>

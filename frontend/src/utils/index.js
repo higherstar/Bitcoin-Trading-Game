@@ -6,3 +6,11 @@ export const errorMessage = (error) => {
     return error.data.message;
   else return error;
 }
+
+export const changeAmountUnit = (amount) => {
+  return Math.abs(amount) > 999999 
+    ? Math.sign(amount)*((Math.abs(amount)/1000000).toFixed(1)) + 'M' 
+    : Math.abs(amount) > 999 
+    ? Math.sign(amount)*((Math.abs(amount)/1000).toFixed(1)) + 'K' 
+    : Math.sign(amount)*Math.abs(amount);
+}
