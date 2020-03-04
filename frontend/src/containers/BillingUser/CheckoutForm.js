@@ -13,6 +13,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minWidth: 300,
+    '& .StripeElement': {
+      display: 'block',
+      margin: '10px 0 20px 0',
+      maxWidth: 500,
+      padding: '10px 14px',
+      background: 'white',
+    },
   },
   description: {
     marginBottom: 30,
@@ -26,6 +33,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  stripeStyle: {
+    '& .StripeElement--empty': {
+      fontSize: 30
+    }
+  }
 }));
 
 function CheckoutForm(props) {
@@ -57,13 +69,28 @@ function CheckoutForm(props) {
   return (
     <div className={classes.cardInfo}>
       <p className={classes.description}>Please input your payment info.</p>
-      <CardElement />
+      <CardElement 
+        className={classes.stripeStyle}
+        options={{
+          style: {
+            base: {
+              fontSize: '20px',
+              color: '#ffffff',
+              '::placeholder': {
+                color: '#aab7c4',
+              },
+            },
+            invalid: {
+              color: '#9e2146',
+            },
+          }
+      }}/>
       <div className={classes.buttonGroup}>
         <CustomButton
         onClick={submit}
         label="Confirm"
-        width={200}
-        height={80} />
+        width={'14.7VW'}
+        height={'5vw'} />
         {
           loading && <Loading />
         }

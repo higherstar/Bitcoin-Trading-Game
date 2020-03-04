@@ -12,6 +12,10 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
     backgroundColor: theme.palette.base.white,
     fontFamily: theme.font.CeliasMedium,
+
+    '& .MuiInputBase-input': {
+      padding: '1.3vw 14px',
+    }
   },
   formGroup: {
     marginBottom: (props) => theme.spacing(props.marginBottom),
