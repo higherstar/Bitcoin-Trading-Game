@@ -13,9 +13,9 @@ import { changeAmountUnit } from '../../../utils'
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       maxWidth: 'unset',
-      minWidth: '50vw',
+      minWidth: (props) => props.isMobile ? 'unset' : '50vw',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
       paddingTop: 0,
@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.base.white,
     fontWeight: 'bold',
     fontFamily: theme.font.CeliasMedium,
-    fontSize: '3vw',
+    fontSize: (props) => props.isMobile ? '7vw' : '3vw',
+    marginTop: (props) => props.isMobile ? '4vw' : 'unset',
     textAlign: 'center',
   },
   content: {
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: '3.25vw'
+      fontSize: (props) => props.isMobile ? 25 : 50,
     }
   },
   leaderTitles: {
@@ -62,28 +63,28 @@ const useStyles = makeStyles((theme) => ({
   },
   leaderTitleRank: {
     width: '20%',
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? 15 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     marginBottom: '2vw'
   },
   leaderTitleUserName: {
     width: '50%',
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? 15 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     marginBottom: '2vw'
   },
   leaderTitleWinning: {
     width: '30%',
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? 15 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     alignItems: 'center',
     marginBottom: '2vw'
   },
   no: {
-    fontSize: '2vw',
+    fontSize: (props) => props.isMobile ? 15 : '2vw',
     color: 'white',
     width: '20%',
     paddingLeft: '2vw',
@@ -96,12 +97,13 @@ const useStyles = makeStyles((theme) => ({
     width: '50%',
     alignItems: 'center',
     '& img' : {
-      width: '3.4vw',
+      width: (props) => props.isMobile ? '5vw' : '3.4vw',
     },
     '& p': {
-      fontSize: '2vw',
+      fontSize: (props) => props.isMobile ? 15 : '2vw',
       color: 'white',
       margin: 0,
+      maxWidth: '20vw',
       paddingLeft: '2vw',
       fontFamily: theme.font.CeliasMedium,
       alignItems: 'center'
@@ -109,7 +111,7 @@ const useStyles = makeStyles((theme) => ({
   },
   win: {
     width: '30%',
-    fontSize: '2vw',
+    fontSize: (props) => props.isMobile ? 15 : '2vw',
     color: 'white',
     margin: 0,
     paddingLeft: '1vw',
@@ -125,13 +127,13 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 
 function DashBoard(props) {
-  const classes = useStyles();
-
   const {
     opened,
     handleClose,
-    leaderBoardScores
+    leaderBoardScores,
+    isMobile
   } = props;
+  const classes = useStyles({isMobile});
 
   const leaderScors = leaderBoardScores;
   if ( leaderScors.length > 5)
@@ -175,11 +177,13 @@ function DashBoard(props) {
 DashBoard.propTypes = {
   opened: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  leaderBoardScores: PropTypes.array
+  leaderBoardScores: PropTypes.array,
+  isMobile: PropTypes.bool
 };
 
 DashBoard.defaultProps = {
-  leaderBoardScores: []
+  leaderBoardScores: [],
+  isMobile: false
 }
 
 const mapStateToProps = (store) => ({

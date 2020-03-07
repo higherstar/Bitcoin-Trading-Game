@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       maxWidth: 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
@@ -29,16 +29,17 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: '2.5vw',
+      fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
       color: theme.palette.primary.buttonBottomBorder,
       padding: '2vw',
-      textDecoration: 'none'
+      textDecoration: 'none',
+      marginRight: (props) => props.isMobile ? '4vw' : 'unset'
     }
   },
   headerText: {
-    fontSize: '5vw',
+    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium
@@ -50,12 +51,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PauseModal(props) {
-  const classes = useStyles();
-
   const {
-    opened, close
+    opened, close, isMobile
   } = props;
-  
+  const classes = useStyles({isMobile});
+
   return (
     <Dialog
       className={classes.container}
@@ -78,13 +78,15 @@ PauseModal.propTypes = {
   handleClose: PropTypes.func,
   logInUser: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
+  isMobile: PropTypes.bool
 };
 
 PauseModal.defaultProps = {
   opened: false,
   handleClose: () => {},
-  history: {}
+  history: {},
+  isMobile: false
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

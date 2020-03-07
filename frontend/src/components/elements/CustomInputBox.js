@@ -19,20 +19,20 @@ const useStyles = makeStyles((theme) => ({
   },
   formGroup: {
     marginBottom: (props) => theme.spacing(props.marginBottom),
-    display: 'flex',
+    display: (props) => props.isMobile ? 'block' : 'flex',
     alignItems: 'center',
   },
   label: {
-    width: (props) => `${props.width.toString().slice(0, -2)/2}vw`,
-    marginRight: (props) => `${props.width.toString().slice(0, -2)/5}vw`,
+    width: (props) =>  props.isMobile ? '15vw' : `${props.width.toString().slice(0, -2)/2}vw`,
+    marginRight: (props) => props.isMobile ? '4vw' : `${props.width.toString().slice(0, -2)/5}vw`,
     color: '#fff',
-    fontSize: '2.25VW',
+    fontSize: (props) => props.isMobile ? '5vw' : '2.25VW',
     fontFamily: theme.font.CeliasMedium,
   },
 }));
 
 function CustomInputBox({
-  className,
+  className,  
   leftText,
   label,
   width,
@@ -41,8 +41,9 @@ function CustomInputBox({
   labelPadding,
   defaultValue,
   type,
+  isMobile,
 }) {
-  const classes = useStyles({ width, marginBottom, labelPadding });
+  const classes = useStyles({ width, marginBottom, labelPadding, isMobile });
 
   return (
     <Box className={classnames(classes.formGroup, className)}>
@@ -56,7 +57,7 @@ function CustomInputBox({
         autoComplete={type}
         variant="outlined"
         inputProps={{style: {
-          fontSize: '1.6vw',
+          fontSize: isMobile ? '6vw' : '1.6vw',
         }}}
         onChange={onChange}
       />
@@ -74,6 +75,7 @@ CustomInputBox.propTypes = {
   defaultValue: PropTypes.string,
   labelPadding: PropTypes.string,
   marginBottom: PropTypes.number,
+  isMobile: PropTypes.bool,
 };
 
 CustomInputBox.defaultProps = {
@@ -86,6 +88,7 @@ CustomInputBox.defaultProps = {
   defaultValue: '',
   marginBottom: 4,
   labelPadding: 'px',
+  isMobile: false,
 };
 
 export default CustomInputBox;

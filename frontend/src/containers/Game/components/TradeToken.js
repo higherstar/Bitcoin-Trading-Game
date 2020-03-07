@@ -9,24 +9,24 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& svg': {
-      fontSize: 50,
+      fontSize: (props) => props.isMobile ? 25 : 50,
       marginRight: 10
     },
     '& p': {
       fontFamily: theme.font.CeliasMedium,
-      fontSize: 29,
-      paddingRight: 10,
+      fontSize: (props) => props.isMobile ? 15 :  29,
+      paddingRight: (props) => props.isMobile ? 0 : 10,
       color: theme.palette.primary.mainMenuButtonColor,
       margin: 0
     },
     '& img': {
-      width: 65
+      width: (props) => props.isMobile ? 40 :  65
     }
   }
 }));
 
 function TradeToken(props) {
-  const { name } = props;
+  const { name, isMobile } = props;
   const classes = useStyles(props);
 
   return (
@@ -39,11 +39,13 @@ function TradeToken(props) {
 }
 
 TradeToken.propTypes = {
-  name: PropTypes.string
+  name: PropTypes.string,
+  isMobile: PropTypes.bool
 };
 
 TradeToken.defaultProps = {
-  name: 'Custom'
+  name: 'Custom',
+  isMobile: false,
 };
 
 export default TradeToken;

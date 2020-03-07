@@ -15,7 +15,7 @@ import { CustomButton, CustomInputBox, CustomAlert } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: '50vw',
+      width: (props) => props.isMobile ? '90vw' : '50vw',
       maxWidth: 'unset',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: '3.25vw'
+      fontSize: (props) => props.isMobile ? '8vw' : '3.25vw'
     }
   },
   inputContainer: {
@@ -82,14 +82,15 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 
 function SignUpModal(props) {
-  const classes = useStyles();
 
   const {
     opened,
     handleClose,
     registerUser,
     history,
+    isMobile,
   } = props;
+  const classes = useStyles({isMobile});
 
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -138,25 +139,31 @@ function SignUpModal(props) {
             onChange={handleChangeName}
             label="UserName"
             leftText="UserName: "
-            width={'18VW'}
-            labelPadding={'20vw'} />
+            width={isMobile ? '70vw' : '18VW'}
+            labelPadding={'20vw'}
+            isMobile={isMobile}
+          />
           <CustomInputBox 
             onChange={handleChangeEmail}
             label="Email" leftText="Email: "
             type="email"
-            width={'18VW'}
-            labelPadding={'20vw'} />
+            width={isMobile ? '70vw' : '18VW'}
+            labelPadding={'20vw'} 
+            isMobile={isMobile}  
+          />
           <CustomInputBox 
             onChange={handleChangePassword}
             label="Password" leftText="Password: "
             type="password"
-            width={'18VW'}
-            labelPadding={'20vw'} />
+            width={isMobile ? '70vw' : '18VW'}
+            labelPadding={'20vw'} 
+            isMobile={isMobile}  
+          />
           <CustomButton
             onClick={handleOnClickSignUp}
             label="Sign Up"
-            width={'14.7VW'}
-            height={'5vw'}
+            width={isMobile ? '70vw' : '14.7VW'}
+            height={isMobile ? '15vw' : '5vw'}
             className={classes.signUpButtonStyle} />
           <CustomAlert 
             title={errorShow.message}
@@ -174,6 +181,11 @@ SignUpModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   registerUser: PropTypes.func.isRequired,
+  isMobile: PropTypes.bool,
+};
+
+SignUpModal.defaultProps = {
+  isMobile: false,
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -11,8 +11,7 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
-      maxWidth: 'unset',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       minWidth: 'fit-content',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
@@ -29,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: '2.5vw',
+      fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
@@ -38,24 +37,24 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   headerTitle: {
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     marginBottom: 0,
   },
   jackpotText: {
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium
   },
   coin: {
-    fontSize: '2.5vw',
+    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
     color: 'white',
     paddingLeft: 15,
     fontFamily: theme.font.CeliasMedium
   },
   headerText: {
-    fontSize: '5vw',
+    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium
@@ -80,12 +79,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function WinnerModal(props) {
-  const classes = useStyles();
-
   const {
     opened,
-    jackPot
+    jackPot,
+    isMobile
   } = props;
+  const classes = useStyles({isMobile});
   
   return (
     <Dialog
@@ -112,12 +111,14 @@ WinnerModal.propTypes = {
   handleClose: PropTypes.func,
   logInUser: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  jackPot: PropTypes.number.isRequired
+  jackPot: PropTypes.number.isRequired,
+  isMobile: PropTypes.bool
 };
 
 WinnerModal.defaultProps = {
   opened: false,
   history: {},
+  isMobile: false,
   handleClose: () => {},
 }
 

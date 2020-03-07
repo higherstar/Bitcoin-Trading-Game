@@ -11,9 +11,10 @@ import { CustomSwitch } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
+      height: 'fit-content',
+      minWidth: (props) => props.isMobile ? 'unset' : '35vw',
       maxWidth: 'unset',
-      minWidth: '35vw',
       height: 'fit-content',
       padding: '4vw',
       borderWidth: 3,
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     '& p': {
-      fontSize: '3vw',
+      fontSize: (props) => props.isMobile ? '6vw' : '3vw',
       color: 'white',
       fontFamily: theme.font.CeliasMedium,
       margin: 0 
@@ -49,14 +50,14 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     justifyContent: 'space-between',
     '& p': {
-      fontSize: '2vw',
+      fontSize: (props) => props.isMobile ? '4vw' : '2vw',
       color: theme.palette.primary.buttonBottomBorder,
       fontFamily: theme.font.CeliasMedium,
       margin: 0 
     },
     '& div': {
       cursor: 'pointer',
-      fontSize: '1.5vw',
+      fontSize: (props) => props.isMobile ? '4vw' : '1.5vw',
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
       background: '#4267b2',
@@ -65,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   done: {
-    fontSize: '3vw',
+    fontSize: (props) => props.isMobile ? '6vw' : '3vw',
     cursor: 'pointer',
     fontFamily: theme.font.CeliasMedium,
     color: 'white',
@@ -75,13 +76,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Setting (props) {
-  const classes = useStyles();
-
   const {
     opened,
     handleClose,
-    leaderBoardScores
+    leaderBoardScores,
+    isMobile
   } = props;
+  const classes = useStyles({isMobile});
 
   const leaderScors = leaderBoardScores;
   if ( leaderScors.length > 5)
@@ -113,10 +114,12 @@ function Setting (props) {
 
 Setting.propTypes = {
   opened: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired
+  handleClose: PropTypes.func.isRequired,
+  isMobile: PropTypes.bool
 };
 
 Setting.defaultProps = {
+  isMobile: false
 }
 
 const mapStateToProps = (store) => ({

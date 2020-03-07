@@ -14,8 +14,9 @@ import { CustomButton } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      minWidth: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       height: 'fit-content',
+      minWidth: (props) => props.isMobile ? 'unset' : 'fit-content',
       padding: theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
@@ -28,16 +29,18 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    fontSize: '3vw',
+    fontSize: (props) => props.isMobile ? '7vw' : '3vw',
+    marginTop: (props) => props.isMobile ? '4vw' : 'unset',
     textAlign: 'center',
   },
   content: {
     padding: theme.spacing(1, 0),
     flex: 1,
+    marginBottom: (props) => props.isMobile ? '7vw' : 'unset',
   },
   actions: {
     justifyContent: 'center',
-    display: 'flex'
+    display: 'flex',
   },
   root: {
     margin: 0,
@@ -49,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: '2.9vw'
+      fontSize: (props) => props.isMobile ? 25 : 50,
     }
   },
 }));
@@ -74,10 +77,11 @@ function BuyModal(props) {
     content,
     handleClose,
     buttonTitle,
-    handleOK
+    handleOK,
+    isMobile
   } = props;
 
-  const classes = useStyles();
+  const classes = useStyles({isMobile});
 
   return (
     <Dialog
@@ -100,8 +104,8 @@ function BuyModal(props) {
           label={buttonTitle}
           color="red"
           onClick={handleOK}
-          width={'16vw'}
-          height={'5vw'}
+          width={isMobile ? '50vw' : '16vw'}
+          height={isMobile ? '10vw' : '5vw'}
         />
       </DialogActions>
     </Dialog>
@@ -114,14 +118,16 @@ BuyModal.propTypes = {
   content: PropTypes.node,
   buttonTitle: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
-  handleOK: PropTypes.func
+  handleOK: PropTypes.func,
+  isMobile: PropTypes.bool
 };
 
 BuyModal.defaultProps = {
   title: '',
   content: '',
   buttonTitle: 'Cancel',
-  handleOK: ()=>{}
+  handleOK: ()=>{},
+  isMobile: false
 };
 
 export default BuyModal;

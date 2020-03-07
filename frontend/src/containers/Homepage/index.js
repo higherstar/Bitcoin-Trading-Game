@@ -64,22 +64,35 @@ function HomePage(props) {
     <div className={classes.container}>
       <div className={classes.buttonContainer}>
         <div className={classes.link}>
-          <CustomButton label='LOGIN' onClick={onClickLogin} width={'27vw'} height={'8vw'}/>
+          <CustomButton 
+            label='LOGIN' 
+            onClick={onClickLogin} 
+            width={isMobile ? '80vw' : '27vw'} 
+            height={isMobile ? '15vw' : '8vw'}
+          />
         </div>
         <div className={classes.link}>
-          <CustomButton label='SIGN UP' className={classes.signUpStyle} onClick={onClickSignUp} width={'27vw'} height={'8vw'}/>
+          <CustomButton 
+            label='SIGN UP' 
+            className={classes.signUpStyle} 
+            onClick={onClickSignUp} 
+            width={isMobile ? '80vw' : '27vw'} 
+            height={isMobile ? '15vw' : '8vw'}
+          />
         </div>
         <LoginModal
           opened={loginModalView}
           handleClose={handleLoginClose}
           handleOK={handleLogin}
           history={history}
+          isMobile={isMobile}
         />
         <SignUpModal
           opened={signUpModalView}
           handleClose={handleSignUpClose}
           handleOK={handleLogin}
           history={history}
+          isMobile={isMobile}
         />
       </div>
     </div>

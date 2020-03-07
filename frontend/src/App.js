@@ -66,7 +66,7 @@ const App = (props) => {
   const classes = useStyles();
   const [isMobile, setIsMobile] = useState(false);
   const getWindowWidth = () => {
-    setIsMobile(window.innerWidth <= 800);
+    setIsMobile(window.innerWidth <= 700);
   };
   useEffect(() => {
     window.addEventListener('resize', getWindowWidth);
@@ -101,7 +101,7 @@ const App = (props) => {
                 <Redirect exact from="/" to="/home" />
                 <PublicRoute exact path="/home" component={HomePage} props={pageProps} />
                 <PublicRoute exact path="/billing" component={BillingUser} props={pageProps} />
-                <PublicRoute exact path="/game" component={Game} props={props} />
+                <PublicRoute exact path="/game" component={Game} props={pageProps} />
                 <PublicRoute exact path="/game/main" component={MainGameScreen} props={pageProps} />
                 {/* <PrivateRoute exact path="/game/main" component={MainGameScreen} props={props} */}
               </Switch>

@@ -12,20 +12,21 @@ const useStyles = makeStyles((theme) => ({
       color: 'white'
     },
     '& p': {
-      fontSize: '2.4vw',
+      fontSize:  (props) => props.isMobile ? '6vw' : '2.4vw',
+      maxWidth: (props) => props.isMobile ? '40vw' : '30vw',
       margin: 0,
       fontFamily: theme.font.CeliasMedium,
       paddingLeft: 10,
       color: theme.palette.primary.mainMenuButtonColor
     },
     '& img': {
-      width: '6vw'
+      width: (props) => props.isMobile ? 50 : '6vw'
     }
   }
 }));
 
 function CustomUserIcon(props) {
-  const { name, image } = props;
+  const { name, image, isMobile } = props;
   const classes = useStyles(props);
 
   return (
@@ -40,12 +41,14 @@ function CustomUserIcon(props) {
 
 CustomUserIcon.propTypes = {
   name: PropTypes.string,
-  image: PropTypes.string
+  image: PropTypes.string,
+  isMobile: PropTypes.bool
 };
 
 CustomUserIcon.defaultProps = {
   name: 'Custom',
-  image: 'Users/user1.png '
+  image: 'Users/user1.png ',
+  isMobile: false
 };
 
 export default CustomUserIcon;

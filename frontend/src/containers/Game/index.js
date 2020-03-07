@@ -18,7 +18,6 @@ import AddAmountDialog from './components/AddAmountDialog'
 import DashBoard from './components/DashBoard'
 import Setting from './components/Setting'
 import AmountInput from './components/AmountInput';
-import { ProfileUserImage } from './components/UserImage'
 import { changeAmountUnit } from '../../utils'
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium,
   },
   title: {
-    fontSize: '7vw',
+    fontSize: (props) => props.isMobile ? 30 : '7vw',
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: '15vh',
+    marginTop: (props) => props.isMobile ? '5vh' : '15vh',
     marginBottom: '6vh',
     fontFamily: theme.font.CeliasMedium,
   },
@@ -71,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     bottom: 20,
     left: 20,
     '& img': {
-      width: 75
+      width: (props) => props.isMobile ? 50 : 75
     }
   },
   leaderBoardStyle: {
@@ -83,17 +82,17 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     cursor: 'pointer',
     '& img': {
-      width: 75
+      width: (props) => props.isMobile ? 40 : 75
     },
     '& p': {
-      fontSize: 29,
+      fontSize: (props) => props.isMobile ? 15 : 29,
       fontFamily: theme.font.CeliasMedium,
       margin: 0,
       color: theme.palette.primary.mainMenuButtonColor
     },
   },
   gameMenuTitle: {
-    fontSize: '3vw',
+    fontSize: (props) => props.isMobile ? 35 : '3vw',
     color: theme.palette.primary.mainMenuButtonColor,
     fontWeight: 'bold',
     marginTop: 0,
@@ -103,7 +102,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50,
+    paddingTop: (props) => props.isMobile ? 30 : 50,
     fontFamily: theme.font.CeliasMedium,
   },
   amountInput: {
@@ -115,24 +114,24 @@ const useStyles = makeStyles((theme) => ({
   amountParent: {
     display: 'flex',
     position: 'absolute',
-    top: 20,
+    top: (props) => props.isMobile ? '40vw' : 20,
     padding: '0 1vw 0 1vw',
     borderRadius: 8,
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderWidth: 3,
     borderStyle: 'solid',
-    width: '19vw',
-    height: '10vh',
+    width: (props) => props.isMobile ? '40vw' : '19vw',
+    height: (props) => props.isMobile ? '10vw' : '10vh',
     alignItems: 'center',
     '& p': {
-      fontSize: '3vw',
+      fontSize: (props) => props.isMobile ? '5vw' : '3vw',
       padding: 0,
       margin: 0,
       color: 'white',
       fontFamily: theme.font.CeliasMedium,
     },
     '& h1': {
-      fontSize: '3vw',
+      fontSize: (props) => props.isMobile ? '5vw' : '3vw',
       width: '100%',
       padding: 0,
       paddingRight: 15,
@@ -143,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
     '& h2': {
       padding: 0,
       paddingLeft: '1vw',
-      fontSize: '5vw',
+      fontSize: (props) => props.isMobile ? '7vw' : '5vw',
       margin: 0,
       fontWeight: 'bold',
       color: 'white',
@@ -154,9 +153,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Game(props) {
-  const classes = useStyles();
   const [cookies, setCookie] = useCookies(['id', 'token']);
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken, getLeaderBoardScore } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken, getLeaderBoardScore, isMobile } = props;
+  const classes = useStyles({isMobile});
   const [amountModalView, setAmountModalView] = useState(false);
   const [buyInModalView, setBuyInModalView] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -277,8 +276,8 @@ function Game(props) {
       <AmountInput
         className={classes.amountInput}
         type="number"
-        fontSize="75px"
-        width="70%"
+        fontSize={isMobile ? "40px" : "75px"}
+        width={isMobile ? "90%" : "70%"}
         handleChange={handleChangeAmount}
       />
     </div>
@@ -291,8 +290,9 @@ function Game(props) {
             value={item.value} 
             label={item.level} 
             color={item.color}
-            width={'12vw'}
-            height={'6vw'}
+            width={isMobile ? '16vw' : '12vw'}
+            height={isMobile ? '9vw' : '6vw'}
+            isMobile={isMobile}
             key={index} 
             active={index === buyInSelect} 
             onSelect={handleBuyInSelect}
@@ -312,10 +312,10 @@ function Game(props) {
   return (
     <div className={classes.container}>
       <div className={classes.userSection}>
-        <UserIcon name={userInfo.name} image={profileImage}/>
+        <UserIcon name={userInfo.name} image={profileImage} isMobile={isMobile}/>
       </div>
       <div className={classes.tradeTokenSection}>
-        <TradeToken name={userTradeToken.toString()}/>
+        <TradeToken name={userTradeToken.toString()} isMobile={isMobile}/>
       </div>
       <div className={classes.mainSettingStyle} onClick={()=>handleOpenSetting()}>
         <img src={MainSettingImage}/>
@@ -347,6 +347,7 @@ function Game(props) {
         title="Add Amount"
         buttonTitle="BUY"
         handleOK={handleAmountChargeClick}
+        isMobile={isMobile}
       />
       <BuyModal
         opened={buyInModalView}
@@ -355,6 +356,7 @@ function Game(props) {
         title="Select Stackes"
         buttonTitle="BUY-IN"
         handleOK={handleBuyInClick}
+        isMobile={isMobile}
       />
       <CustomAlert 
         title={errorShow.message}
@@ -364,10 +366,12 @@ function Game(props) {
       <DashBoard
         opened={openDashBoard}
         handleClose={handleCloseDashBoard}
+        isMobile={isMobile}
         />
       <Setting
         opened={openSetting}
         handleClose={handleCloseSetting}
+        isMobile={isMobile}
         />
     </div>
   );

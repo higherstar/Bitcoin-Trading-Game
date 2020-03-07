@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       maxWidth: 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: '3vw',
+      fontSize: (props) => props.isMobile ? '5vw' : '3vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   headerTitle: {
-    fontSize: '4vw',
+    fontSize: (props) => props.isMobile ? '7vw' : '4vw',
     width: '100%',
     textAlign: 'center',
     margin: 0,
@@ -43,18 +43,18 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 0,
   },
   jackpotText: {
-    fontSize: 40,
+    fontSize: (props) => props.isMobile ? 20 : 40,
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium
   },
   coin: {
-    fontSize: 40,
+    fontSize: (props) => props.isMobile ? 20 : 40,
     color: 'white',
     paddingLeft: 15,
     fontFamily: theme.font.CeliasMedium
   },
   headerText: {
-    fontSize: '5vw',
+    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium
@@ -82,11 +82,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function LoserModal(props) {
-  const classes = useStyles();
-
   const {
-    opened
+    opened,
+    isMobile
   } = props;
+  const classes = useStyles({isMobile});
   
   return (
     <Dialog
@@ -109,13 +109,15 @@ function LoserModal(props) {
 LoserModal.propTypes = {
   opened: PropTypes.bool,
   handleClose: PropTypes.func,
-  history: PropTypes.object
+  history: PropTypes.object,
+  isMobile: PropTypes.bool
 };
 
 LoserModal.defaultProps = {
   opened: false,
   handleClose: () => {},
-  history: {}
+  history: {},
+  isMobile: false
 };
 
 export default LoserModal;

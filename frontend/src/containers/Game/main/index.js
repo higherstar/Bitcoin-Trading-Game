@@ -45,8 +45,8 @@ const useStyles = makeStyles((theme) => ({
     padding: '1.7vw'
   },
   userStakeInfoStyle: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: (props) => props.isMobile ? 5 : 10,
+    paddingBottom: (props) => props.isMobile ? 5 : 10,
     paddingRight: '2vw',
     paddingLeft: '2vw',
     marginRight: '2vw',
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
-      fontSize: '2vw',
+      fontSize: (props) => props.isMobile ? '3vw' : '2vw',
       margin: 0
     }
   },
@@ -74,8 +74,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   jackpotInfoStyle: {
-    paddingTop: '1vw',
-    paddingBottom: '1vw',
+    paddingTop: (props) => props.isMobile ? 5 : '1vw',
+    paddingBottom: (props) => props.isMobile ? 5 : '1vw',
     paddingRight: '2vw',
     paddingLeft: '2vw',    
     display: 'flex',
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
       fontWeight: 'bold',
-      fontSize: '2.5vw',
+      fontSize: (props) => props.isMobile ? '3vw' : '2.5vw',
       margin: 0
     }
   },
@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
       width: 70
     },
     '& p': {
-      fontSize: 12,
+      fontSize: (props) => props.isMobile ? 15 : 12,
       color: '#fff',
       textAlign: 'center',
       margin: 0,
@@ -123,14 +123,14 @@ const useStyles = makeStyles((theme) => ({
     left: '5vw',
     top: 20,
     '& img': {
-      width: 70
+      width: (props) => props.isMobile ? 50 : 70
     }
   },
   joinedUserList: {
     display: 'flex',
     paddingTop: '1vw',
     paddingBottom: '3vw',
-    minHeight: '10vw', 
+    minHeight: (props) => props.isMobile ? 70 : '10vw', 
     justifyContent: 'flex-start',
     borderWidth: 5,
     borderRadius: 15,
@@ -151,14 +151,14 @@ const useStyles = makeStyles((theme) => ({
       margin: 0,
       color: theme.palette.base.white,
       fontFamily: theme.font.CeliasMedium,
-      fontSize: '1.5vw',
+      fontSize: (props) => props.isMobile ? 12 : '1.5vw',
       fontWeight: 'bold'
     },
     '& svg': {
       fontSize: 40
     },
     '& img': {
-      width: '6vw'
+      width: (props) => props.isMobile ? 35 : '6vw'
     }
   },
   waitingScreenStyle: {
@@ -174,7 +174,7 @@ const useStyles = makeStyles((theme) => ({
     '& p': {
       color: '#fff',
       fontWeight: 'bold',
-      fontSize: 50,
+      fontSize: (props) => props.isMobile ? 30 : 50,
       margin: 0,
       textAlign: 'center'
     }
@@ -184,7 +184,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     bottom: '8vh',
-    right: '10vw',
+    right: (props) => props.isMobile ? 'unset' : '10vw',
+    left: (props) => props.isMobile ? 40 : 'unset',
     zIndex: 20,
   }
 }));
@@ -204,7 +205,7 @@ const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 120;
 const gameWatingTime = 30;  
 function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom } = props;
+  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ playersTokens, setPlayersTokens] = useState([]);
@@ -226,7 +227,7 @@ function MainGameScreen(props) {
     }
   });
   useEffect(() => console.log('RESTARTED'), [])
-  const classes = useStyles();
+  const classes = useStyles({isMobile});
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
@@ -545,8 +546,8 @@ function MainGameScreen(props) {
         <div className={classes.takeWinStyle}>
           <CustomButton
             onClick={onClickTakeWin} 
-            width={'10vw'}
-            height={'4vw'} 
+            width={isMobile ? '20vw' : '10vw'}
+            height={isMobile ? '8vw' : '4vw'} 
             label="TAKE WIN"/>
         </div>
       </div>
@@ -593,13 +594,16 @@ function MainGameScreen(props) {
       <WinnerModal
         opened={gameWinDialogShow}
         jackPot={jackPot}
+        isMobile={isMobile}
       />
       <LoserModal
         opened={gameLoseDialogShow}
+        isMobile={isMobile}
       />
       <PauseModal
         opened={gamePauseDialogShow}
         close={handlePauseGameModalClose}
+        isMobile={isMobile}
       />
     </div>
   );

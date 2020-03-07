@@ -12,8 +12,8 @@ import CloseIcon from '@material-ui/icons/Close';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: '40%',
-      minWidth: 450,
+      width: (props) => props.isMobile ? '90vw' : '40%',
+      minWidth: (props) => props.isMobile ? 'unset' : 450,
       height: 'fit-content',
       maxWidth: 'unset',
       padding: theme.spacing(4.25, 3.25),
@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     fontFamily: theme.font.CeliasMedium,
     fontWeight: 'bold',
-    fontSize: 50,
+    marginTop: (props) => props.isMobile ? 15 : 'unset',
+    fontSize: (props) => props.isMobile ? 30 : 50,
     textAlign: 'center',
   },
   content: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     '& p': {
-      fontSize: 70,
+      fontSize: (props) => props.isMobile ? 40 : 70,
       color: theme.palette.primary.buttonBottomBorder,
       fontFamily: theme.font.CeliasMedium,
       marginBottom: 0,
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium,
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: 50
+      fontSize: (props) => props.isMobile ? 30 : 50,
     }
   },
 }));
@@ -79,16 +80,16 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 function AddAmountDialog(props) {
-  const classes = useStyles();
-
   const {
     opened,
     title,
     content,
     handleClose,
     buttonTitle,
-    handleOK
+    handleOK,
+    isMobile
   } = props;
+  const classes = useStyles({isMobile});
 
   return (
     <Dialog
@@ -117,14 +118,16 @@ AddAmountDialog.propTypes = {
   content: PropTypes.node,
   buttonTitle: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
-  handleOK: PropTypes.func
+  handleOK: PropTypes.func,
+  isMobile: PropTypes.bool
 };
 
 AddAmountDialog.defaultProps = {
   title: '',
   content: '',
   buttonTitle: 'Cancel',
-  handleOK: ()=>{}
+  handleOK: ()=>{},
+  isMobile: false
 };
 
 export default AddAmountDialog;

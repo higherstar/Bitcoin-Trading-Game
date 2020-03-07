@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
   button: {
     width: (props) => props.width,
     height: (props) => props.height,
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: (props) => props.isMobile ? 10 : 20,
+    marginRight: (props) => props.isMobile ? 10 : 20,
     background: (props) => props.active ? props.color : 'transparent',
     display: 'flex',
     flexDirection: 'column',
@@ -24,18 +24,18 @@ const useStyles = makeStyles((theme) => ({
     color: (props) => props.color === '#ffffff' && props.active ? theme.palette.base[800] : theme.palette.base.white,
   },
   valueText: {
-    fontSize: '2.7vw',
+    fontSize: (props) => props.isMobile ? '5vw' : '2.7vw',
     fontWeight: 600,
   },
   label: {
     color: (props) => props.color,
-    fontSize: '2.7vw',
+    fontSize: (props) => props.isMobile ? '4vw' : '2.7vw',
     fontWeight: 600,
   },
 }));
 
 function BuyIn(props) {
-  const { value, label, color, onSelect, active } = props;
+  const { value, label, color, onSelect, active, isMobile } = props;
   const selectIndex = value === 20 ? 0 : value === 50 ? 1 : 2;
   const classes = useStyles(props);
   return (
@@ -57,7 +57,8 @@ BuyIn.TypeProps = {
   color: PropTypes.string,
   value: PropTypes.number.isRequired,
   onSelect: PropTypes.func.isRequired,
-  active: PropTypes.bool
+  active: PropTypes.bool,
+  isMobile: PropTypes.bool
 };
 
 BuyIn.defaultProps = {
@@ -65,7 +66,8 @@ BuyIn.defaultProps = {
   height: 50,
   label: '',
   color: '#ffffff',
-  active: false
+  active: false,
+  isMobile: false
 };
 
 export default BuyIn;

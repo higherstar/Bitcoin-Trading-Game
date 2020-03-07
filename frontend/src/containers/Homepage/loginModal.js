@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
 import { connect } from 'react-redux';
 import { useCookies } from 'react-cookie';
+import classnames from 'classnames';
 
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
@@ -16,7 +17,7 @@ import { CustomButton, CustomInputBox, CustomAlert } from 'components/elements';
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
-      width: 'fit-content',
+      width: (props) => props.isMobile ? '90vw' : 'fit-content',
       maxWidth: 'unset',
       minWidth: '50vw',
       height: 'fit-content',
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: '3.25vw'
+      fontSize: (props) => props.isMobile ? '8vw' : '3.25vw'
     }
   },
   inputContainer: {
@@ -84,14 +85,14 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 
 function LoginModal(props) {
-  const classes = useStyles();
-
   const {
     opened,
     handleClose,
     logInUser,
     history,
+    isMobile,
   } = props;
+  const classes = useStyles({isMobile});
 
   const [cookies, setCookie] = useCookies(['id', 'token']);
   const [userEmail, setUserEmail] = useState('');
@@ -134,22 +135,24 @@ function LoginModal(props) {
             onChange={handleChangeEmail}
             label="Email"
             leftText="Email: "
-            width={'17VW'}
+            width={isMobile ? '70vw' : '17VW'}
             labelPadding={'20vw'}
             type="email"
+            isMobile={isMobile}
           />
           <CustomInputBox
             onChange={handleChangePassword}
             label="Password"
             leftText="Password: "
-            width={'17VW'}
+            width={isMobile ? '70vw' : '17vw'}
             labelPadding={'20vw'}
             type="password"
+            isMobile={isMobile}
           />
           <CustomButton label="LOGIN"
             onClick={onClickLogin} 
-            width={'14.7VW'}
-            height={'5vw'}
+            width={isMobile ? '70vw' : '14.7VW'}
+            height={isMobile ? '15vw' : '5vw'}
             type="submit"/>
           <CustomAlert 
             title={errorShow.message}
@@ -166,7 +169,8 @@ LoginModal.propTypes = {
   opened: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   logInUser: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  isMobile: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
