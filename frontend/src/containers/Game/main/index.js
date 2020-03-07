@@ -11,7 +11,7 @@ import { createRoom, joinRoom, getActiveRoom} from 'redux/actions/gamePlay';
 import { bindActionCreators } from 'redux';
 import { CustomButton, CustomLineChart } from 'components/elements';
 import ChatUI from '../components/chat'
-import { fetchData, getCryptoData } from '../components/chart/TradingAPI';
+import { getCryptoData } from '../components/chart/TradingAPI';
 import PauseImage from 'assets/image/pause_btn.png'
 import ClockImage from 'assets/image/clock.png';
 import { setGameScore, setGameInfo, getWinnerState } from './gameAPICalls';
@@ -230,7 +230,6 @@ function MainGameScreen(props) {
   let waitingTimerId = useRef(null);
   let gamePlayTimeId = useRef(null);
   let apiFetchTimerId = useRef(null);
-  let chartWrapper = null;
   // let lineSeries = useRef(null);
   let chartData = useRef([]);
   let startingGame = useRef(false);
@@ -614,7 +613,7 @@ MainGameScreen.propTypes = {
   buyInStacke: PropTypes.func.isRequired,
   createRoom: PropTypes.func.isRequired,
   joinRoom: PropTypes.func.isRequired,
-  getAcitveRoom: PropTypes.func.isRequired,
+  getAcitveRoom: PropTypes.func,
   playRoom: PropTypes.object.isRequired
 };
 

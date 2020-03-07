@@ -172,7 +172,7 @@ function SignUpModal(props) {
 SignUpModal.propTypes = {
   opened: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   registerUser: PropTypes.func.isRequired,
 };
 

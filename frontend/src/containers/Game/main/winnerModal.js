@@ -108,12 +108,18 @@ function WinnerModal(props) {
 }
 
 WinnerModal.propTypes = {
-  opened: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  opened: PropTypes.bool,
+  handleClose: PropTypes.func,
   logInUser: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired,
-  jackPot: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired,
+  jackPot: PropTypes.number.isRequired
 };
+
+WinnerModal.defaultProps = {
+  opened: false,
+  history: {},
+  handleClose: () => {},
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   logInUser,

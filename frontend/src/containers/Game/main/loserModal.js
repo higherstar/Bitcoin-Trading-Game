@@ -107,9 +107,15 @@ function LoserModal(props) {
 }
 
 LoserModal.propTypes = {
-  opened: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired
+  opened: PropTypes.bool,
+  handleClose: PropTypes.func,
+  history: PropTypes.object
+};
+
+LoserModal.defaultProps = {
+  opened: false,
+  handleClose: () => {},
+  history: {}
 };
 
 export default LoserModal;

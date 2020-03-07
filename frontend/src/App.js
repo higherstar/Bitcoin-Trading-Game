@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Switch, withRouter, Redirect } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -64,6 +64,22 @@ const useStyles = makeStyles((theme) => ({
 
 const App = (props) => {
   const classes = useStyles();
+  const [isMobile, setIsMobile] = useState(false);
+  const getWindowWidth = () => {
+    setIsMobile(window.innerWidth <= 800);
+  };
+  useEffect(() => {
+    window.addEventListener('resize', getWindowWidth);
+  }, []);
+
+  useEffect(() => {
+    getWindowWidth();
+  });
+
+  const pageProps = {
+    ...props,
+    isMobile,
+  }
 
   return (
     <SnackbarProvider maxSnack={3}>
@@ -83,10 +99,10 @@ const App = (props) => {
             >
               <Switch>
                 <Redirect exact from="/" to="/home" />
-                <PublicRoute exact path="/home" component={HomePage} props={props} />
-                <PublicRoute exact path="/billing" component={BillingUser} props={props} />
+                <PublicRoute exact path="/home" component={HomePage} props={pageProps} />
+                <PublicRoute exact path="/billing" component={BillingUser} props={pageProps} />
                 <PublicRoute exact path="/game" component={Game} props={props} />
-                <PublicRoute exact path="/game/main" component={MainGameScreen} props={props} />
+                <PublicRoute exact path="/game/main" component={MainGameScreen} props={pageProps} />
                 {/* <PrivateRoute exact path="/game/main" component={MainGameScreen} props={props} */}
               </Switch>
             </PerfectScrollbar>

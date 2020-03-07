@@ -68,8 +68,8 @@ function CustomButton({
 CustomButton.propTypes = {
   className: PropTypes.string,
   label: PropTypes.string.isRequired,
-  width: PropTypes.number,
-  height: PropTypes.number,
+  width: PropTypes.string,
+  height: PropTypes.string,
   color: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.array,
@@ -79,13 +79,13 @@ CustomButton.propTypes = {
 
 CustomButton.defaultProps = {
   className: '',
-  width: 160,
-  height: 40,
+  width: '160px',
+  height: '40px',
   color: 'blue',
   disabled: false,
   icon: [],
   onClick: undefined,
-  type: ''
+  type: 'button'
 };
 
 export default CustomButton;

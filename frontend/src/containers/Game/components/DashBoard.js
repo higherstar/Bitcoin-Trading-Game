@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -9,6 +9,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { changeAmountUnit } from '../../../utils'
+
 const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
@@ -123,33 +124,6 @@ const DialogContent = withStyles((theme) => ({
   },
 }))(MuiDialogContent);
 
-const leaderBoardData = [
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-  {
-    userName: 'Dexter Cahill',
-    winning: '20K'
-  },
-]
-
 function DashBoard(props) {
   const classes = useStyles();
 
@@ -162,6 +136,7 @@ function DashBoard(props) {
   const leaderScors = leaderBoardScores;
   if ( leaderScors.length > 5)
     leaderScors.slice(0, 5);
+    
   return (
     <Dialog
       className={classes.container}
@@ -182,10 +157,10 @@ function DashBoard(props) {
         </div>
         {
           leaderScors.map((item, index) => (
-            <div className={classes.leaderTitles}>
+            <div className={classes.leaderTitles} key={`leader_title_${index}`}>
               <p className={classes.no}>{index + 1}</p>
               <div className={classes.users}>
-                <img src='./Users/user.png'></img>
+                <img src='./Users/user.png' alt="user"></img>
                 <p>{item.name}</p>
               </div>
               <p className={classes.win}>{changeAmountUnit (item.totalScore)}</p>

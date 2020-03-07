@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { logInUser } from 'redux/actions/user';
@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     '& a': {
       fontSize: '2.5vw',
-      color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
       color: theme.palette.primary.buttonBottomBorder,
@@ -75,12 +74,18 @@ function PauseModal(props) {
 }
 
 PauseModal.propTypes = {
-  opened: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  opened: PropTypes.bool,
+  handleClose: PropTypes.func,
   logInUser: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired
 };
+
+PauseModal.defaultProps = {
+  opened: false,
+  handleClose: () => {},
+  history: {}
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   logInUser,

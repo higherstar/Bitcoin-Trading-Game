@@ -166,7 +166,7 @@ LoginModal.propTypes = {
   opened: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   logInUser: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -31,11 +31,12 @@ export default function CustomAlert(props) {
 CustomAlert.propTypes = {
   title : PropTypes.string,
   type : PropTypes.string,
-  open : PropTypes.bool.isRequired,
+  open : PropTypes.bool,
   handleClose: PropTypes.func.isRequired
 };
 
 CustomAlert.defaultProps = {
   title : '',
-  type: 'error'
+  type: 'error',
+  open: false
 }

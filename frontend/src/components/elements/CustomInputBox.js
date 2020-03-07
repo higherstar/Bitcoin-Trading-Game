@@ -69,10 +69,10 @@ CustomInputBox.propTypes = {
   label: PropTypes.string,
   leftText: PropTypes.string,
   onChange: PropTypes.func,
-  width: PropTypes.number,
+  width: PropTypes.string,
   type: PropTypes.string,
   defaultValue: PropTypes.string,
-  labelPadding: PropTypes.number,
+  labelPadding: PropTypes.string,
   marginBottom: PropTypes.number,
 };
 
@@ -81,11 +81,11 @@ CustomInputBox.defaultProps = {
   label: '',
   leftText: '',
   onChange: undefined,
-  width: 200,
+  width: '200px',
   type: 'text',
   defaultValue: '',
   marginBottom: 4,
-  labelPadding: 8,
+  labelPadding: 'px',
 };
 
 export default CustomInputBox;

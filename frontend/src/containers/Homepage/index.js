@@ -35,29 +35,30 @@ const useStyles = makeStyles((theme) => ({
 
 function HomePage(props) {
   const classes = useStyles();
-  const { history } = props;
+  const { history, isMobile } = props;
   const [loginModalView, setLoginModalView] = useState(false);
   const [signUpModalView, setSignUpModalView] = useState(false);
+  console.log(isMobile);
 
-const onClickLogin = () => {
-  setLoginModalView(true);
-};
+  const onClickLogin = () => {
+    setLoginModalView(true);
+  };
 
-const handleLoginClose = () => {
-  setLoginModalView(false);
-}
+  const handleLoginClose = () => {
+    setLoginModalView(false);
+  }
 
-const handleSignUpClose = () => {
-  setSignUpModalView(false);
-}
+  const handleSignUpClose = () => {
+    setSignUpModalView(false);
+  }
 
-const handleLogin = () => {
-  // setLoginModalView(true);
-}
+  const handleLogin = () => {
+    // setLoginModalView(true);
+  }
 
-const onClickSignUp = () => {
-  setSignUpModalView(true);
-};
+  const onClickSignUp = () => {
+    setSignUpModalView(true);
+  };
 
   return (
     <div className={classes.container}>
@@ -86,7 +87,7 @@ const onClickSignUp = () => {
 }
 
 HomePage.propTypes = {
-  history: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired
 };
 
 HomePage.defaultProps = {
