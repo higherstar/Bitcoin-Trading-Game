@@ -14,9 +14,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : '40%',
       minWidth: (props) => props.isMobile ? 'unset' : 450,
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       height: 'fit-content',
-      maxWidth: 'unset',
-      padding: theme.spacing(4.25, 3.25),
+      padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
       borderStyle: 'solid',
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   title: {
-    marginBottom: theme.spacing(2),
+    marginBottom: (props) => props.isMobile ? 10 : theme.spacing(2),
     color: 'white',
     fontFamily: theme.font.CeliasMedium,
     fontWeight: 'bold',
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium,
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: (props) => props.isMobile ? 30 : 50,
+      fontSize: (props) => props.isMobile ? 25 : '3.25vw'
     }
   },
 }));
@@ -97,7 +97,7 @@ function AddAmountDialog(props) {
       open={opened}
       aria-labelledby="customized-dialog-title"
     >
-      <DialogContent className={classes.content}>
+      <DialogContent className={classes.content} style={{paddingBottom: isMobile ? 0 : 8}}>
         <Typography className={classes.title}>{title}</Typography>
         {content}
         <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>

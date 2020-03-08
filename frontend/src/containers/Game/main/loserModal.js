@@ -9,10 +9,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
-      maxWidth: 'unset',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
-      padding: '4vw',
+      padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : '4vw',
       borderStyle: 'solid',
       background: 'black',
     },
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: (props) => props.isMobile ? '5vw' : '3vw',
+      fontSize: (props) => props.isMobile ? 20 : '3vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   headerTitle: {
-    fontSize: (props) => props.isMobile ? '7vw' : '4vw',
+    fontSize: (props) => props.isMobile ? 25 : '4vw',
     width: '100%',
     textAlign: 'center',
     margin: 0,
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium
   },
   headerText: {
-    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
+    fontSize: (props) => props.isMobile ? 25 : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
       height: 'fit-content',
       minWidth: (props) => props.isMobile ? 'unset' : '35vw',
-      maxWidth: 'unset',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       height: 'fit-content',
       padding: '4vw',
       borderWidth: 3,
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     '& p': {
-      fontSize: (props) => props.isMobile ? '6vw' : '3vw',
+      fontSize: (props) => props.isMobile ? 20 : '3vw',
       color: 'white',
       fontFamily: theme.font.CeliasMedium,
       margin: 0 
@@ -50,14 +50,14 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     justifyContent: 'space-between',
     '& p': {
-      fontSize: (props) => props.isMobile ? '4vw' : '2vw',
+      fontSize: (props) => props.isMobile ? 20 : '2vw',
       color: theme.palette.primary.buttonBottomBorder,
       fontFamily: theme.font.CeliasMedium,
       margin: 0 
     },
     '& div': {
       cursor: 'pointer',
-      fontSize: (props) => props.isMobile ? '4vw' : '1.5vw',
+      fontSize: (props) => props.isMobile ? 20 : '1.5vw',
       fontFamily: theme.font.CeliasMedium,
       color: 'white',
       background: '#4267b2',
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   done: {
-    fontSize: (props) => props.isMobile ? '6vw' : '3vw',
+    fontSize: (props) => props.isMobile ? 25 : '3vw',
     cursor: 'pointer',
     fontFamily: theme.font.CeliasMedium,
     color: 'white',

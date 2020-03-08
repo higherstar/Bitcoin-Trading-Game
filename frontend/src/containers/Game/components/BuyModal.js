@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
       height: 'fit-content',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       minWidth: (props) => props.isMobile ? 'unset' : 'fit-content',
       padding: theme.spacing(4.25, 3.25),
       borderWidth: 3,
@@ -29,14 +30,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    fontSize: (props) => props.isMobile ? '7vw' : '3vw',
+    fontSize: (props) => props.isMobile ? 25 : '3vw',
     marginTop: (props) => props.isMobile ? '4vw' : 'unset',
     textAlign: 'center',
   },
   content: {
     padding: theme.spacing(1, 0),
     flex: 1,
-    marginBottom: (props) => props.isMobile ? '7vw' : 'unset',
+    overflowY: 'unset',
   },
   actions: {
     justifyContent: 'center',
@@ -104,8 +105,8 @@ function BuyModal(props) {
           label={buttonTitle}
           color="red"
           onClick={handleOK}
-          width={isMobile ? '50vw' : '16vw'}
-          height={isMobile ? '10vw' : '5vw'}
+          width={isMobile ? '200px' : '16vw'}
+          height={isMobile ? '40px' : '5vw'}
         />
       </DialogActions>
     </Dialog>

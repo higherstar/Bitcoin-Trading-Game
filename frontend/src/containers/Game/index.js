@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buyInContainer: {
     display: 'flex',
+    flexDirection: (props) => props.isMobile ? 'column' : 'row',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -290,8 +291,8 @@ function Game(props) {
             value={item.value} 
             label={item.level} 
             color={item.color}
-            width={isMobile ? '16vw' : '12vw'}
-            height={isMobile ? '9vw' : '6vw'}
+            width={isMobile ? '125px' : '12vw'}
+            height={isMobile ? '50px' : '6vw'}
             isMobile={isMobile}
             key={index} 
             active={index === buyInSelect} 

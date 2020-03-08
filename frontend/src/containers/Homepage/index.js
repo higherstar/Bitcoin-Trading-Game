@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomButton } from 'components/elements';
 import LoginModal from './loginModal';
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
     marginTop: 50,
     marginBottom: 50
-  },
+  }
 }));
 
 function HomePage(props) {
@@ -64,11 +65,12 @@ function HomePage(props) {
     <div className={classes.container}>
       <div className={classes.buttonContainer}>
         <div className={classes.link}>
-          <CustomButton 
+          <CustomButton
             label='LOGIN' 
             onClick={onClickLogin} 
             width={isMobile ? '80vw' : '27vw'} 
             height={isMobile ? '15vw' : '8vw'}
+            isMobile={isMobile}
           />
         </div>
         <div className={classes.link}>
@@ -78,6 +80,7 @@ function HomePage(props) {
             onClick={onClickSignUp} 
             width={isMobile ? '80vw' : '27vw'} 
             height={isMobile ? '15vw' : '8vw'}
+            isMobile={isMobile}
           />
         </div>
         <LoginModal

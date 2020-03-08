@@ -12,10 +12,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
-      maxWidth: 'unset',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
-      padding: theme.spacing(4.25, 3.25),
+      padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
       borderStyle: 'solid',
@@ -29,17 +29,17 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
+      fontSize: (props) => props.isMobile ? 17 : '2.5vw',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
       color: theme.palette.primary.buttonBottomBorder,
       padding: '2vw',
       textDecoration: 'none',
-      marginRight: (props) => props.isMobile ? '4vw' : 'unset'
+      marginRight: (props) => props.isMobile ? 10 : 'unset'
     }
   },
   headerText: {
-    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
+    fontSize: (props) => props.isMobile ? 25 : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
-      maxWidth: 'unset',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       minWidth: (props) => props.isMobile ? 'unset' : '50vw',
       height: 'fit-content',
       padding: theme.spacing(4.25, 3.25),
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.base.white,
     fontWeight: 'bold',
     fontFamily: theme.font.CeliasMedium,
-    fontSize: (props) => props.isMobile ? '7vw' : '3vw',
+    fontSize: (props) => props.isMobile ? 25 : '3vw',
     marginTop: (props) => props.isMobile ? '4vw' : 'unset',
     textAlign: 'center',
   },

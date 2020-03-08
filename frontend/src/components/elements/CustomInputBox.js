@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   formGroup: {
-    marginBottom: (props) => theme.spacing(props.marginBottom),
+    marginBottom: (props) => props.isMobile ? 15 : theme.spacing(props.marginBottom),
     display: (props) => props.isMobile ? 'block' : 'flex',
     alignItems: 'center',
   },
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     width: (props) =>  props.isMobile ? '15vw' : `${props.width.toString().slice(0, -2)/2}vw`,
     marginRight: (props) => props.isMobile ? '4vw' : `${props.width.toString().slice(0, -2)/5}vw`,
     color: '#fff',
-    fontSize: (props) => props.isMobile ? '5vw' : '2.25VW',
+    fontSize: (props) => props.isMobile ? 17 : '2.25VW',
     fontFamily: theme.font.CeliasMedium,
   },
 }));
@@ -57,7 +57,7 @@ function CustomInputBox({
         autoComplete={type}
         variant="outlined"
         inputProps={{style: {
-          fontSize: isMobile ? '6vw' : '1.6vw',
+          fontSize: isMobile ? 17 : '1.6vw',
         }}}
         onChange={onChange}
       />

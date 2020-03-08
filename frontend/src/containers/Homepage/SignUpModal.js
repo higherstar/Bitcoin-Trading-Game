@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : '50vw',
-      maxWidth: 'unset',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       height: 'fit-content',
-      padding: theme.spacing(4.25, 3.25),
+      padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : theme.spacing(4.25, 3.25),
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
       borderStyle: 'solid',
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   title: {
-    marginBottom: theme.spacing(2),
+    marginBottom: (props) => props.isMobile ? 10 : theme.spacing(2),
     color: theme.palette.base[500],
     fontWeight: 'bold',
     fontSize: 25,
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.base.white,
     '& svg': {
-      fontSize: (props) => props.isMobile ? '8vw' : '3.25vw'
+      fontSize: (props) => props.isMobile ? 25 : '3.25vw'
     }
   },
   inputContainer: {
@@ -128,7 +128,7 @@ function SignUpModal(props) {
       open={opened}
       aria-labelledby="customized-dialog-title"
     >
-      <DialogContent className={classes.content}>
+      <DialogContent className={classes.content} style={{paddingBottom: isMobile ? 0 : 8}}>
         <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
           <CloseIcon />
         </IconButton>
@@ -139,7 +139,7 @@ function SignUpModal(props) {
             onChange={handleChangeName}
             label="UserName"
             leftText="UserName: "
-            width={isMobile ? '70vw' : '18VW'}
+            width={isMobile ? 200 : '18VW'}
             labelPadding={'20vw'}
             isMobile={isMobile}
           />
@@ -147,7 +147,7 @@ function SignUpModal(props) {
             onChange={handleChangeEmail}
             label="Email" leftText="Email: "
             type="email"
-            width={isMobile ? '70vw' : '18VW'}
+            width={isMobile ? 200 : '18VW'}
             labelPadding={'20vw'} 
             isMobile={isMobile}  
           />
@@ -155,15 +155,15 @@ function SignUpModal(props) {
             onChange={handleChangePassword}
             label="Password" leftText="Password: "
             type="password"
-            width={isMobile ? '70vw' : '18VW'}
+            width={isMobile ? 200 : '18VW'}
             labelPadding={'20vw'} 
             isMobile={isMobile}  
           />
           <CustomButton
             onClick={handleOnClickSignUp}
             label="Sign Up"
-            width={isMobile ? '70vw' : '14.7VW'}
-            height={isMobile ? '15vw' : '5vw'}
+            width={isMobile ? 200 : '14.7VW'}
+            height={isMobile ? 40 : '5vw'}
             className={classes.signUpButtonStyle} />
           <CustomAlert 
             title={errorShow.message}

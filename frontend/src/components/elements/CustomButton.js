@@ -6,7 +6,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    minWidth: (props) => props.width,
+    minWidth: (props) => props.isMobile ? 300 : props.width,
     minHeight: (props) => props.height,
     paddingTop: '1vw',
     paddingBottom: '1vw',
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.primary.buttonBottomBorder,
     borderWidth: 3,
     borderStyle: 'solid',
-    fontSize: (props) => `${props.width.toString().slice(0, -2) / 7}vw`,
+    fontSize: (props) => props.isMobile ? 25 : '3vw',
     color: theme.palette.base.white,
     fontFamily: theme.font.CeliasMedium,
     // background: `linear-gradient(${theme.palette.primary.buttonTopBorder}, ${theme.palette.primary.buttonBottomBorder})`,
@@ -48,9 +48,10 @@ function CustomButton({
   disabled,
   icon,
   onClick,
-  type
+  type,
+  isMobile
 }) {
-  const classes = useStyles({ width, height, color });
+  const classes = useStyles({ width, height, color, isMobile });
 
   return (
     <Button
@@ -74,7 +75,8 @@ CustomButton.propTypes = {
   disabled: PropTypes.bool,
   icon: PropTypes.array,
   onClick: PropTypes.func,
-  type: PropTypes.string
+  type: PropTypes.string,
+  isMobile: PropTypes
 };
 
 CustomButton.defaultProps = {
@@ -85,7 +87,8 @@ CustomButton.defaultProps = {
   disabled: false,
   icon: [],
   onClick: undefined,
-  type: 'button'
+  type: 'button',
+  isMobile: false
 };
 
 export default CustomButton;

@@ -5,6 +5,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 const useStyles = makeStyles((theme) => ({
   container: {
     textAlign: 'center',
+    marginBottom: (props) => props.isMobile ? 10 : 'unset',
   },
   button: {
     width: (props) => props.width,
@@ -24,12 +25,12 @@ const useStyles = makeStyles((theme) => ({
     color: (props) => props.color === '#ffffff' && props.active ? theme.palette.base[800] : theme.palette.base.white,
   },
   valueText: {
-    fontSize: (props) => props.isMobile ? '5vw' : '2.7vw',
+    fontSize: (props) => props.isMobile ? 20 : '2.7vw',
     fontWeight: 600,
   },
   label: {
     color: (props) => props.color,
-    fontSize: (props) => props.isMobile ? '4vw' : '2.7vw',
+    fontSize: (props) => props.isMobile ? 18 : '2.7vw',
     fontWeight: 600,
   },
 }));

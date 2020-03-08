@@ -12,9 +12,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     '& .MuiDialog-paper': {
       width: (props) => props.isMobile ? '90vw' : 'fit-content',
+      maxWidth: (props) => props.isMobile ? 300 : 'unset',
       minWidth: 'fit-content',
       height: 'fit-content',
-      padding: theme.spacing(4.25, 3.25),
+      padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : '4vw',
       borderWidth: 3,
       borderColor: theme.palette.primary.buttonBottomBorder,
       borderStyle: 'solid',
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
+      fontSize: (props) => props.isMobile ? 20 : '2.5vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
@@ -37,24 +38,24 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   headerTitle: {
-    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     marginBottom: 0,
   },
   jackpotText: {
-    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium
   },
   coin: {
-    fontSize: (props) => props.isMobile ? '5vw' : '2.5vw',
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: 'white',
     paddingLeft: 15,
     fontFamily: theme.font.CeliasMedium
   },
   headerText: {
-    fontSize: (props) => props.isMobile ? '8vw' : '5vw',
+    fontSize: (props) => props.isMobile ? 25 : '5vw',
     color: 'white',
     margin: 0,
     fontFamily: theme.font.CeliasMedium
@@ -122,7 +123,7 @@ WinnerModal.defaultProps = {
   handleClose: () => {},
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({ 
   logInUser,
 }, dispatch);
 

@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     width: '80%',
     height: '66%',
+    top: (props) => props.isMobile ? '-60px' : 'unset',
   },
   headerBar: {
     width: '100%',
@@ -184,8 +185,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     bottom: '8vh',
-    right: (props) => props.isMobile ? 'unset' : '10vw',
-    left: (props) => props.isMobile ? 40 : 'unset',
+    right: 40,
     zIndex: 20,
   }
 }));
@@ -546,8 +546,8 @@ function MainGameScreen(props) {
         <div className={classes.takeWinStyle}>
           <CustomButton
             onClick={onClickTakeWin} 
-            width={isMobile ? '20vw' : '10vw'}
-            height={isMobile ? '8vw' : '4vw'} 
+            width={isMobile ? 75 : '10vw'}
+            height={isMobile ? 25 : '4vw'} 
             label="TAKE WIN"/>
         </div>
       </div>
