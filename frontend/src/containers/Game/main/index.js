@@ -8,6 +8,7 @@ import { setTradeToken } from 'redux/actions/user';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton'
 import { createRoom, joinRoom, getActiveRoom} from 'redux/actions/gamePlay';
+import { chargeStripe } from 'redux/actions/payment';
 import { bindActionCreators } from 'redux';
 import { CustomButton, CustomLineChart } from 'components/elements';
 import ChatUI from '../components/chat'
@@ -205,7 +206,7 @@ const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 120;
 const gameWatingTime = 30;  
 function MainGameScreen(props) {
-  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile } = props;
+  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile, chargeStripe } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ playersTokens, setPlayersTokens] = useState([]);
@@ -256,8 +257,21 @@ function MainGameScreen(props) {
 
   useEffect(()=> {
     if (waitingTime < 1 ) {
-      clearInterval(waitingTimerId.current);
-      gamePlayTimeCountDown();
+      if (currentPlayers.length > 1) {
+        clearInterval(waitingTimerId.current);
+        gamePlayTimeCountDown();
+      } else {
+        chargeStripe({
+          id: userInfo._id,
+          amount: paymentInfo.betCoin
+        })
+        .then(()=> {
+          history.push('/game');
+        })
+        .catch(()=> {
+          history.push('/game');
+        })
+      }
     }
   }, [waitingTime])
 
@@ -618,7 +632,8 @@ MainGameScreen.propTypes = {
   createRoom: PropTypes.func.isRequired,
   joinRoom: PropTypes.func.isRequired,
   getAcitveRoom: PropTypes.func,
-  playRoom: PropTypes.object.isRequired
+  playRoom: PropTypes.object.isRequired,
+  chargeStripe: PropTypes.func.isRequired,
 };
 
 MainGameScreen.defaultProps = {
@@ -634,6 +649,7 @@ const mapStateToProps = (store) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setTradeToken,
   buyInStacke,
+  chargeStripe,
   createRoom,
   joinRoom,
   getActiveRoom
