@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomSwitch } from 'components/elements';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -55,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
       fontFamily: theme.font.CeliasMedium,
       margin: 0 
     },
+    '& a': {
+      textDecoration: 'none'
+    },
     '& div': {
       cursor: 'pointer',
       fontSize: (props) => props.isMobile ? 20 : '1.5vw',
@@ -102,10 +106,13 @@ function Setting (props) {
           <p>Sound</p>
           <CustomSwitch />
         </div>
-        <div className={classes.sectionFaceBook}>
-          <p>facebook</p>
-          <div>facebook</div>
-        </div>
+        
+          <div className={classes.sectionFaceBook}>
+            <p>Log out</p>
+            <Link to="/home">
+              <div>Log out</div>
+            </Link>
+          </div>
       </div>
       <p className={classes.done} onClick={handleClose}>DONE</p>
     </Dialog>

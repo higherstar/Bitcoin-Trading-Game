@@ -59,10 +59,9 @@ export const chargeStripe = (body) => (dispatch, getState) => {
 };
 
 export const getPaymentInfo = () => (dispatch, getState) => {
-  if (getState().paymentData.isFetching) {
-    return Promise.reject();
-  }
-
+  // if (getState().paymentData.isFetching) {
+  //   return Promise.reject();
+  // }
   if (!getState().userData.userInfo._id) {
     return Promise.reject('No user Info');
   }

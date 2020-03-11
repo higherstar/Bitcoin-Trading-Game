@@ -195,14 +195,18 @@ function Game(props) {
   useEffect(()=>{
     setLoading(true);
     getLeaderBoardScore();
-    if(!userInfo.id) {
+    if(!userInfo._id) {
       if(cookies.id){
         localStorage.setItem('kc_token', cookies.token);
         getUserInfo(cookies.id)
           .then(()=>{
             getPaymentInfo()
-              .then(()=>{
+              .then((res)=>{
                 setLoading(false);
+              })
+              .catch((error)=> {
+                setErrorShow({show:true, message: error, type: 'error'});
+                gotoLogIn();
               })
           })
           .catch(()=>{
@@ -212,12 +216,12 @@ function Game(props) {
       } else gotoLogIn();
     } else {
       getPaymentInfo()
-      .then(()=>{
+      .then((res)=>{
         setLoading(false);
       })
       .catch((error)=> {
-        setLoading(false);
         setErrorShow({show:true, message: error, type: 'error'});
+        gotoLogIn();
       });
     }
   }, []);
