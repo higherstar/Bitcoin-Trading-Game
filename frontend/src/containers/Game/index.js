@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: (props) => props.isMobile ? 30 : '7vw',
     color: theme.palette.base.white,
     fontWeight: 'bold',
-    marginTop: (props) => props.isMobile ? '5vh' : '15vh',
+    marginTop: (props) => props.isMobile ? '5vh' : '10vh',
     marginBottom: '6vh',
     fontFamily: theme.font.CeliasMedium,
   },
@@ -151,9 +151,16 @@ const useStyles = makeStyles((theme) => ({
       cursor: 'pointer',
     },
   },
+  hourlySession: {
+    fontSize: (props) => props.isMobile ? 30 : 60,
+    fontWeight: 'bold',
+    color: 'white',
+    margin: 0,
+  },
 }));
 
 function Game(props) {
+  const [isHourlySession, setIsHourlySession] = useState(false);
   const [cookies, setCookie] = useCookies(['id', 'token']);
   const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken, getLeaderBoardScore, isMobile } = props;
   const classes = useStyles({isMobile});
@@ -185,6 +192,20 @@ function Game(props) {
   ];
 
   const profileImage = '/Users/user1.png';//ProfileUserImage();
+
+  setInterval(() => {
+    const utcMins = new Date().getUTCMinutes();
+    const utcDate = new Date().getUTCDate();
+    const utcHour = new Date().getUTCHours();
+    
+    const hourlySessionMins = (utcDate % 7) * 6 + utcHour - 1;
+    if (utcMins >= hourlySessionMins && utcMins <= hourlySessionMins + 2) {
+      setIsHourlySession(true);
+    } else {
+      setIsHourlySession(false);
+    }
+  }, 5000);
+  
   useEffect(()=>{
     if(paymentInfo.amount) {
       setAmount(paymentInfo.amount);
@@ -227,7 +248,15 @@ function Game(props) {
   }, []);
 
   const onClickStart = () => {
-    setBuyInModalView(true);
+    if (isHourlySession) {
+      buyInStacke(10).then(()=>{
+        history.push('/game/main');
+      }).catch((error)=>{
+        setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
+      });
+    } else {
+      setBuyInModalView(true);
+    }
   };
   const onBuyInModalClose = () => {
     setBuyInModalView(false);
@@ -336,6 +365,7 @@ function Game(props) {
 					+
         </h2>
       </div>
+      {isHourlySession && <p className={classes.hourlySession}>Hourly Session</p>}
       <p className={classes.title}>BITCOIN TRADING</p>
       <div className={classes.buttonContainer}>
         <Link to={`/game${ paymentInfo.betCoin > 0 ? '/main' : ''}`} className={classes.link}>
@@ -358,7 +388,7 @@ function Game(props) {
         opened={buyInModalView}
         handleClose={onBuyInModalClose}
         content={buyInModalContent}
-        title="Select Stackes"
+        title="Select Stacks"
         buttonTitle="BUY-IN"
         handleOK={handleBuyInClick}
         isMobile={isMobile}
@@ -383,6 +413,7 @@ function Game(props) {
 }
 
 Game.TypeProps = {
+  isHourlySession: PropTypes.bool.isRequired,
   chargeStripe: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
   paymentInfo: PropTypes.object.isRequired,

@@ -76,7 +76,7 @@ CustomButton.propTypes = {
   icon: PropTypes.array,
   onClick: PropTypes.func,
   type: PropTypes.string,
-  isMobile: PropTypes
+  isMobile: PropTypes.bool
 };
 
 CustomButton.defaultProps = {

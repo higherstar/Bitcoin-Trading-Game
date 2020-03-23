@@ -206,6 +206,7 @@ const client = new W3CWebSocket(SocketURL);
 const totalGameTime = 120;
 const gameWatingTime = 30;  
 function MainGameScreen(props) {
+  const [ isHourlySession, setIsHourlySession ] = useState(false);
   const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile, chargeStripe } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
@@ -329,6 +330,9 @@ function MainGameScreen(props) {
         tokenPrices: []
       }));
       setGameBetCoin(paymentInfo.betCoin);
+      if (paymentInfo.betCoin === 10) {
+        setIsHourlySession(true);
+      }
       const startGameTime = (Date.now() - (new Date(response.createdDate)).getTime())/1000;
       startingGame.current=true;
       startGame(Math.floor(waitingTime - startGameTime));
@@ -598,6 +602,7 @@ function MainGameScreen(props) {
         <div className={classes.waitingScreenStyle}>
           <p>Waiting Users...</p>
           <p>{waitingTime}</p>
+          {isHourlySession && <p>Hourly Session</p>}
         </div>
       }
       <CustomAlert 
@@ -624,6 +629,7 @@ function MainGameScreen(props) {
 }
 
 MainGameScreen.propTypes = {
+  isHourlySession: PropTypes.bool.isRequired,
   setTradeToken: PropTypes.func.isRequired,
   paymentInfo: PropTypes.object,
   history: PropTypes.object.isRequired,
