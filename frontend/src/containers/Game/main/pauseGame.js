@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 function PauseModal(props) {
   const {
-    opened, close, isMobile
+    opened, close, isMobile, onClickMain
   } = props;
   const classes = useStyles({isMobile});
 
@@ -66,7 +66,7 @@ function PauseModal(props) {
         <p className={classes.headerText}>PAUSE</p>
         <div className={classes.linkCotainer}>
             <a onClick={close}>Resume</a>
-            <Link to='/game'>Main Menu</Link>
+            <a onClick={onClickMain}>Main Menu</a>
         </div>
       </div>
     </Dialog>
@@ -79,7 +79,8 @@ PauseModal.propTypes = {
   logInUser: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,
-  isMobile: PropTypes.bool
+  isMobile: PropTypes.bool,
+  onClickMain: PropTypes.func.isRequired
 };
 
 PauseModal.defaultProps = {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useCookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import makeStyles from '@material-ui/styles/makeStyles';
@@ -203,11 +204,13 @@ const markColorList = [
 ]
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
-const totalGameTime = 120;
-const gameWatingTime = 30;  
+const totalGameTime = 60;
+const gameWatingTime = 30;
+
 function MainGameScreen(props) {
   const [ isHourlySession, setIsHourlySession ] = useState(false);
-  const { setTradeToken, paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile, chargeStripe } = props;
+  const [cookies, setCookie] = useCookies(['id', 'token']);
+  const { paymentInfo, history, userInfo, buyInStacke, createRoom, joinRoom, getActiveRoom, playRoom, isMobile, chargeStripe } = props;
   const [ waitingTime, setWaitingTime ] = useState(gameWatingTime);
   const [ gameTime, setGameTime ] = useState(totalGameTime);
   const [ playersTokens, setPlayersTokens] = useState([]);
@@ -228,6 +231,7 @@ function MainGameScreen(props) {
       lastPrice: -20000
     }
   });
+  const betCoinRef = useRef(0);
   useEffect(() => console.log('RESTARTED'), [])
   const classes = useStyles({isMobile});
   let waitingTimerId = useRef(null);
@@ -244,15 +248,20 @@ function MainGameScreen(props) {
       clearInterval(waitingTimerId.current);
       clearInterval(gamePlayTimeId.current);
       history.push('/game');
-    } else {
-      setTradeToken(-1);
-      //socket connection
+    } else {      
+      const tokenStr = localStorage.getItem(cookies.id);
+      const tokens = parseInt(JSON.parse(tokenStr));
+      betCoinRef.current = paymentInfo.betCoin;
+      console.log(tokens);
+      if (tokens > 0) {
+        localStorage.setItem(cookies.id, JSON.stringify(tokens - 1));
+      }
+
       client.onopen = () => {
-        console.log('WebSocket Client Connected');
+        console.log('WebSocket Client Connected');  
       };
       
       loginGameRoom();
-      // drawing chart
     }
   }, []);
 
@@ -264,7 +273,7 @@ function MainGameScreen(props) {
       } else {
         chargeStripe({
           id: userInfo._id,
-          amount: paymentInfo.betCoin
+          amount: betCoinRef.current
         })
         .then(()=> {
           history.push('/game');
@@ -511,6 +520,18 @@ function MainGameScreen(props) {
     setGamePauseDialogShow(false);
   }
 
+  const handleGoToMain = () => {
+    chargeStripe({
+      id: userInfo._id,
+      amount: betCoinRef.current
+    })
+    .then(()=> {
+      history.push('/game');
+    })
+    .catch(()=> {
+      history.push('/game');
+    })
+  }
   const handleOnClickUser = (userName) => {
     if (userName !== userInfo.name) {
       setSendingMessageUser(userName);
@@ -617,19 +638,20 @@ function MainGameScreen(props) {
       />
       <LoserModal
         opened={gameLoseDialogShow}
+        jackPot={jackPot}
         isMobile={isMobile}
       />
       <PauseModal
         opened={gamePauseDialogShow}
         close={handlePauseGameModalClose}
         isMobile={isMobile}
+        onClickMain={handleGoToMain}
       />
     </div>
   );
 }
 
 MainGameScreen.propTypes = {
-  isHourlySession: PropTypes.bool.isRequired,
   setTradeToken: PropTypes.func.isRequired,
   paymentInfo: PropTypes.object,
   history: PropTypes.object.isRequired,

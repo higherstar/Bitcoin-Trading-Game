@@ -17,7 +17,6 @@ const config = {
 const createHmac = userID => {
   const hash = crypto.createHmac('sha256', "sk_test_VWZficYQXe1adJUzO0vKaYxd").update(userID.valueOf().toString());
   const temp = hash.digest('hex');
-  console.log('hash>>>>>>>>>>', temp)
   return temp;
 }
 
@@ -49,7 +48,6 @@ const createConversation = async ({data, conversationId}) => {
     .then((res) => {
       return {status: true, data: res.data};
     }).catch((err) => {
-      console.log('venus----->error createConversateion', err)
       // console.log(err);
       return {status: false, errorMessage: err};
     });

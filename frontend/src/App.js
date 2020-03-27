@@ -32,21 +32,24 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     position: 'absolute',
     top: '14vh',
-    backgroundColor: theme.palette.primary.backLineColor
+    backgroundColor: theme.palette.primary.backLineColor,
+    zIndex: 5,
   },
   linemiddle: {
     height: 5,
     width: '100%',
     position: 'absolute',
     top: '16vh',
-    backgroundColor: theme.palette.primary.backLineColor
+    backgroundColor: theme.palette.primary.backLineColor,
+    zIndex: 5,
   },
   linebottom: {
     height: 6,
     width: '100%',
     position: 'absolute',
     top: '60vh',
-    backgroundColor: theme.palette.primary.backLineBottomColor
+    backgroundColor: theme.palette.primary.backLineBottomColor,
+    zIndex: 5,
   },
   appContent: {
     height: '100%',
@@ -63,7 +66,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const App = (props) => {
-  const classes = useStyles();
   const [isMobile, setIsMobile] = useState(false);
   const getWindowWidth = () => {
     setIsMobile(window.innerWidth <= 700);
@@ -76,6 +78,7 @@ const App = (props) => {
     getWindowWidth();
   });
 
+  const classes = useStyles({isMobile});
   const pageProps = {
     ...props,
     isMobile,
@@ -88,6 +91,7 @@ const App = (props) => {
 
         <main className={classes.content}>
           <div className={classes.appContent}>
+            {/* <img className={classes.backgroundLine} src={backgroundLine} alt="background line"/>  */}
             <div className={classes.linetop}/>
             <div className={classes.linemiddle}/>
             <div className={classes.linebottom}/>

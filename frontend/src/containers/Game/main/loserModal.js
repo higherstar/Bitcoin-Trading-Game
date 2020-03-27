@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { logInUser } from 'redux/actions/user';
+import { connect } from 'react-redux';
 
 import Dialog from '@material-ui/core/Dialog';
 import makeStyles from '@material-ui/styles/makeStyles';
@@ -13,42 +16,40 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 'fit-content',
       height: 'fit-content',
       padding: (props) => props.isMobile ? theme.spacing(2, 3.25) : '4vw',
+      borderWidth: 3,
+      borderColor: theme.palette.primary.buttonBottomBorder,
       borderStyle: 'solid',
-      background: 'black',
+      background: `linear-gradient(${theme.palette.primary.top}, ${theme.palette.primary.middle}, ${theme.palette.primary.bottom})`,
+      boxShadow: theme.palette.shadow.main,
     },
   },
   inputContainer: {
     justifyContent: 'center',
     display: 'flex',
-    width: '100%',
     flexDirection: 'column',
     alignItems: 'center',
     '& a': {
-      fontSize: (props) => props.isMobile ? 20 : '3vw',
+      fontSize: (props) => props.isMobile ? 20 : '2.5vw',
       color: 'white',
       cursor: 'pointer',
       fontFamily: theme.font.CeliasMedium,
-      marginBottom: 30,
+      marginBottom: '2.2vw',
       textDecoration: 'none'
     }
   },
   headerTitle: {
-    fontSize: (props) => props.isMobile ? 25 : '4vw',
-    width: '100%',
-    textAlign: 'center',
-    margin: 0,
-    marginBottom: 50,
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium,
     marginBottom: 0,
   },
   jackpotText: {
-    fontSize: (props) => props.isMobile ? 20 : 40,
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: theme.palette.primary.buttonBottomBorder,
     fontFamily: theme.font.CeliasMedium
   },
   coin: {
-    fontSize: (props) => props.isMobile ? 20 : 40,
+    fontSize: (props) => props.isMobile ? 20 : '2.5vw',
     color: 'white',
     paddingLeft: 15,
     fontFamily: theme.font.CeliasMedium
@@ -60,10 +61,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: theme.font.CeliasMedium
   },
   jackpotContainer: {
-    width: '100%',
-    justifyContent: 'space-between',
-    display: 'flex',
-    marginTop: '4vw'
+    display: 'flex'
   },
   content: {
     padding: theme.spacing(1, 0),
@@ -96,11 +94,11 @@ function LoserModal(props) {
     >
       <div className={classes.inputContainer}>
         <p className={classes.headerText}>YOU LOSE</p>
-        <p className={classes.headerTitle}>Better luck next time</p>
         <div className={classes.jackpotContainer}>
-            <Link to='/game'>New Game</Link>
-            <Link to='/game'>Main Menu</Link>
+          <p className={classes.jackpotText}>Better Luck Next Time</p>
         </div>
+        <Link to='/game'>New Game</Link>
+        <Link to='/game'>Main Menu</Link>
       </div>
     </Dialog>
   );
@@ -109,15 +107,20 @@ function LoserModal(props) {
 LoserModal.propTypes = {
   opened: PropTypes.bool,
   handleClose: PropTypes.func,
-  history: PropTypes.object,
+  logInUser: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   isMobile: PropTypes.bool
 };
 
 LoserModal.defaultProps = {
   opened: false,
-  handleClose: () => {},
   history: {},
-  isMobile: false
-};
+  isMobile: false,
+  handleClose: () => {},
+}
 
-export default LoserModal;
+const mapDispatchToProps = (dispatch) => bindActionCreators({ 
+  logInUser,
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(LoserModal);

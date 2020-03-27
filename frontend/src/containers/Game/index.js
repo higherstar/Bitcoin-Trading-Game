@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { CustomAlert, Loading } from 'components/elements';
 import UserIcon from './components/UserIcon'
@@ -19,6 +19,8 @@ import DashBoard from './components/DashBoard'
 import Setting from './components/Setting'
 import AmountInput from './components/AmountInput';
 import { changeAmountUnit } from '../../utils'
+import backgroundLine from 'assets/image/back_line.png';
+
 const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
@@ -157,12 +159,32 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     margin: 0,
   },
+  tokenTime: {
+    color: '#10abde',
+    textAlign: 'center',
+    fontSize: (props) => props.isMobile ? 16 : 24,
+
+    '& p': {
+      margin: 0,
+    }
+  },  
+  backgroundLine: {
+    position: 'absolute',
+    bottom: (props) => props.isMobile ? '30vh' : '10vh',
+    left: 0,
+    width: '100%',
+    height: 'auto',
+    zIndex: -1,
+    opacity: 0.6,
+  }
 }));
+
+const REFRESH_TIME = 300;
 
 function Game(props) {
   const [isHourlySession, setIsHourlySession] = useState(false);
   const [cookies, setCookie] = useCookies(['id', 'token']);
-  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, userTradeToken, getLeaderBoardScore, isMobile } = props;
+  const { chargeStripe, userInfo, paymentInfo, getPaymentInfo, history, getUserInfo, buyInStacke, getLeaderBoardScore, isMobile } = props;
   const classes = useStyles({isMobile});
   const [amountModalView, setAmountModalView] = useState(false);
   const [buyInModalView, setBuyInModalView] = useState(false);
@@ -173,6 +195,9 @@ function Game(props) {
   const [buyInSelect, setBuyInSelect] = useState(0);
   const [openDashBoard, setOpenDashBoard] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
+  const [tokenTime, setTokenTime] = useState(0);
+  const tokenInterval = useRef(null);
+
   const buyInCoast = [
     {
       level: 'Easy',
@@ -193,19 +218,72 @@ function Game(props) {
 
   const profileImage = '/Users/user1.png';//ProfileUserImage();
 
-  setInterval(() => {
+  const [userTradeToken, setUserTradeToken] = useState(0);
+
+  const isUnMounted = useRef(false);
+  useEffect(() => {
+    isUnMounted.current = false;
+    return () => {
+      isUnMounted.current = true;
+      if (tokenInterval.current) {
+        clearInterval(tokenInterval.current);
+      }
+    };
+  }, []);
+
+  const increateTokens = useCallback(() => {
+    const tokenStr = localStorage.getItem(cookies.id);
+    const old_tokens = tokenStr ? parseInt(JSON.parse(tokenStr)) : 5;
+    
+    const tokenWaitTimeStr = localStorage.getItem('token_time');
+    let tokenWaitTime = tokenWaitTimeStr ? parseInt(JSON.parse(tokenWaitTimeStr)) : REFRESH_TIME;
+    console.log('????????????????????????????????????????????????????????', tokenWaitTime);
+    if (tokenWaitTime > 0) {
+      if (old_tokens < 5) {
+        tokenWaitTime--;
+        setTokenTime(tokenWaitTime);
+        localStorage.setItem('token_time', JSON.stringify(tokenWaitTime));
+      }
+    } else {
+      if (old_tokens < 5) {
+        localStorage.setItem(cookies.id, JSON.stringify(old_tokens + 1));
+        setUserTradeToken(old_tokens + 1);
+        localStorage.setItem('token_update', JSON.stringify(new Date().getTime()));      
+        setTokenTime(REFRESH_TIME);
+        localStorage.setItem('token_time', JSON.stringify(REFRESH_TIME))
+      }
+    }
+    
+    localStorage.setItem('token_interval', 'true');
+  }, []);
+
+  const checkTokens = useCallback(() => {
+    const tokenStr = localStorage.getItem(cookies.id);
+    const tokens = tokenStr ? parseInt(JSON.parse(tokenStr)) : 5;
+    console.log('<<<<', tokens);
+    setUserTradeToken(tokens);
+  }, []); 
+
+  const checkHourlySession = useCallback(() => {
     const utcMins = new Date().getUTCMinutes();
     const utcDate = new Date().getUTCDate();
-    const utcHour = new Date().getUTCHours();
-    
-    const hourlySessionMins = (utcDate % 7) * 6 + utcHour - 1;
+
+    const hourlySessionMins = (utcDate % 7) * 7 + 15;
     if (utcMins >= hourlySessionMins && utcMins <= hourlySessionMins + 2) {
       setIsHourlySession(true);
     } else {
       setIsHourlySession(false);
     }
-  }, 5000);
-  
+  }, []);
+
+  useEffect(() => {
+    tokenInterval.current = setInterval(() => {
+      checkTokens();
+      checkHourlySession();
+      increateTokens(); 
+    }, 1000)
+  }, [])
+
   useEffect(()=>{
     if(paymentInfo.amount) {
       setAmount(paymentInfo.amount);
@@ -222,8 +300,9 @@ function Game(props) {
         getUserInfo(cookies.id)
           .then(()=>{
             getPaymentInfo()
-              .then((res)=>{
+              .then(()=>{
                 setLoading(false);
+                localStorage.setItem('token_update', JSON.stringify(new Date().getTime()));
               })
               .catch((error)=> {
                 setErrorShow({show:true, message: error, type: 'error'});
@@ -236,6 +315,16 @@ function Game(props) {
 
       } else gotoLogIn();
     } else {
+      const tokenStr = localStorage.getItem(cookies.id);  
+      const tokens = tokenStr ? parseInt(JSON.parse(tokenStr)) : 5;
+      setUserTradeToken(tokens);
+
+      localStorage.setItem('token_update', JSON.stringify(new Date().getTime()));
+
+      if (tokens === 5) {
+        localStorage.setItem(cookies.id, JSON.stringify(5));
+      }
+
       getPaymentInfo()
       .then((res)=>{
         setLoading(false);
@@ -248,21 +337,22 @@ function Game(props) {
   }, []);
 
   const onClickStart = () => {
-    if (isHourlySession) {
-      buyInStacke(10).then(()=>{
-        history.push('/game/main');
-      }).catch((error)=>{
-        setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
-      });
-    } else {
-      setBuyInModalView(true);
+    if (userTradeToken > 0) {
+      if (isHourlySession) {
+        buyInStacke(10).then(()=>{
+          history.push('/game/main');
+        }).catch((error)=>{
+          setErrorShow({show:true, message: error ? error : 'Net Error', type: 'error'});
+        });
+      } else {
+        setBuyInModalView(true);
+      }
     }
   };
   const onBuyInModalClose = () => {
     setBuyInModalView(false);
   };
-  const onClickHowToPlay = () => {
-    console.log('signupButtonClicked');
+  const onClickHowToPlay = () => {  
   };
   const gotoLogIn = () => {
     history.push('/home');
@@ -343,13 +433,28 @@ function Game(props) {
     setOpenSetting(false);
   }
   if (loading) { return <Loading />; }
+
+  const sec2Time = (secs) => {
+    if (userTradeToken === 5) {
+      return '';
+    }
+    
+    const min = `${Math.floor(tokenTime / 60)}`;
+    const sec = `${tokenTime % 60}`;
+    return `${min.length === 1 ? '0' : ''}${min} : ${sec.length === 1 ? '0' : ''}${sec}`
+  } 
+
   return (
     <div className={classes.container}>
+      <img className={classes.backgroundLine} src={backgroundLine} alt="background line"/> 
       <div className={classes.userSection}>
         <UserIcon name={userInfo.name} image={profileImage} isMobile={isMobile}/>
       </div>
       <div className={classes.tradeTokenSection}>
         <TradeToken name={userTradeToken.toString()} isMobile={isMobile}/>
+        <div className={classes.tokenTime}>
+          <p>{sec2Time(tokenTime)}</p>
+        </div>
       </div>
       <div className={classes.mainSettingStyle} onClick={()=>handleOpenSetting()}>
         <img src={MainSettingImage}/>
@@ -421,14 +526,12 @@ Game.TypeProps = {
   history: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
   buyInStacke: PropTypes.func.isRequired,
-  userTradeToken: PropTypes.number.isRequired,
   getLeaderBoardScore: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (store) => ({
   userInfo: store.userData.userInfo,
   paymentInfo: store.paymentData.paymentInfo,
-  userTradeToken: store.userData.userTradeToken
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
