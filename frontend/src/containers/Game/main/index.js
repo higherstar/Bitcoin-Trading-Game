@@ -204,7 +204,7 @@ const markColorList = [
 ]
 const SocketURL = process.env.REACT_APP_SOCKET
 const client = new W3CWebSocket(SocketURL);
-const totalGameTime = 60;
+const totalGameTime = 120;
 const gameWatingTime = 30;
 
 function MainGameScreen(props) {
